@@ -1,0 +1,74 @@
+import asyncio
+from datetime import datetime
+from sqlalchemy.orm import Session
+from backend.db.session import SessionLocal
+from backend.db.models import MealPlan, ShoppingList, FreezerItem, NutritionCycle
+from backend.telegram.bot import send_weekly_message
+
+
+def get_current_cycle_week() -> int:
+    week_of_year = datetime.now().isocalendar()[1]
+    return ((week_of_year - 1) % 8) + 1
+
+
+def build_week_data(db: Session, cyclus_week: int) -> dict:
+    nc = db.query(NutritionCycle).filter(NutritionCycle.cyclus_week == cyclus_week).first()
+    vlees_thema = nc.vlees_type if nc else "Onbekend"
+
+    dag_namen = ["maandag", "dinsdag", "woensdag", "donderdag", "vrijdag", "zaterdag", "zondag"]
+    batch_dagen = {"donderdag", "zondag"}
+
+    dagen = []
+    for dag in dag_namen:
+        entries = (
+            db.query(MealPlan)
+            .filter(MealPlan.cyclus_week == cyclus_week, MealPlan.dag == dag)
+            .all()
+        )
+        maaltijden = []
+        totaal_eiwit = 0.0
+        totaal_kcal = 0
+        for e in entries:
+            if e.recipe:
+                maaltijden.append({
+                    "maaltijd_type": e.maaltijd_type,
+                    "naam": e.recipe.naam,
+                    "eiwit_g": e.recipe.eiwit_g or 0,
+                })
+                totaal_eiwit += e.recipe.eiwit_g or 0
+                totaal_kcal += e.recipe.kcal or 0
+        dagen.append({
+            "dag": dag,
+            "maaltijden": maaltijden,
+            "totaal_eiwit_g": totaal_eiwit,
+            "totaal_kcal": totaal_kcal,
+            "is_batch": dag in batch_dagen,
+        })
+
+    shopping = db.query(ShoppingList).filter(ShoppingList.cyclus_week == cyclus_week).all()
+    freezer = db.query(FreezerItem).filter(FreezerItem.cyclus_week == cyclus_week).all()
+
+    return {
+        "week": cyclus_week,
+        "vlees_thema": vlees_thema,
+        "dagen": dagen,
+        "shopping": [
+            {"product": s.product, "categorie": s.categorie, "hoeveelheid": s.hoeveelheid}
+            for s in shopping
+        ],
+        "freezer": [
+            {"product": f.product, "ontdooi_dag": f.ontdooi_dag, "gebruik_dag": f.gebruik_dag}
+            for f in freezer
+        ],
+    }
+
+
+def run_weekly_job():
+    db = SessionLocal()
+    try:
+        cyclus_week = get_current_cycle_week()
+        week_data = build_week_data(db, cyclus_week)
+        asyncio.run(send_weekly_message(week_data))
+        print(f"Wekelijks Telegram bericht verstuurd voor cyclus week {cyclus_week}")
+    finally:
+        db.close()
