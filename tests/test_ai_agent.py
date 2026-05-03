@@ -22,8 +22,8 @@ async def test_estimate_macros_returns_dict():
 
 @pytest.mark.asyncio
 async def test_integrate_recipe_calls_claude():
-    with patch("backend.ai.claude_client.anthropic.Anthropic") as mock_anthropic:
-        mock_client = MagicMock()
+    with patch("backend.ai.claude_client.anthropic.AsyncAnthropic") as mock_anthropic:
+        mock_client = AsyncMock()
         mock_anthropic.return_value = mock_client
         mock_client.messages.create.return_value.content = [
             MagicMock(text='{"status": "ok", "aanpassingen": []}')

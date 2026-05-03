@@ -22,8 +22,8 @@ Alleen JSON, geen uitleg."""
 
 
 async def integrate_recipe_in_schema(recept: dict, huidig_schema: list) -> dict:
-    client = anthropic.Anthropic(api_key=settings.anthropic_api_key)
-    message = client.messages.create(
+    client = anthropic.AsyncAnthropic(api_key=settings.anthropic_api_key)
+    message = await client.messages.create(
         model="claude-sonnet-4-6",
         max_tokens=1024,
         messages=[{
@@ -45,8 +45,8 @@ async def integrate_recipe_in_schema(recept: dict, huidig_schema: list) -> dict:
 
 
 async def validate_week_macros(week_data: dict) -> dict:
-    client = anthropic.Anthropic(api_key=settings.anthropic_api_key)
-    message = client.messages.create(
+    client = anthropic.AsyncAnthropic(api_key=settings.anthropic_api_key)
+    message = await client.messages.create(
         model="claude-sonnet-4-6",
         max_tokens=512,
         messages=[{
