@@ -6,10 +6,13 @@ import RecipeCard from "../components/RecipeCard";
 export default function Recipes() {
   const [recipes, setRecipes] = useState([]);
   const [search, setSearch] = useState("");
+  const [debouncedSearch, setDebouncedSearch] = useState("");
+  const [initialized, setInitialized] = useState(false);
   const [showForm, setShowForm] = useState(false);
   const [formData, setFormData] = useState({ naam: "", ingredienten: "", categorie: "diner" });
   const [macros, setMacros] = useState(null);
   const [loading, setLoading] = useState(false);
+  const [saving, setSaving] = useState(false);
   const [error, setError] = useState(null);
   const [searchParams] = useSearchParams();
 
@@ -17,9 +20,30 @@ export default function Recipes() {
     if (searchParams.get("new") === "1") setShowForm(true);
   }, [searchParams]);
 
+  // Debounce search input by 300ms
   useEffect(() => {
-    getRecipes(search).then(setRecipes).catch(console.error);
+    const t = setTimeout(() => setDebouncedSearch(search), 300);
+    return () => clearTimeout(t);
   }, [search]);
+
+  // Fetch with stale-result guard
+  useEffect(() => {
+    let cancelled = false;
+    getRecipes(debouncedSearch)
+      .then((data) => { if (!cancelled) { setRecipes(data); setInitialized(true); } })
+      .catch(console.error);
+    return () => { cancelled = true; };
+  }, [debouncedSearch]);
+
+  const toggleForm = () => {
+    setShowForm((v) => !v);
+    setError(null);
+  };
+
+  const handleFormDataChange = (field, value) => {
+    setFormData((prev) => ({ ...prev, [field]: value }));
+    if (field === "naam" || field === "ingredienten") setMacros(null);
+  };
 
   const handleAiFill = async () => {
     if (!formData.naam || !formData.ingredienten) return;
@@ -40,22 +64,29 @@ export default function Recipes() {
 
   const handleCreate = async (e) => {
     e.preventDefault();
-    const payload = {
-      naam: formData.naam,
-      categorie: formData.categorie,
-      ...macros,
-    };
-    await createRecipe(payload);
-    setFormData({ naam: "", ingredienten: "", categorie: "diner" });
-    setMacros(null);
-    setShowForm(false);
-    getRecipes(search).then(setRecipes);
+    setSaving(true);
+    setError(null);
+    try {
+      await createRecipe({ naam: formData.naam, categorie: formData.categorie, ...macros });
+      setFormData({ naam: "", ingredienten: "", categorie: "diner" });
+      setMacros(null);
+      setShowForm(false);
+      getRecipes(debouncedSearch).then(setRecipes).catch(console.error);
+    } catch {
+      setError("Opslaan mislukt, probeer opnieuw");
+    } finally {
+      setSaving(false);
+    }
   };
 
   const handleDelete = async (id) => {
     if (!confirm("Recept verwijderen?")) return;
-    await deleteRecipe(id);
-    setRecipes((r) => r.filter((x) => x.id !== id));
+    try {
+      await deleteRecipe(id);
+      setRecipes((r) => r.filter((x) => x.id !== id));
+    } catch {
+      alert("Verwijderen mislukt");
+    }
   };
 
   return (
@@ -63,7 +94,7 @@ export default function Recipes() {
       <div className="flex items-center justify-between mb-4">
         <h1 className="text-xl font-bold text-gray-900">Recepten</h1>
         <button
-          onClick={() => setShowForm(!showForm)}
+          onClick={toggleForm}
           className="bg-brand text-white text-sm font-semibold px-3 py-1.5 rounded-lg"
         >
           {showForm ? "Annuleer" : "➕ Nieuw"}
@@ -77,13 +108,13 @@ export default function Recipes() {
             className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm mb-2 focus:outline-none focus:ring-2 focus:ring-brand"
             placeholder="Naam recept"
             value={formData.naam}
-            onChange={(e) => setFormData({ ...formData, naam: e.target.value })}
+            onChange={(e) => handleFormDataChange("naam", e.target.value)}
             required
           />
           <select
             className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm mb-2"
             value={formData.categorie}
-            onChange={(e) => setFormData({ ...formData, categorie: e.target.value })}
+            onChange={(e) => handleFormDataChange("categorie", e.target.value)}
           >
             <option value="ontbijt">Ontbijt</option>
             <option value="lunch">Lunch</option>
@@ -94,7 +125,7 @@ export default function Recipes() {
             className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm mb-2 h-20 resize-none focus:outline-none focus:ring-2 focus:ring-brand"
             placeholder={"Ingrediënten (één per regel)\nbijv:\n450g gehakt\n200g pasta"}
             value={formData.ingredienten}
-            onChange={(e) => setFormData({ ...formData, ingredienten: e.target.value })}
+            onChange={(e) => handleFormDataChange("ingredienten", e.target.value)}
           />
           {error && (
             <p className="text-red-600 text-xs mb-2">{error}</p>
@@ -119,16 +150,17 @@ export default function Recipes() {
             <button
               type="button"
               onClick={handleAiFill}
-              disabled={loading}
+              disabled={loading || saving}
               className="flex-1 border border-gray-200 text-gray-700 text-sm font-medium py-2 rounded-lg disabled:opacity-50"
             >
               {loading ? "AI bezig..." : "🤖 Macro's schatten"}
             </button>
             <button
               type="submit"
-              className="flex-1 bg-brand text-white text-sm font-semibold py-2 rounded-lg"
+              disabled={loading || saving}
+              className="flex-1 bg-brand text-white text-sm font-semibold py-2 rounded-lg disabled:opacity-50"
             >
-              Opslaan
+              {saving ? "Opslaan..." : "Opslaan"}
             </button>
           </div>
         </form>
@@ -137,6 +169,7 @@ export default function Recipes() {
       <div className="bg-white border border-gray-200 rounded-xl px-3 py-2 flex items-center gap-2 mb-4 shadow-sm">
         <span className="text-gray-400">🔍</span>
         <input
+          aria-label="Zoek recept"
           className="flex-1 text-sm text-gray-700 focus:outline-none"
           placeholder="Zoek recept..."
           value={search}
@@ -145,7 +178,7 @@ export default function Recipes() {
       </div>
 
       <div className="flex flex-col gap-2">
-        {recipes.length === 0 && (
+        {initialized && recipes.length === 0 && (
           <p className="text-center text-gray-400 text-sm py-8">Geen recepten gevonden</p>
         )}
         {recipes.map((r) => (
