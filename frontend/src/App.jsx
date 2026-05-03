@@ -1,27 +1,30 @@
-import { BrowserRouter, Routes, Route, Link } from "react-router-dom";
+import { BrowserRouter, Routes, Route, NavLink } from "react-router-dom";
 import Home from "./pages/Home";
 import Recipes from "./pages/Recipes";
 import WeekPlan from "./pages/WeekPlan";
 
+const navClass = ({ isActive }) =>
+  `flex-1 py-3 text-center text-xs flex flex-col items-center gap-0.5 ${isActive ? "text-brand" : "text-gray-500 hover:text-brand"}`;
+
 export default function App() {
   return (
     <BrowserRouter>
-      <div className="max-w-md mx-auto min-h-screen bg-gray-50">
+      <div className="max-w-md mx-auto min-h-screen bg-gray-50 pb-16">
         <Routes>
           <Route path="/" element={<Home />} />
           <Route path="/recepten" element={<Recipes />} />
           <Route path="/weekplan" element={<WeekPlan />} />
         </Routes>
-        <nav className="fixed bottom-0 left-1/2 -translate-x-1/2 w-full max-w-md bg-white border-t border-gray-200 flex">
-          <Link to="/" className="flex-1 py-3 text-center text-xs text-gray-500 hover:text-brand flex flex-col items-center gap-0.5">
-            <span className="text-lg">🏠</span>Home
-          </Link>
-          <Link to="/recepten" className="flex-1 py-3 text-center text-xs text-gray-500 hover:text-brand flex flex-col items-center gap-0.5">
-            <span className="text-lg">📖</span>Recepten
-          </Link>
-          <Link to="/weekplan" className="flex-1 py-3 text-center text-xs text-gray-500 hover:text-brand flex flex-col items-center gap-0.5">
-            <span className="text-lg">📅</span>Week
-          </Link>
+        <nav aria-label="Hoofdnavigatie" className="fixed bottom-0 left-1/2 -translate-x-1/2 w-full max-w-md bg-white border-t border-gray-200 flex">
+          <NavLink to="/" end className={navClass}>
+            <span aria-hidden="true" className="text-lg">🏠</span>Home
+          </NavLink>
+          <NavLink to="/recepten" className={navClass}>
+            <span aria-hidden="true" className="text-lg">📖</span>Recepten
+          </NavLink>
+          <NavLink to="/weekplan" className={navClass}>
+            <span aria-hidden="true" className="text-lg">📅</span>Week
+          </NavLink>
         </nav>
       </div>
     </BrowserRouter>

@@ -5,7 +5,7 @@ const api = axios.create({
 });
 
 export const getRecipes = (search = "") =>
-  api.get(`/api/recipes${search ? `?search=${search}` : ""}`).then((r) => r.data);
+  api.get(`/api/recipes${search ? `?search=${encodeURIComponent(search)}` : ""}`).then((r) => r.data);
 
 export const createRecipe = (data) =>
   api.post("/api/recipes", data).then((r) => r.data);
