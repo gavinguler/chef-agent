@@ -1,6 +1,9 @@
 import json
+import logging
 import httpx
 from backend.config import settings
+
+logger = logging.getLogger(__name__)
 
 MACRO_PROMPT = """Schat de macronutriënten voor dit recept en geef een JSON terug (enkel JSON, geen uitleg):
 Recept: {naam}
@@ -28,6 +31,7 @@ async def estimate_macros(naam: str, ingredienten: list[str]) -> dict:
         end = raw.rfind("}") + 1
         return json.loads(raw[start:end])
     except (json.JSONDecodeError, ValueError):
+        logger.warning("estimate_macros: kon JSON niet parsen uit Ollama response: %r", raw)
         return {"kcal": None, "eiwit_g": None, "vet_g": None, "koolhydraten_g": None}
 
 
@@ -52,4 +56,5 @@ Alleen JSON, geen uitleg."""
         end = raw.rfind("]") + 1
         return json.loads(raw[start:end])
     except (json.JSONDecodeError, ValueError):
+        logger.warning("generate_shopping_list: kon JSON niet parsen uit Ollama response: %r", raw)
         return []

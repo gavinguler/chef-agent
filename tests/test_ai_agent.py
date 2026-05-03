@@ -13,5 +13,7 @@ async def test_estimate_macros_returns_dict():
         http_response.json.return_value = {"response": mock_response}
         mock_instance.post.return_value = http_response
         result = await estimate_macros("Bolognese", ["450g gehakt", "pasta 200g", "tomatensaus"])
-    assert "kcal" in result
-    assert "eiwit_g" in result
+    assert result["kcal"] == 650
+    assert result["eiwit_g"] == 48.0
+    assert result["vet_g"] == 22.0
+    assert result["koolhydraten_g"] == 55.0
