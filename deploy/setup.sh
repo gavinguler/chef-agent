@@ -15,7 +15,7 @@ mkdir -p /opt/chef-agent
 cd /opt/chef-agent
 
 # Code clonen of updaten
-git clone https://github.com/gavinguler/chef-agent.git . 2>/dev/null || git pull
+git clone https://github.com/gavinguler/chef-agent.git . 2>/dev/null || git pull --ff-only
 
 # Python venv
 python3.12 -m venv .venv
@@ -24,34 +24,38 @@ python3.12 -m venv .venv
 
 # Frontend build
 if command -v node &>/dev/null; then
-  cd frontend && npm ci && npm run build && cd ..
+  cd /opt/chef-agent/frontend && npm ci && npm run build
   echo "Frontend gebouwd in frontend/dist/"
 fi
 
 # Environment file
-if [ ! -f .env ]; then
-  cp .env.example .env
+if [ ! -f /opt/chef-agent/.env ]; then
+  cp /opt/chef-agent/.env.example /opt/chef-agent/.env
   echo ""
-  echo "BELANGRIJK: Vul .env in met echte waarden!"
+  echo "BELANGRIJK: Vul /opt/chef-agent/.env in met echte waarden:"
   echo "  DATABASE_URL=postgresql://chef_agent:***@192.168.0.170:5432/chef_agent"
   echo "  TELEGRAM_BOT_TOKEN=..."
   echo "  TELEGRAM_CHAT_ID=..."
   echo "  ANTHROPIC_API_KEY=..."
   echo "  OLLAMA_BASE_URL=http://<ollama-ip>:11434"
   echo ""
-  echo "Daarna: systemctl start chef-agent"
+  echo "Na invullen, herstart het script: bash /opt/chef-agent/deploy/setup.sh"
+  echo "Of start de service handmatig na migraties: systemctl start chef-agent"
   exit 0
 fi
 
-# Database migraties
+# Database migraties (vereist dat DATABASE_URL correct is in .env)
+cd /opt/chef-agent
 .venv/bin/alembic upgrade head
 
 # Seed data
 .venv/bin/python -m backend.db.seed
 
-# Systemd service
-cp deploy/chef-agent.service /etc/systemd/system/
+# Eigenaarschap instellen voor de service user
 chown -R chef:chef /opt/chef-agent
+
+# Systemd service
+cp /opt/chef-agent/deploy/chef-agent.service /etc/systemd/system/
 systemctl daemon-reload
 systemctl enable chef-agent
 systemctl start chef-agent
