@@ -1,12 +1,14 @@
 import pytest
 from fastapi.testclient import TestClient
-from sqlalchemy import create_engine
+from sqlalchemy import create_engine, event
 from sqlalchemy.orm import sessionmaker
 from backend.db.models import Base
 from backend.db.session import get_db
 from backend.main import app
 
+# Use a file-based SQLite for tests so all connections share the same database
 TEST_DATABASE_URL = "sqlite:///./test.db"
+
 
 @pytest.fixture(scope="session")
 def engine():
@@ -18,13 +20,23 @@ def engine():
     if os.path.exists("test.db"):
         os.remove("test.db")
 
+
+@pytest.fixture(autouse=True)
+def clean_tables(engine):
+    """Truncate all tables before each test for isolation."""
+    with engine.begin() as conn:
+        for table in reversed(Base.metadata.sorted_tables):
+            conn.execute(table.delete())
+
+
 @pytest.fixture
-def db(engine):
+def db(engine, clean_tables):
     TestSession = sessionmaker(bind=engine)
     session = TestSession()
     yield session
     session.rollback()
     session.close()
+
 
 @pytest.fixture
 def client(db):
