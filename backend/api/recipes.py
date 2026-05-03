@@ -83,3 +83,16 @@ def delete_recipe(recipe_id: uuid.UUID, db: Session = Depends(get_db)):
         raise HTTPException(status_code=404, detail="Recept niet gevonden")
     db.delete(db_recipe)
     db.commit()
+
+
+from backend.ai.agent import fill_recipe_macros as _fill_recipe_macros
+
+
+class AiFillMacrosIn(BaseModel):
+    naam: str
+    ingredienten: list[str]
+
+
+@router.post("/ai-fill-macros")
+async def ai_fill_macros(payload: AiFillMacrosIn):
+    return await _fill_recipe_macros(payload.naam, payload.ingredienten)

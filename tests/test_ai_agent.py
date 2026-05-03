@@ -1,6 +1,7 @@
 import pytest
 from unittest.mock import patch, AsyncMock, MagicMock
 from backend.ai.ollama_client import estimate_macros
+from backend.ai.claude_client import integrate_recipe_in_schema
 
 @pytest.mark.asyncio
 async def test_estimate_macros_returns_dict():
@@ -17,3 +18,19 @@ async def test_estimate_macros_returns_dict():
     assert result["eiwit_g"] == 48.0
     assert result["vet_g"] == 22.0
     assert result["koolhydraten_g"] == 55.0
+
+
+@pytest.mark.asyncio
+async def test_integrate_recipe_calls_claude():
+    with patch("backend.ai.claude_client.anthropic.Anthropic") as mock_anthropic:
+        mock_client = MagicMock()
+        mock_anthropic.return_value = mock_client
+        mock_client.messages.create.return_value.content = [
+            MagicMock(text='{"status": "ok", "aanpassingen": []}')
+        ]
+        result = await integrate_recipe_in_schema(
+            recept={"naam": "Nieuw recept", "categorie": "diner", "kcal": 600, "eiwit_g": 45.0},
+            huidig_schema=[]
+        )
+    assert result["status"] == "ok"
+    assert "aanpassingen" in result
