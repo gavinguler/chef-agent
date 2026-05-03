@@ -5,6 +5,8 @@ from backend.config import settings
 
 logger = logging.getLogger(__name__)
 
+_client = anthropic.AsyncAnthropic(api_key=settings.anthropic_api_key)
+
 INTEGRATE_PROMPT = """Je bent een voedingsschema expert. Een gebruiker wil een nieuw recept toevoegen aan zijn 8-weeks voedingsschema.
 
 Nieuw recept:
@@ -22,8 +24,7 @@ Alleen JSON, geen uitleg."""
 
 
 async def integrate_recipe_in_schema(recept: dict, huidig_schema: list) -> dict:
-    client = anthropic.AsyncAnthropic(api_key=settings.anthropic_api_key)
-    message = await client.messages.create(
+    message = await _client.messages.create(
         model="claude-sonnet-4-6",
         max_tokens=1024,
         messages=[{
@@ -45,8 +46,7 @@ async def integrate_recipe_in_schema(recept: dict, huidig_schema: list) -> dict:
 
 
 async def validate_week_macros(week_data: dict) -> dict:
-    client = anthropic.AsyncAnthropic(api_key=settings.anthropic_api_key)
-    message = await client.messages.create(
+    message = await _client.messages.create(
         model="claude-sonnet-4-6",
         max_tokens=512,
         messages=[{
@@ -65,4 +65,4 @@ Geef terug als JSON:
         return json.loads(raw[start:end])
     except (json.JSONDecodeError, ValueError):
         logger.warning("validate_week_macros: kon JSON niet parsen: %r", raw)
-        return {"voldoet": None, "opmerkingen": "Validatie mislukt"}
+        return {"voldoet": None, "gemiddeld_eiwit_g": None, "gemiddeld_kcal": None, "opmerkingen": "Validatie mislukt"}

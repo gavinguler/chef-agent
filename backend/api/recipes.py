@@ -1,4 +1,5 @@
 from fastapi import APIRouter, Depends, HTTPException, Query
+import httpx
 from sqlalchemy.orm import Session
 from pydantic import BaseModel
 from typing import Optional
@@ -93,4 +94,7 @@ class AiFillMacrosIn(BaseModel):
 
 @router.post("/ai-fill-macros")
 async def ai_fill_macros(payload: AiFillMacrosIn):
-    return await _fill_recipe_macros(payload.naam, payload.ingredienten)
+    try:
+        return await _fill_recipe_macros(payload.naam, payload.ingredienten)
+    except (httpx.HTTPError, httpx.ConnectError):
+        raise HTTPException(status_code=503, detail="AI service niet beschikbaar")
