@@ -5,9 +5,11 @@ import FreezerBanner from "../components/FreezerBanner";
 
 function getCurrentCycleWeek() {
   const now = new Date();
-  const start = new Date(now.getFullYear(), 0, 1);
-  const weekOfYear = Math.ceil(((now - start) / 86400000 + start.getDay() + 1) / 7);
-  return ((weekOfYear - 1) % 8) + 1;
+  const d = new Date(Date.UTC(now.getFullYear(), now.getMonth(), now.getDate()));
+  d.setUTCDate(d.getUTCDate() + 4 - (d.getUTCDay() || 7));
+  const yearStart = new Date(Date.UTC(d.getUTCFullYear(), 0, 1));
+  const isoWeek = Math.ceil((((d - yearStart) / 86400000) + 1) / 7);
+  return ((isoWeek - 1) % 8) + 1;
 }
 
 function greet() {
