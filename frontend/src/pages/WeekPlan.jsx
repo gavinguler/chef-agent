@@ -1,4 +1,4 @@
-import { useEffect, useState, useMemo } from "react";
+import { useEffect, useState } from "react";
 import { getWeekPlan } from "../api/client";
 import DayTabs from "../components/DayTabs";
 

@@ -5,7 +5,7 @@ from typing import Optional
 import uuid
 
 from backend.db.session import get_db
-from backend.db.models import MealPlan, Recipe
+from backend.db.models import MealPlan, Recipe, NutritionCycle
 
 router = APIRouter()
 
@@ -36,6 +36,7 @@ class DayPlan(BaseModel):
 
 class WeekPlan(BaseModel):
     week: int
+    vlees_thema: Optional[str] = None
     dagen: list[DayPlan]
 
 
@@ -83,7 +84,9 @@ def get_week_plan(week_num: int, db: Session = Depends(get_db)):
             totaal_eiwit_g=totaal_eiwit,
             totaal_kcal=totaal_kcal,
         ))
-    return WeekPlan(week=week_num, dagen=dagen)
+    nutrition = db.query(NutritionCycle).filter(NutritionCycle.cyclus_week == week_num).first()
+    vlees_thema = nutrition.vlees_type if nutrition else None
+    return WeekPlan(week=week_num, vlees_thema=vlees_thema, dagen=dagen)
 
 
 @router.put("/week/{week_num}/dag/{dag}/maaltijd/{meal_type}")
