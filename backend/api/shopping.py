@@ -1,2 +1,61 @@
-from fastapi import APIRouter
+from fastapi import APIRouter, Depends, HTTPException
+from sqlalchemy.orm import Session
+from pydantic import BaseModel
+from typing import Optional
+import uuid
+
+from backend.db.session import get_db
+from backend.db.models import ShoppingList
+
 router = APIRouter()
+
+
+class ShoppingItemIn(BaseModel):
+    product: str
+    categorie: Optional[str] = None
+    hoeveelheid: Optional[str] = None
+    winkel: str = "lidl"
+    prijs_indicatie: Optional[float] = None
+
+
+class ShoppingItemOut(BaseModel):
+    id: uuid.UUID
+    product: str
+    categorie: Optional[str] = None
+    hoeveelheid: Optional[str] = None
+    winkel: str
+    prijs_indicatie: Optional[float] = None
+
+    model_config = {"from_attributes": True}
+
+
+class ShoppingListOut(BaseModel):
+    week: int
+    items: list[ShoppingItemOut]
+
+
+@router.get("/week/{week_num}", response_model=ShoppingListOut)
+def get_shopping_list(week_num: int, db: Session = Depends(get_db)):
+    items = db.query(ShoppingList).filter(ShoppingList.cyclus_week == week_num).all()
+    return ShoppingListOut(week=week_num, items=items)
+
+
+@router.post("/week/{week_num}/items", response_model=ShoppingItemOut, status_code=201)
+def add_item(week_num: int, item: ShoppingItemIn, db: Session = Depends(get_db)):
+    db_item = ShoppingList(cyclus_week=week_num, **item.model_dump())
+    db.add(db_item)
+    db.commit()
+    db.refresh(db_item)
+    return db_item
+
+
+@router.delete("/week/{week_num}/items/{item_id}", status_code=204)
+def delete_item(week_num: int, item_id: uuid.UUID, db: Session = Depends(get_db)):
+    item = db.query(ShoppingList).filter(
+        ShoppingList.id == item_id,
+        ShoppingList.cyclus_week == week_num,
+    ).first()
+    if not item:
+        raise HTTPException(status_code=404, detail="Item niet gevonden")
+    db.delete(item)
+    db.commit()
