@@ -34,14 +34,21 @@ class ShoppingListOut(BaseModel):
     items: list[ShoppingItemOut]
 
 
+def _validate_week(week_num: int):
+    if not 1 <= week_num <= 8:
+        raise HTTPException(status_code=400, detail="Week moet tussen 1 en 8 zijn")
+
+
 @router.get("/week/{week_num}", response_model=ShoppingListOut)
 def get_shopping_list(week_num: int, db: Session = Depends(get_db)):
+    _validate_week(week_num)
     items = db.query(ShoppingList).filter(ShoppingList.cyclus_week == week_num).all()
     return ShoppingListOut(week=week_num, items=items)
 
 
 @router.post("/week/{week_num}/items", response_model=ShoppingItemOut, status_code=201)
 def add_item(week_num: int, item: ShoppingItemIn, db: Session = Depends(get_db)):
+    _validate_week(week_num)
     db_item = ShoppingList(cyclus_week=week_num, **item.model_dump())
     db.add(db_item)
     db.commit()
