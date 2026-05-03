@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useMemo } from "react";
 import { Link } from "react-router-dom";
 import { getWeekPlan } from "../api/client";
 import FreezerBanner from "../components/FreezerBanner";
@@ -21,17 +21,23 @@ function greet() {
 
 const DAG_NL = ["zondag", "maandag", "dinsdag", "woensdag", "donderdag", "vrijdag", "zaterdag"];
 
+const cycleWeek = getCurrentCycleWeek();
+
 export default function Home() {
   const [weekPlan, setWeekPlan] = useState(null);
   const [freezerItems] = useState([]);
-  const cycleWeek = getCurrentCycleWeek();
-  const vandaag = DAG_NL[new Date().getDay()];
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+  const vandaag = useMemo(() => DAG_NL[new Date().getDay()], []);
 
   useEffect(() => {
-    getWeekPlan(cycleWeek).then(setWeekPlan).catch(console.error);
-  }, [cycleWeek]);
+    getWeekPlan(cycleWeek)
+      .then(setWeekPlan)
+      .catch(() => setError("Kon weekplan niet laden"))
+      .finally(() => setLoading(false));
+  }, []);
 
-  const vandaagPlan = weekPlan?.dagen?.find((d) => d.dag === vandaag);
+  const vandaagPlan = weekPlan?.dagen?.find((d) => d.dag?.toLowerCase() === vandaag);
   const diner = vandaagPlan?.maaltijden?.find((m) => m.maaltijd_type === "diner");
 
   return (
@@ -39,11 +45,21 @@ export default function Home() {
       <div className="mb-4">
         <h1 className="text-xl font-bold text-gray-900">{greet()} 👋</h1>
         <p className="text-gray-500 text-sm">
-          Week {cycleWeek} · {weekPlan ? weekPlan.vlees_thema || "" : "laden..."}
+          Week {cycleWeek} · {weekPlan ? weekPlan.vlees_thema || "" : ""}
         </p>
       </div>
 
-      {diner && (
+      {loading && (
+        <div className="bg-gray-100 animate-pulse h-20 rounded-xl mb-3" />
+      )}
+
+      {error && !loading && (
+        <div className="bg-red-50 border border-red-200 rounded-xl p-3 mb-3">
+          <p className="text-red-700 text-sm">{error}</p>
+        </div>
+      )}
+
+      {!loading && !error && diner && (
         <div className="bg-white rounded-xl border border-gray-200 shadow-sm p-3 mb-3">
           <p className="text-gray-400 text-xs font-semibold uppercase mb-1">
             Vandaag · {vandaag.charAt(0).toUpperCase() + vandaag.slice(1)}
