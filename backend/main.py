@@ -1,10 +1,14 @@
 from contextlib import asynccontextmanager
+from pathlib import Path
 from apscheduler.schedulers.background import BackgroundScheduler
 from apscheduler.triggers.cron import CronTrigger
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.responses import FileResponse
 from backend.api import recipes, meal_plans, shopping
 from backend.scheduler.weekly_job import run_weekly_job
+
+FRONTEND_DIST = Path(__file__).parent.parent / "frontend" / "dist"
 
 scheduler = BackgroundScheduler()
 
@@ -46,3 +50,14 @@ def trigger_weekly_now():
     """Handmatig de weekly job triggeren voor testen."""
     run_weekly_job()
     return {"status": "verzonden"}
+
+
+@app.get("/{full_path:path}")
+async def serve_frontend(full_path: str):
+    file = FRONTEND_DIST / full_path
+    if file.is_file():
+        return FileResponse(file)
+    index = FRONTEND_DIST / "index.html"
+    if index.exists():
+        return FileResponse(index)
+    return {"detail": "Frontend niet gebouwd"}
