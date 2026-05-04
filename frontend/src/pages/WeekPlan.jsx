@@ -15,23 +15,26 @@ function getCurrentCycleWeek() {
   return ((isoWeek - 1) % 8) + 1;
 }
 
-const cycleWeek = getCurrentCycleWeek();
+const currentCycleWeek = getCurrentCycleWeek();
 
 export default function WeekPlan() {
   const [weekPlan, setWeekPlan] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [selectedWeek, setSelectedWeek] = useState(currentCycleWeek);
   const todayIndex = new Date().getDay();
   const [selectedDay, setSelectedDay] = useState(
     DAYS[todayIndex === 0 ? 6 : todayIndex - 1]
   );
 
   useEffect(() => {
-    getWeekPlan(cycleWeek)
+    setLoading(true);
+    setError(null);
+    getWeekPlan(selectedWeek)
       .then(setWeekPlan)
       .catch(() => setError("Kon weekplan niet laden"))
       .finally(() => setLoading(false));
-  }, []);
+  }, [selectedWeek]);
 
   const dagData = weekPlan?.dagen?.find(
     (d) => d.dag?.toLowerCase() === selectedDay
@@ -40,8 +43,25 @@ export default function WeekPlan() {
   return (
     <div className="p-4 pb-20">
       <div className="mb-4">
-        <h1 className="text-xl font-bold text-gray-900">Week {cycleWeek}</h1>
-        <p className="text-gray-500 text-sm">{weekPlan?.vlees_thema || ""}</p>
+        <h1 className="text-xl font-bold text-gray-900">Weekplan</h1>
+        <div className="flex gap-1 mt-2 flex-wrap">
+          {[1,2,3,4,5,6,7,8].map((w) => (
+            <button
+              key={w}
+              onClick={() => setSelectedWeek(w)}
+              className={`px-3 py-1 rounded-full text-sm font-semibold border transition-colors ${
+                selectedWeek === w
+                  ? "bg-green-600 text-white border-green-600"
+                  : w === currentCycleWeek
+                  ? "bg-green-50 text-green-700 border-green-300"
+                  : "bg-white text-gray-600 border-gray-200"
+              }`}
+            >
+              W{w}{w === currentCycleWeek ? " ★" : ""}
+            </button>
+          ))}
+        </div>
+        <p className="text-gray-500 text-sm mt-2">{weekPlan?.vlees_thema || ""}</p>
       </div>
 
       <DayTabs selected={selectedDay} onChange={setSelectedDay} />
