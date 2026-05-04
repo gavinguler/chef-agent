@@ -10,8 +10,10 @@ apt-get install -y git curl postgresql-client python3-pip python3 python3-venv
 
 PYTHON=python3
 
-# Node.js 20 via NodeSource (distro-pakket is te oud voor vite/react-router)
+# Node.js 20 via NodeSource (distro-pakket te oud voor vite/react-router)
 if ! node --version 2>/dev/null | grep -qE '^v(1[89]|[2-9][0-9])'; then
+  apt-get remove -y --purge nodejs npm libnode-dev libnode108 libnode72 2>/dev/null || true
+  apt-get autoremove -y 2>/dev/null || true
   curl -fsSL https://deb.nodesource.com/setup_20.x | bash -
   apt-get install -y nodejs
 fi
