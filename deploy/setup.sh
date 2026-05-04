@@ -5,21 +5,10 @@ echo "=== Chef Agent Proxmox Setup ==="
 echo "Container IP: 192.168.0.200"
 
 # Vereisten
-# Voeg Debian backports toe voor python3.12 indien nodig
-if ! python3.12 --version &>/dev/null 2>&1; then
-  grep -q "bookworm-backports" /etc/apt/sources.list 2>/dev/null || \
-    echo "deb http://deb.debian.org/debian bookworm-backports main" >> /etc/apt/sources.list
-fi
 apt-get update
-apt-get install -y git postgresql-client python3-pip nodejs npm
+apt-get install -y git postgresql-client python3-pip python3 python3-venv nodejs npm
 
-# Installeer python3.12 (uit backports indien nodig)
-if apt-get install -y python3.12 python3.12-venv 2>/dev/null; then
-  PYTHON=python3.12
-else
-  apt-get install -y python3 python3-venv
-  PYTHON=python3
-fi
+PYTHON=python3
 
 # Gebruiker aanmaken
 useradd -m -s /bin/bash chef || true
