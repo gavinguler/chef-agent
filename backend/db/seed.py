@@ -96,27 +96,72 @@ FREEZER_ITEMS_PER_WEEK = {
 }
 
 
+_DAYS = ["maandag", "dinsdag", "woensdag", "donderdag", "vrijdag", "zaterdag", "zondag"]
+
+_BREAKFAST = [
+    "Havermout met kwark en bessen",
+    "Kwark bowl met noten en banaan",
+    "Omelet met feta en spinazie",
+    "Griekse yoghurt met muesli en fruit",
+]
+
+_LUNCH = [
+    "Tonijn wrap met groente",
+    "Kwark met wraps (kantoor)",
+    "Feta salade met volkorenbrood",
+]
+
+_WEEK_DINNERS = {
+    1: ["Gehakt bolognese met volkorenpasta", "Gehakt wokschotel met rijst", "Gehakt bolognese met volkorenpasta", "Gehakt wokschotel met rijst", "Gehakt bolognese met volkorenpasta", "Ribeye met gegrilde groente", "Hamburgers van de BBQ"],
+    2: ["Riblap stoof met zoete aardappel", "Riblap stoof met zoete aardappel", "Kogelbiefstuk met wokgroente", "Riblap stoof met zoete aardappel", "Kogelbiefstuk met wokgroente", "Worstjes met stamppot boerenkool", "Worstjes met stamppot boerenkool"],
+    3: ["Entrecote met zoete aardappel", "Entrecote met zoete aardappel", "Hamburgers van de BBQ", "Hamburgers van de BBQ", "Hamburgers van de BBQ", "Slow roast rosbief met aardappelen", "Slow roast rosbief met aardappelen"],
+    4: ["Gehakt bolognese met volkorenpasta", "Gehakt wokschotel met rijst", "Gehakt bolognese met volkorenpasta", "Kogelbiefstuk met wokgroente", "Gehakt wokschotel met rijst", "Kogelbiefstuk met wokgroente", "Worstjes met stamppot boerenkool"],
+    5: ["Riblap stoof met zoete aardappel", "Gehakt bolognese met volkorenpasta", "Riblap stoof met zoete aardappel", "Gehakt wokschotel met rijst", "Ribeye met gegrilde groente", "Hamburgers van de BBQ", "Ribeye met gegrilde groente"],
+    6: ["Entrecote met zoete aardappel", "Entrecote met zoete aardappel", "Ossenhaas met aardappelgratin", "Gehakt bolognese met volkorenpasta", "Gehakt wokschotel met rijst", "Ossenhaas met aardappelgratin", "Ossenhaas met aardappelgratin"],
+    7: ["Gehakt bolognese met volkorenpasta", "Gehakt wokschotel met rijst", "Hamburgers van de BBQ", "Gehakt bolognese met volkorenpasta", "Worstjes met stamppot boerenkool", "Hamburgers van de BBQ", "Worstjes met stamppot boerenkool"],
+    8: ["Tartaar met salade en brood", "Tartaar met salade en brood", "Tartaar met salade en brood", "Tartaar met salade en brood", "Tartaar met salade en brood", "Tartaar met salade en brood", "Tartaar met salade en brood"],
+}
+
+
 def seed():
     db = SessionLocal()
     try:
         if db.query(Recipe).count() > 0:
             print("Database al geseed — overgeslagen.")
-            return
+        else:
+            for r in RECIPES:
+                db.add(Recipe(**r))
 
-        for r in RECIPES:
-            db.add(Recipe(**r))
+            for nc in NUTRITION_CYCLE:
+                db.add(NutritionCycle(**nc))
 
-        for nc in NUTRITION_CYCLE:
-            db.add(NutritionCycle(**nc))
+            for week in range(1, 9):
+                for item in SHOPPING_BASE_WEEK:
+                    db.add(ShoppingList(cyclus_week=week, **item))
+                for fi in FREEZER_ITEMS_PER_WEEK.get(week, []):
+                    db.add(FreezerItem(cyclus_week=week, **fi))
 
-        for week in range(1, 9):
-            for item in SHOPPING_BASE_WEEK:
-                db.add(ShoppingList(cyclus_week=week, **item))
-            for fi in FREEZER_ITEMS_PER_WEEK.get(week, []):
-                db.add(FreezerItem(cyclus_week=week, **fi))
+            db.commit()
+            print(f"Seed klaar: {len(RECIPES)} recepten, 8 weken schema.")
 
-        db.commit()
-        print(f"Seed klaar: {len(RECIPES)} recepten, 8 weken schema.")
+        if db.query(MealPlan).count() > 0:
+            print("Maaltijdplannen al geseed — overgeslagen.")
+        else:
+            recipes = {r.naam: r for r in db.query(Recipe).all()}
+            count = 0
+            for week in range(1, 9):
+                for day_idx, dag in enumerate(_DAYS):
+                    breakfast_naam = _BREAKFAST[((week - 1) * 7 + day_idx) % len(_BREAKFAST)]
+                    lunch_naam = _LUNCH[((week - 1) * 7 + day_idx) % len(_LUNCH)]
+                    dinner_naam = _WEEK_DINNERS.get(week, [])[day_idx] if day_idx < len(_WEEK_DINNERS.get(week, [])) else None
+
+                    for maaltijd_type, naam in [("ontbijt", breakfast_naam), ("lunch", lunch_naam), ("diner", dinner_naam)]:
+                        if naam and naam in recipes:
+                            db.add(MealPlan(cyclus_week=week, dag=dag, maaltijd_type=maaltijd_type, recept_id=recipes[naam].id))
+                            count += 1
+
+            db.commit()
+            print(f"Maaltijdplannen geseed: {count} entries voor 8 weken.")
     finally:
         db.close()
 
