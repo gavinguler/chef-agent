@@ -6,9 +6,15 @@ echo "Container IP: 192.168.0.200"
 
 # Vereisten
 apt-get update
-apt-get install -y git postgresql-client python3-pip python3 python3-venv nodejs npm
+apt-get install -y git curl postgresql-client python3-pip python3 python3-venv
 
 PYTHON=python3
+
+# Node.js 20 via NodeSource (distro-pakket is te oud voor vite/react-router)
+if ! node --version 2>/dev/null | grep -qE '^v(1[89]|[2-9][0-9])'; then
+  curl -fsSL https://deb.nodesource.com/setup_20.x | bash -
+  apt-get install -y nodejs
+fi
 
 # Gebruiker aanmaken
 useradd -m -s /bin/bash chef || true
