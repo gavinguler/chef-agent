@@ -6,7 +6,7 @@ export default function DayTabs({ selected, onChange }) {
   const todayCycleIndex = todayIndex === 0 ? 6 : todayIndex - 1;
 
   return (
-    <div className="flex gap-1.5 overflow-x-auto pb-1 -mx-4 px-4">
+    <div className="flex gap-2 overflow-x-auto pb-1 -mx-4 px-4 scrollbar-none">
       {DAYS.map((day, i) => {
         const isSelected = selected === day;
         const isToday = i === todayCycleIndex;
@@ -14,16 +14,16 @@ export default function DayTabs({ selected, onChange }) {
           <button
             key={day}
             onClick={() => onChange(day)}
-            className={`flex-shrink-0 flex flex-col items-center rounded-xl px-2.5 py-2 min-w-[38px] transition-colors ${
+            className={`flex-shrink-0 flex flex-col items-center rounded-2xl px-3 py-2 min-w-[44px] transition-all ${
               isSelected
-                ? "bg-blue-600 text-white"
+                ? "bg-brand text-white shadow-card"
                 : isToday
-                ? "bg-blue-50 text-blue-600 border border-blue-200"
-                : "bg-white border border-gray-200 text-gray-600"
+                ? "bg-green-50 text-green-700 ring-1 ring-green-200"
+                : "bg-white text-gray-500 shadow-card"
             }`}
           >
-            <span className="text-xs font-semibold">{SHORT[i]}</span>
-            <span className="text-xs">{i + 1}</span>
+            <span className="text-xs font-bold">{SHORT[i]}</span>
+            <span className="text-xs opacity-70">{i + 1}</span>
           </button>
         );
       })}

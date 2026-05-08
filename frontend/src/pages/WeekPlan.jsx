@@ -7,139 +7,127 @@ import DayTabs from "../components/DayTabs";
 const DAYS = ["maandag", "dinsdag", "woensdag", "donderdag", "vrijdag", "zaterdag", "zondag"];
 const MEAL_EMOJI = { ontbijt: "🥣", lunch: "🥗", diner: "🍽️" };
 const MEAL_LABELS = { ontbijt: "Ontbijt", lunch: "Lunch", diner: "Diner" };
+const MEAL_BG = { ontbijt: "bg-amber-50", lunch: "bg-sky-50", diner: "bg-emerald-50" };
 
 export default function WeekPlan() {
   const navigate = useNavigate();
   const [currentCycleWeek, setCurrentCycleWeek] = useState(null);
   const [weekPlan, setWeekPlan] = useState(null);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
   const [selectedWeek, setSelectedWeek] = useState(null);
   const todayIndex = new Date().getDay();
-  const [selectedDay, setSelectedDay] = useState(
-    DAYS[todayIndex === 0 ? 6 : todayIndex - 1]
-  );
+  const [selectedDay, setSelectedDay] = useState(DAYS[todayIndex === 0 ? 6 : todayIndex - 1]);
 
   useEffect(() => {
     const stored = getStoredWeek();
-    if (stored) {
-      setCurrentCycleWeek(stored);
-      setSelectedWeek(stored);
-    } else {
-      getCurrentWeek().then((week) => {
-        setCurrentCycleWeek(week);
-        setSelectedWeek(week);
-      });
-    }
+    if (stored) { setCurrentCycleWeek(stored); setSelectedWeek(stored); }
+    else getCurrentWeek().then((w) => { setCurrentCycleWeek(w); setSelectedWeek(w); });
   }, []);
 
   useEffect(() => {
     if (!selectedWeek) return;
     setLoading(true);
-    setError(null);
     getWeekPlan(selectedWeek)
       .then(setWeekPlan)
-      .catch(() => setError("Kon weekplan niet laden"))
+      .catch(() => {})
       .finally(() => setLoading(false));
   }, [selectedWeek]);
 
-  const dagData = weekPlan?.dagen?.find(
-    (d) => d.dag?.toLowerCase() === selectedDay
-  );
+  const dagData = weekPlan?.dagen?.find((d) => d.dag?.toLowerCase() === selectedDay);
 
   return (
-    <div className="p-4 pb-20">
-      <div className="mb-4">
-        <h1 className="text-xl font-bold text-gray-900">Weekplan</h1>
-        <div className="flex gap-1 mt-2 flex-wrap">
+    <div className="min-h-screen">
+      {/* Header */}
+      <div className="bg-gradient-to-br from-green-900 via-green-800 to-green-700 px-5 pt-12 pb-5">
+        <h1 className="text-white text-2xl font-bold tracking-tight mb-3">Weekplan</h1>
+        {weekPlan?.vlees_thema && (
+          <p className="text-green-300 text-sm mb-3">{weekPlan.vlees_thema}</p>
+        )}
+        {/* Week pills */}
+        <div className="flex gap-2 overflow-x-auto pb-1 -mx-1 px-1 scrollbar-none">
           {[1,2,3,4,5,6,7,8].map((w) => (
             <button
               key={w}
               onClick={() => setSelectedWeek(w)}
-              className={`px-3 py-1 rounded-full text-sm font-semibold border transition-colors ${
+              className={`flex-shrink-0 px-3.5 py-1.5 rounded-full text-sm font-semibold transition-all ${
                 selectedWeek === w
-                  ? "bg-green-600 text-white border-green-600"
+                  ? "bg-white text-green-800 shadow-card"
                   : w === currentCycleWeek
-                  ? "bg-green-50 text-green-700 border-green-300"
-                  : "bg-white text-gray-600 border-gray-200"
+                  ? "bg-green-700/60 text-white ring-1 ring-white/40"
+                  : "bg-green-800/50 text-green-200"
               }`}
             >
               W{w}{w === currentCycleWeek ? " ★" : ""}
             </button>
           ))}
         </div>
-        <p className="text-gray-500 text-sm mt-2">{weekPlan?.vlees_thema || ""}</p>
       </div>
 
-      <DayTabs selected={selectedDay} onChange={setSelectedDay} />
+      <div className="px-4 pt-4">
+        <DayTabs selected={selectedDay} onChange={setSelectedDay} />
 
-      <div className="mt-4">
-        {loading && (
-          <div className="bg-gray-100 animate-pulse h-40 rounded-xl" />
-        )}
-
-        {error && !loading && (
-          <div className="bg-red-50 border border-red-200 rounded-xl p-3">
-            <p className="text-red-700 text-sm">{error}</p>
-          </div>
-        )}
-
-        {!loading && !error && (
-          <>
-            <p className="text-blue-600 text-xs font-bold uppercase mb-3">
-              {selectedDay.charAt(0).toUpperCase() + selectedDay.slice(1)}
-            </p>
-
-            <div className="flex flex-col gap-2 mb-4">
-              {["ontbijt", "lunch", "diner"].map((type) => {
-                const maaltijd = dagData?.maaltijden?.find(
-                  (m) => m.maaltijd_type === type
-                );
-                const isClickable = !!maaltijd?.recept_id;
-                return (
-                  <div
-                    key={type}
-                    onClick={() => isClickable && navigate(`/recepten/${maaltijd.recept_id}`)}
-                    className={`bg-white border border-gray-200 rounded-xl p-3 flex items-center gap-3 shadow-sm ${isClickable ? "cursor-pointer active:bg-gray-50" : ""}`}
-                  >
-                    <span className="text-xl">{MEAL_EMOJI[type]}</span>
-                    <div className="flex-1">
-                      <p className="text-gray-400 text-xs font-semibold uppercase">
-                        {MEAL_LABELS[type]}
-                      </p>
-                      <p className="text-gray-800 text-sm font-medium">
-                        {maaltijd?.naam || (
-                          <span className="text-gray-300 italic">
-                            Niet ingesteld
-                          </span>
-                        )}
-                      </p>
-                      {maaltijd?.eiwit_g && (
-                        <p className="text-gray-400 text-xs">
-                          {Math.round(maaltijd.eiwit_g)}g eiwit
-                        </p>
-                      )}
-                    </div>
-                    {isClickable && (
-                      <span className="text-gray-300 text-sm">›</span>
-                    )}
-                  </div>
-                );
-              })}
+        <div className="mt-4">
+          {loading ? (
+            <div className="space-y-3">
+              {[1,2,3].map(i => <div key={i} className="h-20 bg-white rounded-2xl animate-pulse shadow-card" />)}
             </div>
+          ) : (
+            <>
+              <p className="text-xs font-bold text-gray-400 uppercase tracking-wider mb-3">
+                {selectedDay.charAt(0).toUpperCase() + selectedDay.slice(1)}
+              </p>
 
-            {(dagData?.totaal_eiwit_g > 0 || dagData?.totaal_kcal > 0) && (
-              <div className="bg-green-50 border border-green-100 rounded-xl px-4 py-3 flex justify-between items-center">
-                <span className="text-green-700 text-sm font-semibold">
-                  ✅ {Math.round(dagData.totaal_eiwit_g)}g eiwit
-                </span>
-                <span className="text-gray-500 text-sm">
-                  {dagData.totaal_kcal} kcal
-                </span>
+              <div className="space-y-3 mb-4">
+                {["ontbijt", "lunch", "diner"].map((type) => {
+                  const maaltijd = dagData?.maaltijden?.find((m) => m.maaltijd_type === type);
+                  const isClickable = !!maaltijd?.recept_id;
+                  return (
+                    <div
+                      key={type}
+                      onClick={() => isClickable && navigate(`/recepten/${maaltijd.recept_id}`)}
+                      className={`bg-white rounded-2xl shadow-card overflow-hidden ${isClickable ? "cursor-pointer active:scale-95 transition-transform" : ""}`}
+                    >
+                      <div className="flex items-center gap-3 p-4">
+                        <div className={`w-10 h-10 rounded-xl ${MEAL_BG[type]} flex items-center justify-center text-xl flex-shrink-0`}>
+                          {MEAL_EMOJI[type]}
+                        </div>
+                        <div className="flex-1 min-w-0">
+                          <p className="text-xs font-bold text-gray-400 uppercase tracking-wider">{MEAL_LABELS[type]}</p>
+                          {maaltijd?.naam ? (
+                            <>
+                              <p className="text-gray-900 text-sm font-semibold truncate">{maaltijd.naam}</p>
+                              {maaltijd.eiwit_g && (
+                                <p className="text-xs text-green-600 font-medium">{Math.round(maaltijd.eiwit_g)}g eiwit</p>
+                              )}
+                            </>
+                          ) : (
+                            <p className="text-gray-300 text-sm italic">Niet ingesteld</p>
+                          )}
+                        </div>
+                        {isClickable && (
+                          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#d1d5db" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                            <polyline points="9 18 15 12 9 6"/>
+                          </svg>
+                        )}
+                      </div>
+                    </div>
+                  );
+                })}
               </div>
-            )}
-          </>
-        )}
+
+              {(dagData?.totaal_eiwit_g > 0 || dagData?.totaal_kcal > 0) && (
+                <div className="bg-brand rounded-2xl px-5 py-3.5 flex justify-between items-center">
+                  <span className="text-white text-sm font-bold">
+                    {Math.round(dagData.totaal_eiwit_g)}g eiwit
+                  </span>
+                  <span className="text-green-200 text-sm font-medium">
+                    {dagData.totaal_kcal} kcal
+                  </span>
+                </div>
+              )}
+            </>
+          )}
+        </div>
       </div>
     </div>
   );

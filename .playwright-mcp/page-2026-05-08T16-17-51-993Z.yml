@@ -1,0 +1,39 @@
+- generic [ref=e3]:
+  - generic [ref=e4]:
+    - generic [ref=e5]:
+      - heading "Goedenavond 👋" [level=1] [ref=e6]
+      - paragraph [ref=e7]: Week 2 ·
+    - generic [ref=e9]:
+      - link "🛒 Boodschappen" [ref=e10] [cursor=pointer]:
+        - /url: /weekplan
+        - generic [ref=e11]: 🛒
+        - paragraph [ref=e12]: Boodschappen
+      - link "📖 Recepten" [ref=e13] [cursor=pointer]:
+        - /url: /recepten
+        - generic [ref=e14]: 📖
+        - paragraph [ref=e15]: Recepten
+      - link "📅 Week plan" [ref=e16] [cursor=pointer]:
+        - /url: /weekplan
+        - generic [ref=e17]: 📅
+        - paragraph [ref=e18]: Week plan
+      - link "➕ Nieuw recept" [ref=e19] [cursor=pointer]:
+        - /url: /recepten?new=1
+        - generic [ref=e20]: ➕
+        - paragraph [ref=e21]: Nieuw recept
+  - navigation "Hoofdnavigatie" [ref=e22]:
+    - link "Home" [ref=e23] [cursor=pointer]:
+      - /url: /
+      - generic [ref=e24]: 🏠
+      - text: Home
+    - link "Recepten" [ref=e25] [cursor=pointer]:
+      - /url: /recepten
+      - generic [ref=e26]: 📖
+      - text: Recepten
+    - link "Week" [ref=e27] [cursor=pointer]:
+      - /url: /weekplan
+      - generic [ref=e28]: 📅
+      - text: Week
+    - link "Instellingen" [ref=e29] [cursor=pointer]:
+      - /url: /instellingen
+      - generic [ref=e30]: ⚙️
+      - text: Instellingen

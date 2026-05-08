@@ -1,0 +1,53 @@
+- generic [ref=e3]:
+  - generic [ref=e4]:
+    - generic [ref=e5]:
+      - heading "Weekplan" [level=1] [ref=e6]
+      - generic [ref=e7]:
+        - button "W1" [ref=e8] [cursor=pointer]
+        - button "W2 ★" [ref=e9] [cursor=pointer]
+        - button "W3" [ref=e10] [cursor=pointer]
+        - button "W4" [ref=e11] [cursor=pointer]
+        - button "W5" [ref=e12] [cursor=pointer]
+        - button "W6" [ref=e13] [cursor=pointer]
+        - button "W7" [ref=e14] [cursor=pointer]
+        - button "W8" [ref=e15] [cursor=pointer]
+      - paragraph
+    - generic [ref=e16]:
+      - button "Ma 1" [ref=e17] [cursor=pointer]:
+        - generic [ref=e18]: Ma
+        - generic [ref=e19]: "1"
+      - button "Di 2" [ref=e20] [cursor=pointer]:
+        - generic [ref=e21]: Di
+        - generic [ref=e22]: "2"
+      - button "Wo 3" [ref=e23] [cursor=pointer]:
+        - generic [ref=e24]: Wo
+        - generic [ref=e25]: "3"
+      - button "Do 4" [ref=e26] [cursor=pointer]:
+        - generic [ref=e27]: Do
+        - generic [ref=e28]: "4"
+      - button "Vr 5" [ref=e29] [cursor=pointer]:
+        - generic [ref=e30]: Vr
+        - generic [ref=e31]: "5"
+      - button "Za 6" [ref=e32] [cursor=pointer]:
+        - generic [ref=e33]: Za
+        - generic [ref=e34]: "6"
+      - button "Zo 7" [ref=e35] [cursor=pointer]:
+        - generic [ref=e36]: Zo
+        - generic [ref=e37]: "7"
+  - navigation "Hoofdnavigatie" [ref=e40]:
+    - link "Home" [ref=e41] [cursor=pointer]:
+      - /url: /
+      - generic [ref=e42]: 🏠
+      - text: Home
+    - link "Recepten" [ref=e43] [cursor=pointer]:
+      - /url: /recepten
+      - generic [ref=e44]: 📖
+      - text: Recepten
+    - link "Week" [ref=e45] [cursor=pointer]:
+      - /url: /weekplan
+      - generic [ref=e46]: 📅
+      - text: Week
+    - link "Instellingen" [ref=e47] [cursor=pointer]:
+      - /url: /instellingen
+      - generic [ref=e48]: ⚙️
+      - text: Instellingen

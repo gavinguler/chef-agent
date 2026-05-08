@@ -1,0 +1,251 @@
+- generic [ref=e3]:
+  - generic [ref=e4]:
+    - generic [ref=e5]:
+      - heading "Recepten" [level=1] [ref=e6]
+      - button "➕ Nieuw" [ref=e7] [cursor=pointer]
+    - generic [ref=e8]:
+      - generic [ref=e9]: 🔍
+      - textbox "Zoek recept" [ref=e10]:
+        - /placeholder: Zoek recept...
+    - generic [ref=e11]:
+      - link "🍽️ Bolognese (batch) gehakt · 38g eiwit · 480 kcal Verwijder recept" [ref=e12] [cursor=pointer]:
+        - /url: /recepten/114ecd4e-5cd2-41b7-8d49-8e25f86105d7
+        - generic [ref=e13]: 🍽️
+        - generic [ref=e14]:
+          - paragraph [ref=e15]: Bolognese (batch)
+          - paragraph [ref=e16]: gehakt · 38g eiwit · 480 kcal
+        - button "Verwijder recept" [ref=e17]: ×
+      - link "🍽️ Chili con carne (batch) gehakt · 42g eiwit · 510 kcal Verwijder recept" [ref=e18] [cursor=pointer]:
+        - /url: /recepten/c80e8320-ee26-4e43-9f90-7fed698476e7
+        - generic [ref=e19]: 🍽️
+        - generic [ref=e20]:
+          - paragraph [ref=e21]: Chili con carne (batch)
+          - paragraph [ref=e22]: gehakt · 42g eiwit · 510 kcal
+        - button "Verwijder recept" [ref=e23]: ×
+      - link "🍽️ Rundvleescurry (batch) gehakt · 40g eiwit · 520 kcal Verwijder recept" [ref=e24] [cursor=pointer]:
+        - /url: /recepten/f4514688-70ce-4768-9ede-c8f9e5a5b36c
+        - generic [ref=e25]: 🍽️
+        - generic [ref=e26]:
+          - paragraph [ref=e27]: Rundvleescurry (batch)
+          - paragraph [ref=e28]: gehakt · 40g eiwit · 520 kcal
+        - button "Verwijder recept" [ref=e29]: ×
+      - link "🍽️ Picadillo Cubaans (batch) gehakt · 38g eiwit · 490 kcal Verwijder recept" [ref=e30] [cursor=pointer]:
+        - /url: /recepten/2da5cce5-811c-415d-ac39-c86d916545e4
+        - generic [ref=e31]: 🍽️
+        - generic [ref=e32]:
+          - paragraph [ref=e33]: Picadillo Cubaans (batch)
+          - paragraph [ref=e34]: gehakt · 38g eiwit · 490 kcal
+        - button "Verwijder recept" [ref=e35]: ×
+      - link "🍽️ Gehaktballetjes in tomatensaus (batch) gehakt · 44g eiwit · 540 kcal Verwijder recept" [ref=e36] [cursor=pointer]:
+        - /url: /recepten/2f14e25b-d4ab-465f-90a7-7d32d6c7594d
+        - generic [ref=e37]: 🍽️
+        - generic [ref=e38]:
+          - paragraph [ref=e39]: Gehaktballetjes in tomatensaus (batch)
+          - paragraph [ref=e40]: gehakt · 44g eiwit · 540 kcal
+        - button "Verwijder recept" [ref=e41]: ×
+      - link "🍽️ Riblap-stoof (batch) riblap · 48g eiwit · 460 kcal Verwijder recept" [ref=e42] [cursor=pointer]:
+        - /url: /recepten/26e53720-9133-489a-b84d-998e13e7594e
+        - generic [ref=e43]: 🍽️
+        - generic [ref=e44]:
+          - paragraph [ref=e45]: Riblap-stoof (batch)
+          - paragraph [ref=e46]: riblap · 48g eiwit · 460 kcal
+        - button "Verwijder recept" [ref=e47]: ×
+      - link "🍽️ Rosbief slow roast rosbief · 52g eiwit · 350 kcal Verwijder recept" [ref=e48] [cursor=pointer]:
+        - /url: /recepten/3d17bc01-5a42-4c4c-90ab-8329eda2b13d
+        - generic [ref=e49]: 🍽️
+        - generic [ref=e50]:
+          - paragraph [ref=e51]: Rosbief slow roast
+          - paragraph [ref=e52]: rosbief · 52g eiwit · 350 kcal
+        - button "Verwijder recept" [ref=e53]: ×
+      - link "🍽️ Ossenhaas met aardappelgratin ossenhaas · 52g eiwit · 620 kcal Verwijder recept" [ref=e54] [cursor=pointer]:
+        - /url: /recepten/68271c40-a42e-4505-b087-c3859c676643
+        - generic [ref=e55]: 🍽️
+        - generic [ref=e56]:
+          - paragraph [ref=e57]: Ossenhaas met aardappelgratin
+          - paragraph [ref=e58]: ossenhaas · 52g eiwit · 620 kcal
+        - button "Verwijder recept" [ref=e59]: ×
+      - link "🍽️ Ribeye airfryer ribeye · 46g eiwit · 480 kcal Verwijder recept" [ref=e60] [cursor=pointer]:
+        - /url: /recepten/bc706078-e7bf-4d84-a0f4-fb39b8903115
+        - generic [ref=e61]: 🍽️
+        - generic [ref=e62]:
+          - paragraph [ref=e63]: Ribeye airfryer
+          - paragraph [ref=e64]: ribeye · 46g eiwit · 480 kcal
+        - button "Verwijder recept" [ref=e65]: ×
+      - link "🍽️ Entrecote airfryer entrecote · 44g eiwit · 460 kcal Verwijder recept" [ref=e66] [cursor=pointer]:
+        - /url: /recepten/b3c0cc6a-800a-41a4-9d72-32fb0be3bc94
+        - generic [ref=e67]: 🍽️
+        - generic [ref=e68]:
+          - paragraph [ref=e69]: Entrecote airfryer
+          - paragraph [ref=e70]: entrecote · 44g eiwit · 460 kcal
+        - button "Verwijder recept" [ref=e71]: ×
+      - link "🍽️ Kogelbiefstuk airfryer kogelbiefstuk · 58g eiwit · 500 kcal Verwijder recept" [ref=e72] [cursor=pointer]:
+        - /url: /recepten/131ca313-f7f7-4bd6-b2c1-1d01fb2f3149
+        - generic [ref=e73]: 🍽️
+        - generic [ref=e74]:
+          - paragraph [ref=e75]: Kogelbiefstuk airfryer
+          - paragraph [ref=e76]: kogelbiefstuk · 58g eiwit · 500 kcal
+        - button "Verwijder recept" [ref=e77]: ×
+      - link "🍽️ Biefstuk met champignonsaus biefstuk · 44g eiwit · 490 kcal Verwijder recept" [ref=e78] [cursor=pointer]:
+        - /url: /recepten/3fc53c29-c2a8-4d85-a31b-e721d7e82389
+        - generic [ref=e79]: 🍽️
+        - generic [ref=e80]:
+          - paragraph [ref=e81]: Biefstuk met champignonsaus
+          - paragraph [ref=e82]: biefstuk · 44g eiwit · 490 kcal
+        - button "Verwijder recept" [ref=e83]: ×
+      - link "🍽️ Hamburgers airfryer hamburger · 42g eiwit · 560 kcal Verwijder recept" [ref=e84] [cursor=pointer]:
+        - /url: /recepten/0a5c69b7-da3e-4b44-ba9a-f3ff9d3c3982
+        - generic [ref=e85]: 🍽️
+        - generic [ref=e86]:
+          - paragraph [ref=e87]: Hamburgers airfryer
+          - paragraph [ref=e88]: hamburger · 42g eiwit · 560 kcal
+        - button "Verwijder recept" [ref=e89]: ×
+      - link "🍽️ Worstjes airfryer worstjes · 32g eiwit · 420 kcal Verwijder recept" [ref=e90] [cursor=pointer]:
+        - /url: /recepten/ff6ed2eb-f5b9-4b65-b46b-5bce4b1370a2
+        - generic [ref=e91]: 🍽️
+        - generic [ref=e92]:
+          - paragraph [ref=e93]: Worstjes airfryer
+          - paragraph [ref=e94]: worstjes · 32g eiwit · 420 kcal
+        - button "Verwijder recept" [ref=e95]: ×
+      - link "🍽️ Tartaar met aardappel tartaar · 38g eiwit · 380 kcal Verwijder recept" [ref=e96] [cursor=pointer]:
+        - /url: /recepten/17e5f91b-82f1-4419-839a-e80f5b30c3af
+        - generic [ref=e97]: 🍽️
+        - generic [ref=e98]:
+          - paragraph [ref=e99]: Tartaar met aardappel
+          - paragraph [ref=e100]: tartaar · 38g eiwit · 380 kcal
+        - button "Verwijder recept" [ref=e101]: ×
+      - link "🍽️ Magere lap gemarineerd magere lap · 48g eiwit · 420 kcal Verwijder recept" [ref=e102] [cursor=pointer]:
+        - /url: /recepten/7b057cad-35b3-4c8b-85c5-f4aa2a440791
+        - generic [ref=e103]: 🍽️
+        - generic [ref=e104]:
+          - paragraph [ref=e105]: Magere lap gemarineerd
+          - paragraph [ref=e106]: magere lap · 48g eiwit · 420 kcal
+        - button "Verwijder recept" [ref=e107]: ×
+      - link "🍽️ Zalm met citroen 36g eiwit · 360 kcal Verwijder recept" [ref=e108] [cursor=pointer]:
+        - /url: /recepten/ce451b98-4b6d-4c3e-af37-beec01a0ba49
+        - generic [ref=e109]: 🍽️
+        - generic [ref=e110]:
+          - paragraph [ref=e111]: Zalm met citroen
+          - paragraph [ref=e112]: 36g eiwit · 360 kcal
+        - button "Verwijder recept" [ref=e113]: ×
+      - link "🍽️ Zalm honing-soja 36g eiwit · 380 kcal Verwijder recept" [ref=e114] [cursor=pointer]:
+        - /url: /recepten/c8a25a23-c68a-41c3-91f0-05c33bff255d
+        - generic [ref=e115]: 🍽️
+        - generic [ref=e116]:
+          - paragraph [ref=e117]: Zalm honing-soja
+          - paragraph [ref=e118]: 36g eiwit · 380 kcal
+        - button "Verwijder recept" [ref=e119]: ×
+      - link "🍽️ Witvis (kabeljauw) oven 34g eiwit · 280 kcal Verwijder recept" [ref=e120] [cursor=pointer]:
+        - /url: /recepten/a03fa22a-45e0-4282-939c-80f91adcca72
+        - generic [ref=e121]: 🍽️
+        - generic [ref=e122]:
+          - paragraph [ref=e123]: Witvis (kabeljauw) oven
+          - paragraph [ref=e124]: 34g eiwit · 280 kcal
+        - button "Verwijder recept" [ref=e125]: ×
+      - link "🍽️ Shakshuka (batch) 22g eiwit · 300 kcal Verwijder recept" [ref=e126] [cursor=pointer]:
+        - /url: /recepten/07d33c1b-7805-4ae6-bfc9-3dd6a5f45f16
+        - generic [ref=e127]: 🍽️
+        - generic [ref=e128]:
+          - paragraph [ref=e129]: Shakshuka (batch)
+          - paragraph [ref=e130]: 22g eiwit · 300 kcal
+        - button "Verwijder recept" [ref=e131]: ×
+      - link "🍽️ Linzencurry (batch) 20g eiwit · 380 kcal Verwijder recept" [ref=e132] [cursor=pointer]:
+        - /url: /recepten/bc791d4a-7d7d-4305-8955-d584eb327aad
+        - generic [ref=e133]: 🍽️
+        - generic [ref=e134]:
+          - paragraph [ref=e135]: Linzencurry (batch)
+          - paragraph [ref=e136]: 20g eiwit · 380 kcal
+        - button "Verwijder recept" [ref=e137]: ×
+      - link "🍽️ Rode linzendahl (batch) 20g eiwit · 390 kcal Verwijder recept" [ref=e138] [cursor=pointer]:
+        - /url: /recepten/c0ec96a2-b370-4177-939f-4a7ee72494ad
+        - generic [ref=e139]: 🍽️
+        - generic [ref=e140]:
+          - paragraph [ref=e141]: Rode linzendahl (batch)
+          - paragraph [ref=e142]: 20g eiwit · 390 kcal
+        - button "Verwijder recept" [ref=e143]: ×
+      - link "🍽️ Kikkererwten-stoof (batch) 18g eiwit · 340 kcal Verwijder recept" [ref=e144] [cursor=pointer]:
+        - /url: /recepten/a801f84a-cd8b-4469-832e-7ceb51f95739
+        - generic [ref=e145]: 🍽️
+        - generic [ref=e146]:
+          - paragraph [ref=e147]: Kikkererwten-stoof (batch)
+          - paragraph [ref=e148]: 18g eiwit · 340 kcal
+        - button "Verwijder recept" [ref=e149]: ×
+      - link "🍽️ Kipfilet airfryer 50g eiwit · 400 kcal Verwijder recept" [ref=e150] [cursor=pointer]:
+        - /url: /recepten/1223acfc-b1ae-4aa0-b067-16bc5e854106
+        - generic [ref=e151]: 🍽️
+        - generic [ref=e152]:
+          - paragraph [ref=e153]: Kipfilet airfryer
+          - paragraph [ref=e154]: 50g eiwit · 400 kcal
+        - button "Verwijder recept" [ref=e155]: ×
+      - link "🍽️ Aardappelpuree 5g eiwit · 220 kcal Verwijder recept" [ref=e156] [cursor=pointer]:
+        - /url: /recepten/03250a51-f5df-40b7-bcf3-cc33834f6e86
+        - generic [ref=e157]: 🍽️
+        - generic [ref=e158]:
+          - paragraph [ref=e159]: Aardappelpuree
+          - paragraph [ref=e160]: 5g eiwit · 220 kcal
+        - button "Verwijder recept" [ref=e161]: ×
+      - link "🥗 Pasta-salade (batch) 20g eiwit · 480 kcal Verwijder recept" [ref=e162] [cursor=pointer]:
+        - /url: /recepten/c3d6bcce-31df-4b3d-8a79-e333bfc199f3
+        - generic [ref=e163]: 🥗
+        - generic [ref=e164]:
+          - paragraph [ref=e165]: Pasta-salade (batch)
+          - paragraph [ref=e166]: 20g eiwit · 480 kcal
+        - button "Verwijder recept" [ref=e167]: ×
+      - link "🥗 Tonijnsalade 40g eiwit · 420 kcal Verwijder recept" [ref=e168] [cursor=pointer]:
+        - /url: /recepten/6093a25b-cc2e-4223-bc89-c68c78d319d1
+        - generic [ref=e169]: 🥗
+        - generic [ref=e170]:
+          - paragraph [ref=e171]: Tonijnsalade
+          - paragraph [ref=e172]: 40g eiwit · 420 kcal
+        - button "Verwijder recept" [ref=e173]: ×
+      - link "🥗 Salade nicoise 42g eiwit · 450 kcal Verwijder recept" [ref=e174] [cursor=pointer]:
+        - /url: /recepten/125a44be-5ec8-41e9-a52c-0bf491dfe5c5
+        - generic [ref=e175]: 🥗
+        - generic [ref=e176]:
+          - paragraph [ref=e177]: Salade nicoise
+          - paragraph [ref=e178]: 42g eiwit · 450 kcal
+        - button "Verwijder recept" [ref=e179]: ×
+      - link "🥣 Kwark met muesli en fruit 42g eiwit · 520 kcal Verwijder recept" [ref=e180] [cursor=pointer]:
+        - /url: /recepten/1da14174-d150-404d-999c-849226586d0c
+        - generic [ref=e181]: 🥣
+        - generic [ref=e182]:
+          - paragraph [ref=e183]: Kwark met muesli en fruit
+          - paragraph [ref=e184]: 42g eiwit · 520 kcal
+        - button "Verwijder recept" [ref=e185]: ×
+      - link "🥣 Havermout-pannenkoeken 34g eiwit · 480 kcal Verwijder recept" [ref=e186] [cursor=pointer]:
+        - /url: /recepten/76bbfeca-3978-4c79-81f4-bcc00ec2a975
+        - generic [ref=e187]: 🥣
+        - generic [ref=e188]:
+          - paragraph [ref=e189]: Havermout-pannenkoeken
+          - paragraph [ref=e190]: 34g eiwit · 480 kcal
+        - button "Verwijder recept" [ref=e191]: ×
+      - link "🥣 Eieren ontbijt met brood 36g eiwit · 480 kcal Verwijder recept" [ref=e192] [cursor=pointer]:
+        - /url: /recepten/5ea33a8d-650d-4340-9a54-bb8c1c470de6
+        - generic [ref=e193]: 🥣
+        - generic [ref=e194]:
+          - paragraph [ref=e195]: Eieren ontbijt met brood
+          - paragraph [ref=e196]: 36g eiwit · 480 kcal
+        - button "Verwijder recept" [ref=e197]: ×
+      - link "🍎 Kwark met fruit en pindakaas 28g eiwit · 320 kcal Verwijder recept" [ref=e198] [cursor=pointer]:
+        - /url: /recepten/da4b8bc0-72d6-49b4-a1eb-9dde57a60cb2
+        - generic [ref=e199]: 🍎
+        - generic [ref=e200]:
+          - paragraph [ref=e201]: Kwark met fruit en pindakaas
+          - paragraph [ref=e202]: 28g eiwit · 320 kcal
+        - button "Verwijder recept" [ref=e203]: ×
+  - navigation "Hoofdnavigatie" [ref=e204]:
+    - link "Home" [ref=e205] [cursor=pointer]:
+      - /url: /
+      - generic [ref=e206]: 🏠
+      - text: Home
+    - link "Recepten" [ref=e207] [cursor=pointer]:
+      - /url: /recepten
+      - generic [ref=e208]: 📖
+      - text: Recepten
+    - link "Week" [ref=e209] [cursor=pointer]:
+      - /url: /weekplan
+      - generic [ref=e210]: 📅
+      - text: Week
+    - link "Instellingen" [ref=e211] [cursor=pointer]:
+      - /url: /instellingen
+      - generic [ref=e212]: ⚙️
+      - text: Instellingen

@@ -1,0 +1,8 @@
+[      87ms] [WARNING] An iframe which has both allow-scripts and allow-same-origin for its sandbox attribute can escape its sandboxing. @ http://192.168.0.210:8080/app#/Spaces-1/tasks/ServerTasks-743:0
+[     614ms] [INFO] Creating Octopus client for endpoint: http://192.168.0.210:8080/ @ http://192.168.0.210:8080/vendor.981a8a613805f2b7c730.hashedasset.js:1
+[     890ms] [INFO] Rendering using legacy root API @ http://192.168.0.210:8080/vendor.981a8a613805f2b7c730.hashedasset.js:1
+[     904ms] [INFO] Connecting to client, progress: Checking your credentials. Please wait... @ http://192.168.0.210:8080/vendor.981a8a613805f2b7c730.hashedasset.js:1
+[     907ms] [INFO] Theme palette set to light @ http://192.168.0.210:8080/vendor.981a8a613805f2b7c730.hashedasset.js:1
+[    1004ms] [ERROR] Failed to load resource: the server responded with a status of 401 (Unauthorized) @ http://192.168.0.210:8080/api/users/me:0
+[    1005ms] [INFO] User was not authenticated or there was an error checking if the user was authenticated @ http://192.168.0.210:8080/vendor.981a8a613805f2b7c730.hashedasset.js:1
+[    1408ms] [INFO] Finished loading {"Url":"https://extensions.octopus.com/0.0.170/extension.js","SriHash":"sha384-7+UJKL1kOJt1x/6ll2qXF4DRnrRWRtiNNtaWNlqRz84pV97JaAQ68dYC+pGCcKOk"} @ http://192.168.0.210:8080/vendor.981a8a613805f2b7c730.hashedasset.js:1
