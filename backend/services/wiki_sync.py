@@ -115,5 +115,7 @@ async def delete_recipe_from_wiki(naam: str) -> None:
 async def sync_all_recipes_to_wiki(recipes: list) -> int:
     if not settings.github_token:
         return 0
-    await asyncio.gather(*[sync_recipe_to_wiki(r) for r in recipes])
+    for recipe in recipes:
+        await sync_recipe_to_wiki(recipe)
+        await asyncio.sleep(0.5)
     return len(recipes)
