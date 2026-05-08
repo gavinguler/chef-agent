@@ -1,22 +1,21 @@
 import { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
+import { ChevronRight, ShoppingCart, ArrowRight } from "lucide-react";
 import { getWeekPlan, getCurrentWeek } from "../api/client";
-import { getStoredWeek } from "../lib/weekStorage";
-import DayTabs from "../components/DayTabs";
+import { getStoredWeek, setStoredWeek } from "../lib/weekStorage";
 
 const DAYS = ["maandag", "dinsdag", "woensdag", "donderdag", "vrijdag", "zaterdag", "zondag"];
-const MEAL_EMOJI = { ontbijt: "🥣", lunch: "🥗", diner: "🍽️" };
-const MEAL_LABELS = { ontbijt: "Ontbijt", lunch: "Lunch", diner: "Diner" };
-const MEAL_BG = { ontbijt: "bg-amber-50", lunch: "bg-sky-50", diner: "bg-emerald-50" };
+const DAY_SHORT = ["Ma", "Di", "Wo", "Do", "Vr", "Za", "Zo"];
 
 export default function WeekPlan() {
   const navigate = useNavigate();
   const [currentCycleWeek, setCurrentCycleWeek] = useState(null);
+  const [selectedWeek, setSelectedWeek] = useState(null);
   const [weekPlan, setWeekPlan] = useState(null);
   const [loading, setLoading] = useState(true);
-  const [selectedWeek, setSelectedWeek] = useState(null);
-  const todayIndex = new Date().getDay();
-  const [selectedDay, setSelectedDay] = useState(DAYS[todayIndex === 0 ? 6 : todayIndex - 1]);
+
+  const now = new Date();
+  const todayNl = DAYS[now.getDay() === 0 ? 6 : now.getDay() - 1];
 
   useEffect(() => {
     const stored = getStoredWeek();
@@ -27,107 +26,107 @@ export default function WeekPlan() {
   useEffect(() => {
     if (!selectedWeek) return;
     setLoading(true);
-    getWeekPlan(selectedWeek)
-      .then(setWeekPlan)
-      .catch(() => {})
-      .finally(() => setLoading(false));
+    getWeekPlan(selectedWeek).then(setWeekPlan).catch(() => {}).finally(() => setLoading(false));
   }, [selectedWeek]);
 
-  const dagData = weekPlan?.dagen?.find((d) => d.dag?.toLowerCase() === selectedDay);
+  const handleWeekSelect = (w) => {
+    setStoredWeek(w);
+    setSelectedWeek(w);
+    setCurrentCycleWeek(w);
+  };
 
   return (
-    <div className="min-h-screen">
+    <div className="bg-bg min-h-screen pb-[100px]">
+      <div className="h-[54px]" />
+
       {/* Header */}
-      <div className="bg-gradient-to-br from-green-900 via-green-800 to-green-700 px-5 pt-12 pb-5">
-        <h1 className="text-white text-2xl font-bold tracking-tight mb-3">Weekplan</h1>
-        {weekPlan?.vlees_thema && (
-          <p className="text-green-300 text-sm mb-3">{weekPlan.vlees_thema}</p>
-        )}
-        {/* Week pills */}
-        <div className="flex gap-2 overflow-x-auto pb-1 -mx-1 px-1 scrollbar-none">
-          {[1,2,3,4,5,6,7,8].map((w) => (
-            <button
-              key={w}
-              onClick={() => setSelectedWeek(w)}
-              className={`flex-shrink-0 px-3.5 py-1.5 rounded-full text-sm font-semibold transition-all ${
-                selectedWeek === w
-                  ? "bg-white text-green-800 shadow-card"
-                  : w === currentCycleWeek
-                  ? "bg-green-700/60 text-white ring-1 ring-white/40"
-                  : "bg-green-800/50 text-green-200"
-              }`}
-            >
-              W{w}{w === currentCycleWeek ? " ★" : ""}
-            </button>
-          ))}
-        </div>
+      <div className="px-5 pt-[14px] pb-1">
+        <p className="eyebrow">8-weken cyclus</p>
+        <h1 className="h1-page mt-1">Weekplan</h1>
       </div>
 
-      <div className="px-4 pt-4">
-        <DayTabs selected={selectedDay} onChange={setSelectedDay} />
+      {/* Week selector */}
+      <div className="px-5 pt-[14px] flex gap-[6px]">
+        {[1,2,3,4,5,6,7,8].map((w) => (
+          <button
+            key={w}
+            onClick={() => handleWeekSelect(w)}
+            className="flex-1 h-9 rounded-[9px] text-[12px] font-semibold transition-colors"
+            style={{
+              background: selectedWeek === w ? '#1f3a2c' : '#ffffff',
+              color: selectedWeek === w ? '#fff' : '#5d655c',
+              border: selectedWeek === w ? 'none' : '1px solid #e7e4dc',
+            }}
+          >{w}</button>
+        ))}
+      </div>
 
-        <div className="mt-4">
-          {loading ? (
-            <div className="space-y-3">
-              {[1,2,3].map(i => <div key={i} className="h-20 bg-white rounded-2xl animate-pulse shadow-card" />)}
-            </div>
-          ) : (
-            <>
-              <p className="text-xs font-bold text-gray-400 uppercase tracking-wider mb-3">
-                {selectedDay.charAt(0).toUpperCase() + selectedDay.slice(1)}
-              </p>
+      {weekPlan?.vlees_thema && (
+        <p className="px-5 mt-[10px] text-[12px] text-ink2">{weekPlan.vlees_thema}</p>
+      )}
 
-              <div className="space-y-3 mb-4">
-                {["ontbijt", "lunch", "diner"].map((type) => {
-                  const maaltijd = dagData?.maaltijden?.find((m) => m.maaltijd_type === type);
-                  const isClickable = !!maaltijd?.recept_id;
-                  return (
-                    <div
-                      key={type}
-                      onClick={() => isClickable && navigate(`/recepten/${maaltijd.recept_id}`)}
-                      className={`bg-white rounded-2xl shadow-card overflow-hidden ${isClickable ? "cursor-pointer active:scale-95 transition-transform" : ""}`}
-                    >
-                      <div className="flex items-center gap-3 p-4">
-                        <div className={`w-10 h-10 rounded-xl ${MEAL_BG[type]} flex items-center justify-center text-xl flex-shrink-0`}>
-                          {MEAL_EMOJI[type]}
-                        </div>
-                        <div className="flex-1 min-w-0">
-                          <p className="text-xs font-bold text-gray-400 uppercase tracking-wider">{MEAL_LABELS[type]}</p>
-                          {maaltijd?.naam ? (
-                            <>
-                              <p className="text-gray-900 text-sm font-semibold truncate">{maaltijd.naam}</p>
-                              {maaltijd.eiwit_g && (
-                                <p className="text-xs text-green-600 font-medium">{Math.round(maaltijd.eiwit_g)}g eiwit</p>
-                              )}
-                            </>
-                          ) : (
-                            <p className="text-gray-300 text-sm italic">Niet ingesteld</p>
-                          )}
-                        </div>
-                        {isClickable && (
-                          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#d1d5db" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-                            <polyline points="9 18 15 12 9 6"/>
-                          </svg>
-                        )}
-                      </div>
-                    </div>
-                  );
-                })}
-              </div>
-
-              {(dagData?.totaal_eiwit_g > 0 || dagData?.totaal_kcal > 0) && (
-                <div className="bg-brand rounded-2xl px-5 py-3.5 flex justify-between items-center">
-                  <span className="text-white text-sm font-bold">
-                    {Math.round(dagData.totaal_eiwit_g)}g eiwit
-                  </span>
-                  <span className="text-green-200 text-sm font-medium">
-                    {dagData.totaal_kcal} kcal
-                  </span>
+      {/* Day list */}
+      <div className="px-5 mt-5 flex flex-col gap-[10px]">
+        {loading ? (
+          Array.from({ length: 7 }, (_, i) => (
+            <div key={i} className="h-[62px] bg-surface rounded-[14px] border border-line animate-pulse" />
+          ))
+        ) : (
+          DAYS.map((dag, i) => {
+            const dagData = weekPlan?.dagen?.find(d => d.dag?.toLowerCase() === dag);
+            const diner = dagData?.maaltijden?.find(m => m.maaltijd_type === "diner");
+            const isToday = dag === todayNl;
+            return (
+              <button
+                key={dag}
+                onClick={() => diner?.recept_id && navigate(`/recepten/${diner.recept_id}`)}
+                className="w-full text-left rounded-[14px] px-[14px] py-3 flex items-center gap-[14px] transition-colors"
+                style={{
+                  background: isToday ? '#ffffff' : 'transparent',
+                  border: isToday ? '1px solid #1f3a2c' : '1px solid #e7e4dc',
+                }}
+              >
+                <div
+                  className="w-[38px] h-[38px] rounded-[10px] flex items-center justify-center text-[11px] font-semibold flex-shrink-0"
+                  style={{
+                    background: isToday ? '#1f3a2c' : '#e9efe6',
+                    color: isToday ? '#fff' : '#1f3a2c',
+                    letterSpacing: '0.4px',
+                  }}
+                >{DAY_SHORT[i]}</div>
+                <div className="flex-1 min-w-0">
+                  <p className="text-[14px] font-medium tracking-tight truncate">
+                    {diner?.naam ?? <span className="text-ink3 italic font-normal">Niet ingesteld</span>}
+                  </p>
+                  <p className="text-[11px] text-ink3 mt-[2px]">
+                    diner{diner?.eiwit_g ? ` · ${Math.round(diner.eiwit_g)}g eiwit` : ""}
+                  </p>
                 </div>
-              )}
-            </>
-          )}
-        </div>
+                {isToday && (
+                  <span className="text-[11px] font-medium px-2 py-[3px] rounded-[6px] flex-shrink-0"
+                    style={{ background: '#1f3a2c', color: '#fff' }}>vandaag</span>
+                )}
+                {diner?.recept_id && <ChevronRight size={15} strokeWidth={1.6} className="text-ink3 flex-shrink-0" />}
+              </button>
+            );
+          })
+        )}
+      </div>
+
+      {/* Shopping CTA */}
+      <div className="px-5 mt-5">
+        <Link
+          to={`/boodschappen/${selectedWeek ?? 1}`}
+          className="flex items-center gap-3 rounded-[14px] px-4 py-[14px]"
+          style={{ background: '#1a1f1a', color: '#fff' }}
+        >
+          <ShoppingCart size={20} strokeWidth={1.6} />
+          <div className="flex-1">
+            <p className="text-[13px] font-semibold">Boodschappenlijst</p>
+            <p className="text-[11px] mt-[2px]" style={{ opacity: 0.6 }}>Week {selectedWeek}</p>
+          </div>
+          <ArrowRight size={18} strokeWidth={1.6} />
+        </Link>
       </div>
     </div>
   );

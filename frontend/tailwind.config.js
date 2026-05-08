@@ -3,14 +3,27 @@ export default {
   theme: {
     extend: {
       colors: {
-        brand: "#16a34a",
+        // Direction A — "Stil"
+        bg:        '#f6f5f1',
+        surface:   '#ffffff',
+        ink:       '#1a1f1a',
+        ink2:      '#5d655c',
+        ink3:      '#9aa19a',
+        line:      '#e7e4dc',
+        line2:     '#efece4',
+        brand:     '#1f3a2c',
+        brandSoft: '#e9efe6',
+        accent:    '#c2603a',
       },
       fontFamily: {
-        sans: ["-apple-system", "BlinkMacSystemFont", "SF Pro Display", "Segoe UI", "sans-serif"],
+        sans: ['Inter', '-apple-system', 'BlinkMacSystemFont', 'system-ui', 'sans-serif'],
       },
-      boxShadow: {
-        card: "0 1px 3px 0 rgb(0 0 0 / 0.06), 0 1px 2px -1px rgb(0 0 0 / 0.04)",
-        "card-md": "0 4px 12px 0 rgb(0 0 0 / 0.08)",
+      fontSize: {
+        eyebrow: ['11px', { letterSpacing: '1.4px', lineHeight: '1.4' }],
+      },
+      borderRadius: {
+        card: '14px',
+        'card-lg': '18px',
       },
     },
   },

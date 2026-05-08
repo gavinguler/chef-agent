@@ -4,7 +4,33 @@
 
 @layer base {
   body {
-    background-color: #f2f2f0;
+    background-color: #f6f5f1;
+    color: #1a1f1a;
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, system-ui, sans-serif;
     -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+}
+
+@layer utilities {
+  .eyebrow {
+    font-size: 11px;
+    letter-spacing: 1.4px;
+    text-transform: uppercase;
+    color: #9aa19a;
+    font-weight: 500;
+  }
+  .h1-page {
+    font-size: 26px;
+    font-weight: 600;
+    letter-spacing: -0.6px;
+    line-height: 1.15;
+  }
+  .scrollbar-none {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+  .scrollbar-none::-webkit-scrollbar {
+    display: none;
   }
 }

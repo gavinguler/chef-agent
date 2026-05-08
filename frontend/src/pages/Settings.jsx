@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import { ChevronRight } from "lucide-react";
 import { getCurrentWeek, getNotificationSettings, updateNotificationSettings, testDailyMessage, testShoppingReminder } from "../api/client";
 import { getStoredWeek, setStoredWeek, clearStoredWeek } from "../lib/weekStorage";
 
@@ -13,22 +14,39 @@ function Toggle({ value, onChange }) {
   return (
     <button
       onClick={() => onChange(!value)}
-      className={`relative w-11 h-6 rounded-full transition-colors flex-shrink-0 ${value ? "bg-brand" : "bg-gray-200"}`}
+      className="relative flex-shrink-0 transition-colors"
+      style={{ width: 36, height: 22, borderRadius: 11, background: value ? '#1f3a2c' : '#e7e4dc' }}
     >
-      <span className={`absolute top-1 w-4 h-4 bg-white rounded-full shadow transition-all ${value ? "left-6" : "left-1"}`} />
+      <span
+        className="absolute top-[2px] w-[18px] h-[18px] bg-white rounded-full transition-all"
+        style={{ left: value ? 16 : 2, boxShadow: '0 1px 3px rgba(0,0,0,0.18)' }}
+      />
     </button>
   );
 }
 
-function Card({ children }) {
-  return <div className="bg-white rounded-2xl shadow-card overflow-hidden mb-3">{children}</div>;
+function Section({ title, children }) {
+  return (
+    <div className="px-5 pt-5">
+      <p className="eyebrow mb-[10px]">{title}</p>
+      <div className="bg-surface border border-line rounded-[14px] px-[14px]">
+        {children}
+      </div>
+    </div>
+  );
 }
 
-function CardHeader({ title, subtitle }) {
+function RowItem({ label, sub, right, border = true }) {
   return (
-    <div className="px-4 pt-4 pb-3 border-b border-gray-50">
-      <p className="text-sm font-bold text-gray-900">{title}</p>
-      {subtitle && <p className="text-xs text-gray-400 mt-0.5">{subtitle}</p>}
+    <div
+      className="flex items-center gap-3 py-[10px]"
+      style={{ borderBottom: border ? '1px solid #efece4' : 'none' }}
+    >
+      <div className="flex-1">
+        <p className="text-[13px] font-medium">{label}</p>
+        {sub && <p className="text-[11px] text-ink3 mt-[2px]">{sub}</p>}
+      </div>
+      {right}
     </div>
   );
 }
@@ -83,150 +101,128 @@ export default function Settings() {
   };
 
   return (
-    <div className="min-h-screen">
-      <div className="bg-gradient-to-br from-green-900 via-green-800 to-green-700 px-5 pt-12 pb-6">
-        <h1 className="text-white text-2xl font-bold tracking-tight">Instellingen</h1>
-        <p className="text-green-300 text-sm mt-1">Configureer je Chef Agent</p>
+    <div className="bg-bg min-h-screen pb-[100px]">
+      <div className="h-[54px]" />
+
+      <div className="px-5 pt-[14px] pb-1">
+        <h1 className="h1-page">Instellingen</h1>
+        <p className="text-[13px] text-ink2 mt-1">Configureer je Chef Agent</p>
       </div>
 
-      <div className="px-4 pt-4 pb-24">
-
-        {/* Cyclus week */}
-        <Card>
-          <CardHeader title="Huidige cyclus week" subtitle={`Automatisch: week ${backendWeek ?? "…"}${override ? ` · Handmatig: week ${override}` : ""}`} />
-          <div className="p-4">
-            <div className="flex gap-2 flex-wrap mb-3">
-              {[1,2,3,4,5,6,7,8].map((w) => (
-                <button
-                  key={w}
-                  onClick={() => handleWeekSelect(w)}
-                  className={`px-3.5 py-1.5 rounded-full text-sm font-bold transition-all ${
-                    activeWeek === w ? "bg-brand text-white" : "bg-gray-100 text-gray-600"
-                  }`}
-                >W{w}</button>
-              ))}
-            </div>
-            {override && (
-              <button onClick={handleWeekReset} className="text-xs text-gray-400 underline">
-                Reset naar automatisch (week {backendWeek ?? "…"})
-              </button>
-            )}
-            {weekSaved && <p className="text-green-600 text-xs mt-2 font-semibold">✓ Opgeslagen</p>}
+      {/* Cyclus week */}
+      <Section title="Huidige cyclus week">
+        <div className="py-[10px]">
+          <p className="text-[12px] text-ink2 mb-3">
+            Auto: week {backendWeek ?? "…"}{override ? ` · Handmatig: week ${override}` : ""}
+          </p>
+          <div className="flex gap-[6px]">
+            {[1,2,3,4,5,6,7,8].map((w) => (
+              <button
+                key={w}
+                onClick={() => handleWeekSelect(w)}
+                className="flex-1 h-[34px] rounded-[8px] text-[12px] font-semibold transition-colors"
+                style={{
+                  background: activeWeek === w ? '#1f3a2c' : 'transparent',
+                  color: activeWeek === w ? '#fff' : '#5d655c',
+                  border: activeWeek === w ? 'none' : '1px solid #e7e4dc',
+                }}
+              >W{w}</button>
+            ))}
           </div>
-        </Card>
+          {override && (
+            <button onClick={handleWeekReset} className="text-[11px] text-ink3 underline mt-2 block">
+              Reset naar automatisch (week {backendWeek ?? "…"})
+            </button>
+          )}
+          {weekSaved && <p className="text-[11px] mt-2 font-semibold" style={{ color: '#1f3a2c' }}>Opgeslagen</p>}
+        </div>
+      </Section>
 
-        {/* Telegram notificaties */}
-        {notif && (
-          <>
-            {/* Weekoverzicht */}
-            <Card>
-              <CardHeader title="Notificaties deze week" />
-              <div className="p-4">
-                <div className="flex gap-1.5">
-                  {DAYS.map((day, i) => {
-                    const hasDaily = notif.daily_enabled;
-                    const hasShopping = notif.shopping_enabled && notif.shopping_days.includes(day);
-                    return (
-                      <div key={day} className="flex-1 flex flex-col items-center gap-1">
-                        <span className="text-[10px] text-gray-400 font-semibold">{DAY_SHORT[i]}</span>
-                        <div className={`w-full rounded-xl py-2 flex flex-col items-center gap-0.5 ${
-                          hasDaily || hasShopping ? "bg-green-50" : "bg-gray-50"
-                        }`}>
-                          {hasDaily && <span className="text-xs leading-none">☀️</span>}
-                          {hasShopping && <span className="text-xs leading-none">🛒</span>}
-                          {!hasDaily && !hasShopping && <span className="w-1 h-1 rounded-full bg-gray-200 my-1.5" />}
-                        </div>
-                      </div>
-                    );
-                  })}
-                </div>
-                <div className="flex gap-3 mt-2">
-                  <span className="text-[10px] text-gray-400">☀️ dagelijks bericht</span>
-                  <span className="text-[10px] text-gray-400">🛒 boodschappen</span>
-                </div>
+      {/* Telegram */}
+      {notif && (
+        <>
+          <Section title="Telegram">
+            <RowItem
+              label="Dagelijks ochtendberichtje"
+              sub={`${toTimeStr(notif.daily_hour, notif.daily_minute)} · wat je vandaag eet`}
+              right={<Toggle value={notif.daily_enabled} onChange={(v) => setField("daily_enabled", v)} />}
+            />
+            {notif.daily_enabled && (
+              <div className="pb-[10px] flex items-center gap-3" style={{ borderBottom: '1px solid #efece4' }}>
+                <span className="text-[12px] text-ink2">Tijdstip</span>
+                <input
+                  type="time"
+                  value={toTimeStr(notif.daily_hour, notif.daily_minute)}
+                  onChange={(e) => { const t = fromTimeStr(e.target.value); setNotif((n) => ({ ...n, daily_hour: t.hour, daily_minute: t.minute })); }}
+                  className="flex-1 border border-line bg-line2 rounded-[10px] px-3 py-[8px] text-[13px] focus:outline-none"
+                />
+                <button
+                  onClick={() => handleTest("daily")} disabled={testing === "daily"}
+                  className="text-[12px] font-medium px-3 py-[8px] rounded-[10px] border border-line text-ink2 disabled:opacity-50"
+                >
+                  {testing === "daily" ? "..." : "Test"}
+                </button>
               </div>
-            </Card>
-
-            {/* Dagelijks bericht */}
-            <Card>
-              <div className="flex items-center justify-between px-4 pt-4 pb-3 border-b border-gray-50">
-                <div>
-                  <p className="text-sm font-bold text-gray-900">☀️ Dagelijks ochtendberichtje</p>
-                  <p className="text-xs text-gray-400 mt-0.5">Wat je die dag gaat eten</p>
+            )}
+            <RowItem
+              label="Boodschappenherinnering"
+              sub="Op welke dagen?"
+              right={<Toggle value={notif.shopping_enabled} onChange={(v) => setField("shopping_enabled", v)} />}
+            />
+            {notif.shopping_enabled && (
+              <div className="pb-3 space-y-3" style={{ borderBottom: '1px solid #efece4' }}>
+                <div className="flex gap-[6px] flex-wrap pt-1">
+                  {DAYS.map((day, i) => (
+                    <button
+                      key={day}
+                      onClick={() => toggleShoppingDay(day)}
+                      className="px-3 py-[5px] rounded-[14px] text-[11px] font-medium transition-colors"
+                      style={{
+                        background: notif.shopping_days.includes(day) ? '#1f3a2c' : 'transparent',
+                        color: notif.shopping_days.includes(day) ? '#fff' : '#5d655c',
+                        border: notif.shopping_days.includes(day) ? 'none' : '1px solid #e7e4dc',
+                      }}
+                    >{DAY_SHORT[i]}</button>
+                  ))}
                 </div>
-                <Toggle value={notif.daily_enabled} onChange={(v) => setField("daily_enabled", v)} />
-              </div>
-              {notif.daily_enabled && (
-                <div className="p-4 flex items-center gap-3">
-                  <span className="text-xs text-gray-500 font-medium">Tijdstip</span>
+                <div className="flex items-center gap-3">
+                  <span className="text-[12px] text-ink2">Tijdstip</span>
                   <input
                     type="time"
-                    value={toTimeStr(notif.daily_hour, notif.daily_minute)}
-                    onChange={(e) => { const t = fromTimeStr(e.target.value); setNotif((n) => ({ ...n, daily_hour: t.hour, daily_minute: t.minute })); }}
-                    className="flex-1 border border-gray-100 bg-gray-50 rounded-xl px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-brand"
+                    value={toTimeStr(notif.shopping_hour, notif.shopping_minute)}
+                    onChange={(e) => { const t = fromTimeStr(e.target.value); setNotif((n) => ({ ...n, shopping_hour: t.hour, shopping_minute: t.minute })); }}
+                    className="flex-1 border border-line bg-line2 rounded-[10px] px-3 py-[8px] text-[13px] focus:outline-none"
                   />
                   <button
-                    onClick={() => handleTest("daily")} disabled={testing === "daily"}
-                    className="text-xs font-semibold text-brand border border-brand/20 bg-green-50 rounded-xl px-3 py-2 disabled:opacity-50"
+                    onClick={() => handleTest("shopping")} disabled={testing === "shopping"}
+                    className="text-[12px] font-medium px-3 py-[8px] rounded-[10px] border border-line text-ink2 disabled:opacity-50"
                   >
-                    {testing === "daily" ? "..." : "Test"}
+                    {testing === "shopping" ? "..." : "Test"}
                   </button>
                 </div>
-              )}
-            </Card>
-
-            {/* Boodschappenherinnering */}
-            <Card>
-              <div className="flex items-center justify-between px-4 pt-4 pb-3 border-b border-gray-50">
-                <div>
-                  <p className="text-sm font-bold text-gray-900">🛒 Boodschappenherinnering</p>
-                  <p className="text-xs text-gray-400 mt-0.5">Op welke dagen?</p>
-                </div>
-                <Toggle value={notif.shopping_enabled} onChange={(v) => setField("shopping_enabled", v)} />
               </div>
-              {notif.shopping_enabled && (
-                <div className="p-4 space-y-3">
-                  <div className="flex gap-1.5 flex-wrap">
-                    {DAYS.map((day, i) => (
-                      <button
-                        key={day}
-                        onClick={() => toggleShoppingDay(day)}
-                        className={`px-3 py-1.5 rounded-full text-xs font-bold transition-all ${
-                          notif.shopping_days.includes(day)
-                            ? "bg-brand text-white"
-                            : "bg-gray-100 text-gray-600"
-                        }`}
-                      >{DAY_SHORT[i]}</button>
-                    ))}
-                  </div>
-                  <div className="flex items-center gap-3">
-                    <span className="text-xs text-gray-500 font-medium">Tijdstip</span>
-                    <input
-                      type="time"
-                      value={toTimeStr(notif.shopping_hour, notif.shopping_minute)}
-                      onChange={(e) => { const t = fromTimeStr(e.target.value); setNotif((n) => ({ ...n, shopping_hour: t.hour, shopping_minute: t.minute })); }}
-                      className="flex-1 border border-gray-100 bg-gray-50 rounded-xl px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-brand"
-                    />
-                    <button
-                      onClick={() => handleTest("shopping")} disabled={testing === "shopping"}
-                      className="text-xs font-semibold text-brand border border-brand/20 bg-green-50 rounded-xl px-3 py-2 disabled:opacity-50"
-                    >
-                      {testing === "shopping" ? "..." : "Test"}
-                    </button>
-                  </div>
-                </div>
-              )}
-            </Card>
+            )}
+            <RowItem label="Vriezer-reminder" sub="Avond voor je het nodig hebt" border={false}
+              right={<Toggle value={false} onChange={() => {}} />} />
+          </Section>
 
+          <div className="px-5 pt-5">
             <button
               onClick={handleSaveNotif} disabled={notifSaving}
-              className="w-full bg-brand text-white text-sm font-bold py-3.5 rounded-2xl shadow-card disabled:opacity-50 transition-all active:scale-95"
+              className="w-full bg-brand text-white text-[13px] font-semibold py-[14px] rounded-[14px] disabled:opacity-50"
             >
-              {notifSaving ? "Opslaan..." : notifSaved ? "✓ Opgeslagen" : "Instellingen opslaan"}
+              {notifSaving ? "Opslaan..." : notifSaved ? "Opgeslagen" : "Instellingen opslaan"}
             </button>
-          </>
-        )}
-      </div>
+          </div>
+        </>
+      )}
+
+      {/* Voorkeuren */}
+      <Section title="Voorkeuren">
+        <RowItem label="Eiwit-doel" sub="140 g per dag" right={<ChevronRight size={15} strokeWidth={1.6} className="text-ink3" />} />
+        <RowItem label="Calorie-budget" sub="2200 kcal per dag" right={<ChevronRight size={15} strokeWidth={1.6} className="text-ink3" />} />
+        <RowItem label="Dieet" sub="Geen restricties" border={false} right={<ChevronRight size={15} strokeWidth={1.6} className="text-ink3" />} />
+      </Section>
     </div>
   );
 }
