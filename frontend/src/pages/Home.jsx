@@ -1,16 +1,8 @@
 import { useEffect, useState, useMemo } from "react";
 import { Link } from "react-router-dom";
-import { getWeekPlan } from "../api/client";
+import { getWeekPlan, getCurrentWeek } from "../api/client";
+import { getStoredWeek } from "../lib/weekStorage";
 import FreezerBanner from "../components/FreezerBanner";
-
-function getCurrentCycleWeek() {
-  const now = new Date();
-  const d = new Date(Date.UTC(now.getFullYear(), now.getMonth(), now.getDate()));
-  d.setUTCDate(d.getUTCDate() + 4 - (d.getUTCDay() || 7));
-  const yearStart = new Date(Date.UTC(d.getUTCFullYear(), 0, 1));
-  const isoWeek = Math.ceil((((d - yearStart) / 86400000) + 1) / 7);
-  return ((isoWeek - 1) % 8) + 1;
-}
 
 function greet() {
   const h = new Date().getHours();
@@ -21,9 +13,8 @@ function greet() {
 
 const DAG_NL = ["zondag", "maandag", "dinsdag", "woensdag", "donderdag", "vrijdag", "zaterdag"];
 
-const cycleWeek = getCurrentCycleWeek();
-
 export default function Home() {
+  const [cycleWeek, setCycleWeek] = useState(null);
   const [weekPlan, setWeekPlan] = useState(null);
   const [freezerItems] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -31,11 +22,22 @@ export default function Home() {
   const vandaag = useMemo(() => DAG_NL[new Date().getDay()], []);
 
   useEffect(() => {
+    const stored = getStoredWeek();
+    if (stored) {
+      setCycleWeek(stored);
+    } else {
+      getCurrentWeek().then(setCycleWeek);
+    }
+  }, []);
+
+  useEffect(() => {
+    if (!cycleWeek) return;
+    setLoading(true);
     getWeekPlan(cycleWeek)
       .then(setWeekPlan)
       .catch(() => setError("Kon weekplan niet laden"))
       .finally(() => setLoading(false));
-  }, []);
+  }, [cycleWeek]);
 
   const vandaagPlan = weekPlan?.dagen?.find((d) => d.dag?.toLowerCase() === vandaag);
   const diner = vandaagPlan?.maaltijden?.find((m) => m.maaltijd_type === "diner");

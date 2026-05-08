@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { getWeekPlan, getCurrentWeek } from "../api/client";
+import { getStoredWeek } from "../lib/weekStorage";
 import DayTabs from "../components/DayTabs";
 
 const DAYS = ["maandag", "dinsdag", "woensdag", "donderdag", "vrijdag", "zaterdag", "zondag"];
@@ -20,10 +21,16 @@ export default function WeekPlan() {
   );
 
   useEffect(() => {
-    getCurrentWeek().then((week) => {
-      setCurrentCycleWeek(week);
-      setSelectedWeek(week);
-    });
+    const stored = getStoredWeek();
+    if (stored) {
+      setCurrentCycleWeek(stored);
+      setSelectedWeek(stored);
+    } else {
+      getCurrentWeek().then((week) => {
+        setCurrentCycleWeek(week);
+        setSelectedWeek(week);
+      });
+    }
   }, []);
 
   useEffect(() => {
