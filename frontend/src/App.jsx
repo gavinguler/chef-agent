@@ -27,8 +27,7 @@ export default function App() {
           <Route path="/boodschappen/:week" element={<Shopping />} />
         </Routes>
 
-        <nav className="fixed bottom-0 left-1/2 -translate-x-1/2 w-full max-w-[402px] bg-bg/92 backdrop-blur-xl border-t border-line flex pb-7 pt-2"
-          style={{ WebkitBackdropFilter: 'blur(20px)' }}>
+        <nav className="fixed bottom-0 left-1/2 -translate-x-1/2 w-full max-w-[402px] bg-bg border-t border-line flex pb-7 pt-2">
           {NAV.map(({ to, end, Icon, label }) => (
             <NavLink key={to} to={to} end={end}
               className={({ isActive }) =>
