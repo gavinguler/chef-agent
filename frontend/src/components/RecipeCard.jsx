@@ -1,3 +1,5 @@
+import { Link } from "react-router-dom";
+
 const CATEGORY_EMOJI = {
   ontbijt: "🥣",
   lunch: "🥗",
@@ -7,7 +9,10 @@ const CATEGORY_EMOJI = {
 
 export default function RecipeCard({ recipe, onDelete }) {
   return (
-    <div className="bg-white border border-gray-200 rounded-xl p-3 flex items-center gap-3 shadow-sm">
+    <Link
+      to={`/recepten/${recipe.id}`}
+      className="bg-white border border-gray-200 rounded-xl p-3 flex items-center gap-3 shadow-sm active:bg-gray-50"
+    >
       <span className="text-2xl">{CATEGORY_EMOJI[recipe.categorie] || "🍴"}</span>
       <div className="flex-1 min-w-0">
         <p className="font-semibold text-gray-900 text-sm truncate">{recipe.naam}</p>
@@ -19,13 +24,13 @@ export default function RecipeCard({ recipe, onDelete }) {
       </div>
       {onDelete && (
         <button
-          onClick={() => onDelete(recipe.id)}
+          onClick={(e) => { e.preventDefault(); onDelete(recipe.id); }}
           className="text-gray-300 hover:text-red-400 text-lg px-1"
           aria-label="Verwijder recept"
         >
           ×
         </button>
       )}
-    </div>
+    </Link>
   );
 }
