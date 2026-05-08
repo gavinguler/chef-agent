@@ -1,30 +1,38 @@
 from contextlib import asynccontextmanager
 from pathlib import Path
-from apscheduler.schedulers.background import BackgroundScheduler
 from apscheduler.triggers.cron import CronTrigger
 from fastapi import Depends, FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import FileResponse
 from sqlalchemy.orm import Session
-from backend.api import recipes, meal_plans, shopping
-from backend.db.models import Recipe
-from backend.db.session import get_db
+from backend.api import recipes, meal_plans, shopping, notifications
+from backend.db.models import Recipe, NotificationSettings
+from backend.db.session import get_db, SessionLocal
+from backend.scheduler.manager import scheduler, reschedule_notification_jobs
 from backend.scheduler.weekly_job import run_weekly_job
 from backend.services.wiki_sync import sync_all_recipes_to_wiki
 
 FRONTEND_DIST = Path(__file__).parent.parent / "frontend" / "dist"
 
-scheduler = BackgroundScheduler()
-
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
+    # Wekelijks Telegram bericht (zondag 09:00)
     scheduler.add_job(
         run_weekly_job,
         CronTrigger(day_of_week="sun", hour=9, minute=0),
         id="weekly_telegram",
         replace_existing=True,
     )
+    # Dagelijkse + boodschappen jobs op basis van DB-instellingen
+    db = SessionLocal()
+    try:
+        row = db.query(NotificationSettings).filter(NotificationSettings.id == 1).first()
+        if row:
+            reschedule_notification_jobs(row)
+    finally:
+        db.close()
+
     scheduler.start()
     yield
     scheduler.shutdown()
@@ -42,6 +50,7 @@ app.add_middleware(
 app.include_router(recipes.router, prefix="/api/recipes", tags=["recipes"])
 app.include_router(meal_plans.router, prefix="/api/meal-plans", tags=["meal-plans"])
 app.include_router(shopping.router, prefix="/api/shopping", tags=["shopping"])
+app.include_router(notifications.router, prefix="/api/notifications", tags=["notifications"])
 
 
 @app.get("/health")
@@ -57,7 +66,6 @@ def trigger_weekly_now():
 
 @app.post("/api/admin/sync-wiki")
 async def sync_wiki(db: Session = Depends(get_db)):
-    """Synchroniseer alle recepten naar de LLM wiki (eenmalig / op verzoek)."""
     all_recipes = db.query(Recipe).all()
     count = await sync_all_recipes_to_wiki(all_recipes)
     return {"synced": count}

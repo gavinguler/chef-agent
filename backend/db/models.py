@@ -68,6 +68,19 @@ class FreezerItem(Base):
     gebruik_dag = Column(String(20))
 
 
+class NotificationSettings(Base):
+    __tablename__ = "notification_settings"
+
+    id = Column(Integer, primary_key=True, default=1)
+    daily_enabled = Column(Boolean, default=True)
+    daily_hour = Column(Integer, default=7)
+    daily_minute = Column(Integer, default=30)
+    shopping_enabled = Column(Boolean, default=True)
+    shopping_days = Column(String(100), default="woensdag,zaterdag")
+    shopping_hour = Column(Integer, default=8)
+    shopping_minute = Column(Integer, default=0)
+
+
 class NutritionCycle(Base):
     __tablename__ = "nutrition_cycle"
 
