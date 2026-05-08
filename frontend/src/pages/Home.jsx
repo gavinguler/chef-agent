@@ -55,7 +55,7 @@ export default function Home() {
     d.setDate(d.getDate() - dow);
     return Array.from({ length: 7 }, (_, i) => {
       const dd = new Date(d); dd.setDate(d.getDate() + i);
-      return { short: DAG_SHORT[dd.getDay()], date: dd.getDate(), isToday: dd.toDateString() === now.toDateString() };
+      return { short: DAG_SHORT[dd.getDay()], date: dd.getDate(), isToday: dd.toDateString() === now.toDateString(), dayNl: DAG_NL[dd.getDay()] };
     });
   }, []);
 
@@ -71,12 +71,15 @@ export default function Home() {
     getWeekPlan(cycleWeek).then(setWeekPlan).finally(() => setLoading(false));
   }, [cycleWeek]);
 
-  const dagData = weekPlan?.dagen?.find(d => d.dag === todayNl);
+  const [selectedDay, setSelectedDay] = useState(todayNl);
+
+  const dagData = weekPlan?.dagen?.find(d => d.dag === selectedDay);
   const maaltijden = dagData?.maaltijden ?? [];
   const diner = maaltijden.find(m => m.maaltijd_type === "diner");
   const totalEiwit = dagData?.totaal_eiwit_g ?? 0;
   const totalKcal = dagData?.totaal_kcal ?? 0;
   const filledCount = maaltijden.filter(m => m.naam).length;
+  const selectedLabel = selectedDay.charAt(0).toUpperCase() + selectedDay.slice(1);
 
   return (
     <div className="bg-bg min-h-screen pb-[100px]">
@@ -103,7 +106,9 @@ export default function Home() {
       {/* Today meals */}
       <div className="px-5">
         <div className="flex justify-between items-baseline mb-3">
-          <p className="text-[13px] font-semibold">Vandaag</p>
+          <p className="text-[13px] font-semibold">
+            {selectedDay === todayNl ? "Vandaag" : selectedLabel}
+          </p>
           <Link to="/weekplan" className="text-[12px] text-ink2">Volledig plan →</Link>
         </div>
 
@@ -184,21 +189,25 @@ export default function Home() {
 
       {/* Week strip */}
       <div className="px-5 mt-6">
-        <div className="flex justify-between items-baseline mb-3">
-          <p className="text-[13px] font-semibold">Deze week</p>
-        </div>
+        <p className="text-[13px] font-semibold mb-3">Deze week</p>
         <div className="flex gap-2">
-          {weekDates.map((d, i) => (
-            <div key={i} className="flex-1 py-[10px] rounded-[12px] text-center border transition-colors"
-              style={{
-                background: d.isToday ? '#1f3a2c' : '#ffffff',
-                borderColor: d.isToday ? 'transparent' : '#e7e4dc',
-                color: d.isToday ? '#ffffff' : '#1a1f1a',
-              }}>
-              <p style={{ fontSize: 10, letterSpacing: '0.8px', opacity: d.isToday ? 0.7 : 0.5, textTransform: 'uppercase', margin: 0 }}>{d.short}</p>
-              <p className="text-[14px] font-semibold mt-[2px]">{d.date}</p>
-            </div>
-          ))}
+          {weekDates.map((d, i) => {
+            const isSelected = d.dayNl === selectedDay;
+            return (
+              <button
+                key={i}
+                onClick={() => setSelectedDay(d.dayNl)}
+                className="flex-1 py-[10px] rounded-[12px] text-center border transition-colors"
+                style={{
+                  background: isSelected ? '#1f3a2c' : '#ffffff',
+                  borderColor: isSelected ? 'transparent' : d.isToday ? '#5d655c' : '#e7e4dc',
+                  color: isSelected ? '#ffffff' : '#1a1f1a',
+                }}>
+                <p style={{ fontSize: 10, letterSpacing: '0.8px', opacity: isSelected ? 0.7 : 0.5, textTransform: 'uppercase', margin: 0 }}>{d.short}</p>
+                <p className="text-[14px] font-semibold mt-[2px]">{d.date}</p>
+              </button>
+            );
+          })}
         </div>
       </div>
     </div>
