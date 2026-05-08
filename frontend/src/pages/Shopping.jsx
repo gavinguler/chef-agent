@@ -25,7 +25,8 @@ export default function Shopping() {
   useEffect(() => {
     if (!week) return;
     setLoading(true);
-    setChecked({});
+    const saved = localStorage.getItem(`shopping_checked_w${week}`);
+    setChecked(saved ? JSON.parse(saved) : {});
     getShoppingList(week)
       .then(setList)
       .catch(() => setList(null))
@@ -37,7 +38,11 @@ export default function Shopping() {
   const totalCount = allItems.length;
   const pct = totalCount > 0 ? Math.round((checkedCount / totalCount) * 100) : 0;
 
-  const toggleItem = (id) => setChecked((c) => ({ ...c, [id]: !c[id] }));
+  const toggleItem = (id) => setChecked((c) => {
+    const next = { ...c, [id]: !c[id] };
+    localStorage.setItem(`shopping_checked_w${week}`, JSON.stringify(next));
+    return next;
+  });
 
   const groups = allItems.reduce((acc, item) => {
     const cat = item.categorie ?? "Overig";
