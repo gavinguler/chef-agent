@@ -33,11 +33,14 @@ export default function RecipeDetail() {
 
   const handleRefreshImage = async () => {
     setImageRefreshing(true);
+    setError(null);
     try {
       const updated = await refreshRecipeImage(id);
       setRecipe(updated);
-    } catch { setError("Afbeelding vernieuwen mislukt"); }
-    finally { setImageRefreshing(false); }
+    } catch (e) {
+      const msg = e?.response?.data?.detail;
+      setError(msg || "Afbeelding vernieuwen mislukt");
+    } finally { setImageRefreshing(false); }
   };
 
   const handleAiFill = async () => {
@@ -199,6 +202,9 @@ export default function RecipeDetail() {
       </div>
 
       <div className="px-5 pt-6">
+        {error && (
+          <p className="text-[12px] px-3 py-2 mb-3 rounded-[10px]" style={{ color: '#c2603a', background: '#fdeee8' }}>{error}</p>
+        )}
         {/* Category pill */}
         <span className="inline-flex items-center px-2 py-[3px] rounded-[6px] text-[11px] font-medium"
           style={{ background: '#e9efe6', color: '#1f3a2c' }}>

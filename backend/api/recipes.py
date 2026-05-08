@@ -117,29 +117,27 @@ async def refresh_image(recipe_id: uuid.UUID, db: Session = Depends(get_db)):
         raise HTTPException(status_code=503, detail="Unsplash API key niet geconfigureerd")
 
     query = _build_unsplash_query(recipe.naam)
-    page = random.randint(1, 5)
+    current_url = recipe.image_url
     try:
         async with httpx.AsyncClient(timeout=10) as client:
             resp = await client.get(
                 "https://api.unsplash.com/search/photos",
-                params={"query": query, "per_page": 1, "page": page, "orientation": "landscape", "content_filter": "high"},
+                params={"query": query, "per_page": 10, "orientation": "landscape", "content_filter": "high"},
                 headers={"Authorization": f"Client-ID {settings.unsplash_access_key}", "Accept-Version": "v1"},
             )
             resp.raise_for_status()
             results = resp.json().get("results", [])
-            if not results:
-                # fallback to page 1
-                resp2 = await client.get(
-                    "https://api.unsplash.com/search/photos",
-                    params={"query": "food meal healthy", "per_page": 1, "page": 1, "orientation": "landscape"},
-                    headers={"Authorization": f"Client-ID {settings.unsplash_access_key}", "Accept-Version": "v1"},
-                )
-                resp2.raise_for_status()
-                results = resp2.json().get("results", [])
-            if results:
-                recipe.image_url = results[0]["urls"]["regular"]
+            urls = [r["urls"]["regular"] for r in results if r["urls"]["regular"] != current_url]
+            if not urls:
+                urls = [r["urls"]["regular"] for r in results]
+            if urls:
+                recipe.image_url = random.choice(urls)
                 db.commit()
                 db.refresh(recipe)
+    except httpx.HTTPStatusError as e:
+        if e.response.status_code == 403:
+            raise HTTPException(status_code=429, detail="Unsplash limiet bereikt, probeer later opnieuw")
+        raise HTTPException(status_code=502, detail=f"Unsplash fout: {e}")
     except httpx.HTTPError as e:
         raise HTTPException(status_code=502, detail=f"Unsplash fout: {e}")
     return recipe
