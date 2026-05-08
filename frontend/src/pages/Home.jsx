@@ -49,7 +49,7 @@ export default function Home() {
     d.setDate(d.getDate() - dow);
     return Array.from({ length: 7 }, (_, i) => {
       const dd = new Date(d); dd.setDate(d.getDate() + i);
-      return { short: DAG_SHORT[dd.getDay() === 0 ? 7 : dd.getDay()].slice(0, 2), date: dd.getDate(), isToday: dd.toDateString() === now.toDateString() };
+      return { short: DAG_SHORT[dd.getDay()], date: dd.getDate(), isToday: dd.toDateString() === now.toDateString() };
     });
   }, []);
 
