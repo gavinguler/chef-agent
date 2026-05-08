@@ -4,9 +4,16 @@ import { Bell, ShoppingCart, ChevronRight } from "lucide-react";
 import { getWeekPlan, getCurrentWeek } from "../api/client";
 import { getStoredWeek } from "../lib/weekStorage";
 
-const DAG_NL  = ["zondag","maandag","dinsdag","woensdag","donderdag","vrijdag","zaterdag"];
+const DAG_NL    = ["zondag","maandag","dinsdag","woensdag","donderdag","vrijdag","zaterdag"];
 const DAG_SHORT = ["Zo","Ma","Di","Wo","Do","Vr","Za"];
-const MAAND_NL = ["","jan","feb","mrt","apr","mei","jun","jul","aug","sep","okt","nov","dec"];
+const MAAND_NL  = ["","jan","feb","mrt","apr","mei","jun","jul","aug","sep","okt","nov","dec"];
+
+const MEAL_META = {
+  ontbijt: { label: "Ontbijt",  dot: "#9aa19a" },
+  lunch:   { label: "Lunch",    dot: "#9aa19a" },
+  snack:   { label: "Snack",    dot: "#9aa19a" },
+  diner:   { label: "Diner",    dot: "#1f3a2c" },
+};
 
 function greet() {
   const h = new Date().getHours();
@@ -42,10 +49,9 @@ export default function Home() {
   const todayLabel = todayNl.charAt(0).toUpperCase() + todayNl.slice(1);
   const dateLabel = `${todayLabel} · ${now.getDate()} ${MAAND_NL[now.getMonth() + 1]}`;
 
-  // 7-day strip starting Monday
   const weekDates = useMemo(() => {
     const d = new Date(now);
-    const dow = d.getDay() === 0 ? 6 : d.getDay() - 1; // 0=Mon
+    const dow = d.getDay() === 0 ? 6 : d.getDay() - 1;
     d.setDate(d.getDate() - dow);
     return Array.from({ length: 7 }, (_, i) => {
       const dd = new Date(d); dd.setDate(d.getDate() + i);
@@ -66,13 +72,14 @@ export default function Home() {
   }, [cycleWeek]);
 
   const dagData = weekPlan?.dagen?.find(d => d.dag === todayNl);
-  const diner = dagData?.maaltijden?.find(m => m.maaltijd_type === "diner");
+  const maaltijden = dagData?.maaltijden ?? [];
+  const diner = maaltijden.find(m => m.maaltijd_type === "diner");
   const totalEiwit = dagData?.totaal_eiwit_g ?? 0;
   const totalKcal = dagData?.totaal_kcal ?? 0;
+  const filledCount = maaltijden.filter(m => m.naam).length;
 
   return (
     <div className="bg-bg min-h-screen pb-[100px]">
-      {/* Status bar spacer */}
       <div className="h-[54px]" />
 
       {/* Header */}
@@ -80,7 +87,7 @@ export default function Home() {
         <div className="flex justify-between items-start">
           <div>
             <p className="eyebrow">{dateLabel}</p>
-            <h1 className="h1-page mt-1">Goedenavond, Gavin.</h1>
+            <h1 className="h1-page mt-1">{greet()}, Gavin.</h1>
           </div>
           <button className="w-[38px] h-[38px] rounded-full border border-line bg-surface grid place-items-center text-ink2 flex-shrink-0">
             <Bell size={18} strokeWidth={1.6} />
@@ -93,45 +100,51 @@ export default function Home() {
         )}
       </div>
 
-      {/* Today card */}
+      {/* Today meals */}
       <div className="px-5">
-        <div className="bg-surface rounded-[18px] border border-line overflow-hidden">
-          {/* Photo placeholder */}
-          <div className="h-[150px] bg-line2 flex items-center justify-center">
-            <span className="text-ink3 text-[13px]">🍽️ {diner?.naam ?? "–"}</span>
-          </div>
-
-          <div className="px-4 pt-[14px] pb-4">
-            <div className="flex items-center gap-[6px] eyebrow mb-[8px]">
-              <span className="w-[6px] h-[6px] rounded-full bg-ink3 inline-block" />
-              Vanavond · diner
-            </div>
-            {loading ? (
-              <div className="h-5 bg-line2 rounded animate-pulse w-2/3 mb-3" />
-            ) : (
-              <p className="text-[19px] font-semibold mb-3" style={{ letterSpacing: '-0.3px' }}>
-                {diner?.naam ?? "Niet ingesteld"}
-              </p>
-            )}
-            <div className="flex gap-4 text-[12px] text-ink2">
-              {diner?.kcal && <span><strong className="text-[14px] font-semibold text-ink">{diner.kcal}</strong> kcal</span>}
-              {diner?.eiwit_g && <span><strong className="text-[14px] font-semibold text-ink">{Math.round(diner.eiwit_g)}g</strong> eiwit</span>}
-            </div>
-          </div>
-
-          <div className="flex border-t border-line">
-            <button
-              onClick={() => diner?.recept_id && navigate(`/recepten/${diner.recept_id}`)}
-              className="flex-1 py-[13px] text-[13px] font-medium text-ink border-r border-line bg-transparent"
-            >
-              Recept openen
-            </button>
-            <Link to={`/boodschappen/${cycleWeek ?? 1}`}
-              className="flex-1 py-[13px] text-[13px] font-medium text-ink2 flex items-center justify-center gap-[6px]">
-              <ShoppingCart size={15} strokeWidth={1.6} /> Boodschappen
-            </Link>
-          </div>
+        <div className="flex justify-between items-baseline mb-3">
+          <p className="text-[13px] font-semibold">Vandaag</p>
+          <Link to="/weekplan" className="text-[12px] text-ink2">Volledig plan →</Link>
         </div>
+
+        {loading ? (
+          <div className="flex flex-col gap-[8px]">
+            {[1,2,3,4].map(i => <div key={i} className="h-[58px] bg-surface rounded-[14px] border border-line animate-pulse" />)}
+          </div>
+        ) : (
+          <div className="flex flex-col gap-[8px]">
+            {["ontbijt","lunch","snack","diner"].map((type) => {
+              const m = maaltijden.find(x => x.maaltijd_type === type);
+              const meta = MEAL_META[type];
+              const isDiner = type === "diner";
+              return (
+                <button
+                  key={type}
+                  onClick={() => m?.recept_id && navigate(`/recepten/${m.recept_id}`)}
+                  className="w-full bg-surface rounded-[14px] border flex items-center gap-3 px-4 py-3 text-left"
+                  style={{ borderColor: isDiner && m?.naam ? '#1f3a2c' : '#e7e4dc' }}
+                >
+                  <span
+                    className="w-[6px] h-[6px] rounded-full flex-shrink-0"
+                    style={{ background: m?.naam ? (isDiner ? '#1f3a2c' : '#5d655c') : '#e7e4dc' }}
+                  />
+                  <div className="flex-1 min-w-0">
+                    <p className="text-[11px] text-ink3 uppercase tracking-[1.2px] font-medium">{meta.label}</p>
+                    <p className="text-[14px] font-medium mt-[1px] truncate" style={{ color: m?.naam ? '#1a1f1a' : '#9aa19a' }}>
+                      {m?.naam ?? "Niet ingesteld"}
+                    </p>
+                  </div>
+                  {m?.naam && (
+                    <div className="flex items-center gap-3 flex-shrink-0">
+                      {m.kcal && <span className="text-[12px] text-ink3">{m.kcal} kcal</span>}
+                      {m.recept_id && <ChevronRight size={15} strokeWidth={1.6} className="text-ink3" />}
+                    </div>
+                  )}
+                </button>
+              );
+            })}
+          </div>
+        )}
       </div>
 
       {/* Macro progress */}
@@ -139,10 +152,33 @@ export default function Home() {
         <div className="px-5 mt-5">
           <div className="flex justify-between items-baseline mb-[10px]">
             <p className="text-[13px] font-semibold">Vandaag in cijfers</p>
-            <p className="text-[12px] text-ink3">3 van 3 maaltijden</p>
+            <p className="text-[12px] text-ink3">{filledCount} van 4 maaltijden</p>
           </div>
           <MacroBar label="Eiwit" value={totalEiwit} max={160} unit="g" color="#1f3a2c" />
           <MacroBar label="Calorieën" value={totalKcal} max={2700} unit="kcal" color="#5d655c" />
+        </div>
+      )}
+
+      {/* Diner quick action */}
+      {!loading && diner?.naam && (
+        <div className="px-5 mt-5">
+          <div className="bg-surface rounded-[18px] border border-line overflow-hidden">
+            <div className="h-[120px] bg-line2 flex items-center justify-center">
+              <span className="text-ink3 text-[13px]">🍽️ {diner.naam}</span>
+            </div>
+            <div className="flex border-t border-line">
+              <button
+                onClick={() => diner.recept_id && navigate(`/recepten/${diner.recept_id}`)}
+                className="flex-1 py-[13px] text-[13px] font-medium text-ink border-r border-line bg-transparent"
+              >
+                Recept openen
+              </button>
+              <Link to={`/boodschappen/${cycleWeek ?? 1}`}
+                className="flex-1 py-[13px] text-[13px] font-medium text-ink2 flex items-center justify-center gap-[6px]">
+                <ShoppingCart size={15} strokeWidth={1.6} /> Boodschappen
+              </Link>
+            </div>
+          </div>
         </div>
       )}
 
@@ -150,7 +186,6 @@ export default function Home() {
       <div className="px-5 mt-6">
         <div className="flex justify-between items-baseline mb-3">
           <p className="text-[13px] font-semibold">Deze week</p>
-          <Link to="/weekplan" className="text-[12px] text-ink2">Volledig plan →</Link>
         </div>
         <div className="flex gap-2">
           {weekDates.map((d, i) => (
