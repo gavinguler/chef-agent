@@ -1,5 +1,6 @@
 from fastapi import APIRouter, BackgroundTasks, Depends, HTTPException, Query
 import httpx
+import random
 from sqlalchemy.orm import Session
 from pydantic import BaseModel
 from typing import Optional
@@ -8,6 +9,7 @@ import uuid
 from backend.db.session import get_db
 from backend.db.models import Recipe
 from backend.ai.agent import fill_recipe_macros as _fill_recipe_macros
+from backend.config import settings
 from backend.services.wiki_sync import (
     delete_recipe_from_wiki,
     sync_all_recipes_to_wiki,
@@ -95,6 +97,52 @@ def delete_recipe(recipe_id: uuid.UUID, background_tasks: BackgroundTasks, db: S
     db.delete(db_recipe)
     db.commit()
     background_tasks.add_task(delete_recipe_from_wiki, naam)
+
+
+def _build_unsplash_query(naam: str) -> str:
+    naam_lower = naam.lower()
+    for word in ["airfryer", "batch", "(batch)", "italiaans", "mediterraans",
+                 "zo-batch", "slow roast", "lidl 3-ster", "vers", "(joep)",
+                 "joep", "uit zo", "uit di", "laatste portie"]:
+        naam_lower = naam_lower.replace(word, "").strip()
+    return f"{naam_lower} food meal"
+
+
+@router.post("/{recipe_id}/refresh-image", response_model=RecipeOut)
+async def refresh_image(recipe_id: uuid.UUID, db: Session = Depends(get_db)):
+    recipe = db.query(Recipe).filter(Recipe.id == recipe_id).first()
+    if not recipe:
+        raise HTTPException(status_code=404, detail="Recept niet gevonden")
+    if not settings.unsplash_access_key:
+        raise HTTPException(status_code=503, detail="Unsplash API key niet geconfigureerd")
+
+    query = _build_unsplash_query(recipe.naam)
+    page = random.randint(1, 5)
+    try:
+        async with httpx.AsyncClient(timeout=10) as client:
+            resp = await client.get(
+                "https://api.unsplash.com/search/photos",
+                params={"query": query, "per_page": 1, "page": page, "orientation": "landscape", "content_filter": "high"},
+                headers={"Authorization": f"Client-ID {settings.unsplash_access_key}", "Accept-Version": "v1"},
+            )
+            resp.raise_for_status()
+            results = resp.json().get("results", [])
+            if not results:
+                # fallback to page 1
+                resp2 = await client.get(
+                    "https://api.unsplash.com/search/photos",
+                    params={"query": "food meal healthy", "per_page": 1, "page": 1, "orientation": "landscape"},
+                    headers={"Authorization": f"Client-ID {settings.unsplash_access_key}", "Accept-Version": "v1"},
+                )
+                resp2.raise_for_status()
+                results = resp2.json().get("results", [])
+            if results:
+                recipe.image_url = results[0]["urls"]["regular"]
+                db.commit()
+                db.refresh(recipe)
+    except httpx.HTTPError as e:
+        raise HTTPException(status_code=502, detail=f"Unsplash fout: {e}")
+    return recipe
 
 
 class AiFillMacrosIn(BaseModel):

@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
-import { ChevronLeft, Pencil, MoreHorizontal, Sparkles, ArrowRight } from "lucide-react";
-import { getRecipe, updateRecipe, aiFillMacros } from "../api/client";
+import { ChevronLeft, Pencil, MoreHorizontal, Sparkles, ArrowRight, RefreshCw } from "lucide-react";
+import { getRecipe, updateRecipe, aiFillMacros, refreshRecipeImage } from "../api/client";
 
 export default function RecipeDetail() {
   const { id } = useParams();
@@ -12,6 +12,7 @@ export default function RecipeDetail() {
   const [form, setForm] = useState({});
   const [saving, setSaving] = useState(false);
   const [aiLoading, setAiLoading] = useState(false);
+  const [imageRefreshing, setImageRefreshing] = useState(false);
   const [error, setError] = useState(null);
 
   useEffect(() => {
@@ -28,6 +29,15 @@ export default function RecipeDetail() {
       setRecipe(updated); setForm(updated); setEditing(false);
     } catch { setError("Opslaan mislukt"); }
     finally { setSaving(false); }
+  };
+
+  const handleRefreshImage = async () => {
+    setImageRefreshing(true);
+    try {
+      const updated = await refreshRecipeImage(id);
+      setRecipe(updated);
+    } catch { setError("Afbeelding vernieuwen mislukt"); }
+    finally { setImageRefreshing(false); }
   };
 
   const handleAiFill = async () => {
@@ -151,6 +161,15 @@ export default function RecipeDetail() {
           <span className="text-ink3 text-[13px] mb-4">{recipe.naam}</span>
         )}
         <div className="absolute inset-0" style={{ background: 'linear-gradient(to top, rgba(0,0,0,0.35) 0%, transparent 60%)' }} />
+        <button
+          onClick={handleRefreshImage}
+          disabled={imageRefreshing}
+          className="absolute bottom-3 right-3 w-[34px] h-[34px] rounded-full grid place-items-center disabled:opacity-50"
+          style={{ background: 'rgba(0,0,0,0.45)', backdropFilter: 'blur(8px)' }}
+          title="Andere afbeelding"
+        >
+          <RefreshCw size={15} strokeWidth={1.8} color="#fff" className={imageRefreshing ? "animate-spin" : ""} />
+        </button>
       </div>
 
       {/* Glass back button */}

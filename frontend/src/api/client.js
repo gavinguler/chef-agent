@@ -34,6 +34,9 @@ export const toggleShoppingItem = (week, itemId) =>
 export const aiFillMacros = (naam, ingredienten) =>
   api.post("/api/recipes/ai-fill-macros", { naam, ingredienten }).then((r) => r.data);
 
+export const refreshRecipeImage = (id) =>
+  api.post(`/api/recipes/${id}/refresh-image`).then((r) => r.data);
+
 export const getNotificationSettings = () =>
   api.get("/api/notifications/settings").then((r) => r.data);
 
