@@ -11,5 +11,6 @@ class Settings(BaseSettings):
     ollama_base_url: str = "http://localhost:11434"
     cycle_anchor_year: int = 2026
     cycle_anchor_iso_week: int = 18  # ISO week die overeenkomt met cyclus week 1
+    github_token: str = ""  # PAT met contents:write op gavinguler/LLM-wiki
 
 settings = Settings()

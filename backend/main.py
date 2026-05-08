@@ -2,11 +2,15 @@ from contextlib import asynccontextmanager
 from pathlib import Path
 from apscheduler.schedulers.background import BackgroundScheduler
 from apscheduler.triggers.cron import CronTrigger
-from fastapi import FastAPI
+from fastapi import Depends, FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import FileResponse
+from sqlalchemy.orm import Session
 from backend.api import recipes, meal_plans, shopping
+from backend.db.models import Recipe
+from backend.db.session import get_db
 from backend.scheduler.weekly_job import run_weekly_job
+from backend.services.wiki_sync import sync_all_recipes_to_wiki
 
 FRONTEND_DIST = Path(__file__).parent.parent / "frontend" / "dist"
 
@@ -47,9 +51,16 @@ def health():
 
 @app.post("/api/admin/send-weekly-now")
 def trigger_weekly_now():
-    """Handmatig de weekly job triggeren voor testen."""
     run_weekly_job()
     return {"status": "verzonden"}
+
+
+@app.post("/api/admin/sync-wiki")
+async def sync_wiki(db: Session = Depends(get_db)):
+    """Synchroniseer alle recepten naar de LLM wiki (eenmalig / op verzoek)."""
+    all_recipes = db.query(Recipe).all()
+    count = await sync_all_recipes_to_wiki(all_recipes)
+    return {"synced": count}
 
 
 @app.get("/{full_path:path}")

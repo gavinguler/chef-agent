@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Depends, HTTPException, Query
+from fastapi import APIRouter, BackgroundTasks, Depends, HTTPException, Query
 import httpx
 from sqlalchemy.orm import Session
 from pydantic import BaseModel
@@ -8,6 +8,11 @@ import uuid
 from backend.db.session import get_db
 from backend.db.models import Recipe
 from backend.ai.agent import fill_recipe_macros as _fill_recipe_macros
+from backend.services.wiki_sync import (
+    delete_recipe_from_wiki,
+    sync_all_recipes_to_wiki,
+    sync_recipe_to_wiki,
+)
 
 router = APIRouter()
 
@@ -50,11 +55,12 @@ def list_recipes(search: Optional[str] = Query(None), db: Session = Depends(get_
 
 
 @router.post("", response_model=RecipeOut, status_code=201)
-def create_recipe(recipe: RecipeIn, db: Session = Depends(get_db)):
+def create_recipe(recipe: RecipeIn, background_tasks: BackgroundTasks, db: Session = Depends(get_db)):
     db_recipe = Recipe(**recipe.model_dump())
     db.add(db_recipe)
     db.commit()
     db.refresh(db_recipe)
+    background_tasks.add_task(sync_recipe_to_wiki, db_recipe)
     return db_recipe
 
 
@@ -67,7 +73,7 @@ def get_recipe(recipe_id: uuid.UUID, db: Session = Depends(get_db)):
 
 
 @router.put("/{recipe_id}", response_model=RecipeOut)
-def update_recipe(recipe_id: uuid.UUID, recipe: RecipeIn, db: Session = Depends(get_db)):
+def update_recipe(recipe_id: uuid.UUID, recipe: RecipeIn, background_tasks: BackgroundTasks, db: Session = Depends(get_db)):
     db_recipe = db.query(Recipe).filter(Recipe.id == recipe_id).first()
     if not db_recipe:
         raise HTTPException(status_code=404, detail="Recept niet gevonden")
@@ -75,16 +81,19 @@ def update_recipe(recipe_id: uuid.UUID, recipe: RecipeIn, db: Session = Depends(
         setattr(db_recipe, key, value)
     db.commit()
     db.refresh(db_recipe)
+    background_tasks.add_task(sync_recipe_to_wiki, db_recipe)
     return db_recipe
 
 
 @router.delete("/{recipe_id}", status_code=204)
-def delete_recipe(recipe_id: uuid.UUID, db: Session = Depends(get_db)):
+def delete_recipe(recipe_id: uuid.UUID, background_tasks: BackgroundTasks, db: Session = Depends(get_db)):
     db_recipe = db.query(Recipe).filter(Recipe.id == recipe_id).first()
     if not db_recipe:
         raise HTTPException(status_code=404, detail="Recept niet gevonden")
+    naam = db_recipe.naam
     db.delete(db_recipe)
     db.commit()
+    background_tasks.add_task(delete_recipe_from_wiki, naam)
 
 
 class AiFillMacrosIn(BaseModel):
