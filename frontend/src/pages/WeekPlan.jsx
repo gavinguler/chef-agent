@@ -1,33 +1,33 @@
 import { useEffect, useState } from "react";
-import { getWeekPlan } from "../api/client";
+import { useNavigate } from "react-router-dom";
+import { getWeekPlan, getCurrentWeek } from "../api/client";
 import DayTabs from "../components/DayTabs";
 
 const DAYS = ["maandag", "dinsdag", "woensdag", "donderdag", "vrijdag", "zaterdag", "zondag"];
 const MEAL_EMOJI = { ontbijt: "🥣", lunch: "🥗", diner: "🍽️" };
 const MEAL_LABELS = { ontbijt: "Ontbijt", lunch: "Lunch", diner: "Diner" };
 
-function getCurrentCycleWeek() {
-  const now = new Date();
-  const d = new Date(Date.UTC(now.getFullYear(), now.getMonth(), now.getDate()));
-  d.setUTCDate(d.getUTCDate() + 4 - (d.getUTCDay() || 7));
-  const yearStart = new Date(Date.UTC(d.getUTCFullYear(), 0, 1));
-  const isoWeek = Math.ceil((((d - yearStart) / 86400000) + 1) / 7);
-  return ((isoWeek - 1) % 8) + 1;
-}
-
-const currentCycleWeek = getCurrentCycleWeek();
-
 export default function WeekPlan() {
+  const navigate = useNavigate();
+  const [currentCycleWeek, setCurrentCycleWeek] = useState(null);
   const [weekPlan, setWeekPlan] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const [selectedWeek, setSelectedWeek] = useState(currentCycleWeek);
+  const [selectedWeek, setSelectedWeek] = useState(null);
   const todayIndex = new Date().getDay();
   const [selectedDay, setSelectedDay] = useState(
     DAYS[todayIndex === 0 ? 6 : todayIndex - 1]
   );
 
   useEffect(() => {
+    getCurrentWeek().then((week) => {
+      setCurrentCycleWeek(week);
+      setSelectedWeek(week);
+    });
+  }, []);
+
+  useEffect(() => {
+    if (!selectedWeek) return;
     setLoading(true);
     setError(null);
     getWeekPlan(selectedWeek)
@@ -88,10 +88,12 @@ export default function WeekPlan() {
                 const maaltijd = dagData?.maaltijden?.find(
                   (m) => m.maaltijd_type === type
                 );
+                const isClickable = !!maaltijd?.recept_id;
                 return (
                   <div
                     key={type}
-                    className="bg-white border border-gray-200 rounded-xl p-3 flex items-center gap-3 shadow-sm"
+                    onClick={() => isClickable && navigate(`/recepten/${maaltijd.recept_id}`)}
+                    className={`bg-white border border-gray-200 rounded-xl p-3 flex items-center gap-3 shadow-sm ${isClickable ? "cursor-pointer active:bg-gray-50" : ""}`}
                   >
                     <span className="text-xl">{MEAL_EMOJI[type]}</span>
                     <div className="flex-1">
@@ -111,6 +113,9 @@ export default function WeekPlan() {
                         </p>
                       )}
                     </div>
+                    {isClickable && (
+                      <span className="text-gray-300 text-sm">›</span>
+                    )}
                   </div>
                 );
               })}

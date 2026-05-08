@@ -2,14 +2,28 @@ from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
 from pydantic import BaseModel
 from typing import Optional
+from datetime import date, timedelta
 import uuid
 
 from backend.db.session import get_db
 from backend.db.models import MealPlan, Recipe, NutritionCycle
+from backend.config import settings
 
 router = APIRouter()
 
 DAYS = ["maandag", "dinsdag", "woensdag", "donderdag", "vrijdag", "zaterdag", "zondag"]
+
+
+def _iso_week_start(year: int, week: int) -> date:
+    jan4 = date(year, 1, 4)
+    return jan4 + timedelta(days=(week - 1) * 7 - (jan4.isoweekday() - 1))
+
+
+@router.get("/current-week")
+def get_current_week():
+    anchor = _iso_week_start(settings.cycle_anchor_year, settings.cycle_anchor_iso_week)
+    weeks_since = (date.today() - anchor).days // 7
+    return {"week": (weeks_since % 8) + 1}
 MEAL_TYPES = ["ontbijt", "lunch", "diner"]
 
 
