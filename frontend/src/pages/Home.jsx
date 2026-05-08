@@ -168,8 +168,15 @@ export default function Home() {
       {!loading && diner?.naam && (
         <div className="px-5 mt-5">
           <div className="bg-surface rounded-[18px] border border-line overflow-hidden">
-            <div className="h-[120px] bg-line2 flex items-center justify-center">
-              <span className="text-ink3 text-[13px]">🍽️ {diner.naam}</span>
+            <div className="h-[140px] bg-line2 relative overflow-hidden flex items-center justify-center">
+              {diner.image_url ? (
+                <img src={diner.image_url} alt={diner.naam} className="absolute inset-0 w-full h-full object-cover" />
+              ) : (
+                <span className="text-ink3 text-[13px]">🍽️ {diner.naam}</span>
+              )}
+              <div className="absolute inset-x-0 bottom-0 px-3 pb-2 pt-6" style={{ background: 'linear-gradient(to top, rgba(0,0,0,0.5), transparent)' }}>
+                <p className="text-white text-[13px] font-medium truncate">{diner.naam}</p>
+              </div>
             </div>
             <div className="flex border-t border-line">
               <button

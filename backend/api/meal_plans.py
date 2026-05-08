@@ -37,6 +37,7 @@ class MealOut(BaseModel):
     naam: Optional[str] = None
     kcal: Optional[int] = None
     eiwit_g: Optional[float] = None
+    image_url: Optional[str] = None
 
     model_config = {"from_attributes": True}
 
@@ -81,6 +82,7 @@ def get_week_plan(week_num: int, db: Session = Depends(get_db)):
                     naam=entry.recipe.naam,
                     kcal=entry.recipe.kcal,
                     eiwit_g=entry.recipe.eiwit_g,
+                    image_url=entry.recipe.image_url,
                 ))
                 totaal_eiwit += entry.recipe.eiwit_g or 0
                 totaal_kcal += entry.recipe.kcal or 0

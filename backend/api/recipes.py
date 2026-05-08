@@ -42,6 +42,7 @@ class RecipeOut(BaseModel):
     categorie: Optional[str] = None
     vlees_type: Optional[str] = None
     bron: str
+    image_url: Optional[str] = None
 
     model_config = {"from_attributes": True}
 

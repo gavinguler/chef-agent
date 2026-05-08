@@ -140,7 +140,17 @@ export default function RecipeDetail() {
     <div className="bg-bg min-h-screen pb-[110px]">
       {/* Hero photo area */}
       <div className="relative h-[300px] bg-line2 flex items-end justify-center overflow-hidden">
-        <span className="text-ink3 text-[13px] mb-4">{recipe.naam}</span>
+        {recipe.image_url && (
+          <img
+            src={recipe.image_url}
+            alt={recipe.naam}
+            className="absolute inset-0 w-full h-full object-cover"
+          />
+        )}
+        {!recipe.image_url && (
+          <span className="text-ink3 text-[13px] mb-4">{recipe.naam}</span>
+        )}
+        <div className="absolute inset-0" style={{ background: 'linear-gradient(to top, rgba(0,0,0,0.35) 0%, transparent 60%)' }} />
       </div>
 
       {/* Glass back button */}
