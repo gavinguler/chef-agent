@@ -1,16 +1,31 @@
 import { useEffect, useState } from "react";
-import { useParams, useNavigate } from "react-router-dom";
-import { ChevronLeft, Check } from "lucide-react";
-import { getShoppingList } from "../api/client";
+import { useParams, useNavigate, Link } from "react-router-dom";
+import { ChevronLeft, Check, ChevronRight } from "lucide-react";
+import { getShoppingList, getCurrentWeek } from "../api/client";
+import { getStoredWeek } from "../lib/weekStorage";
 
 export default function Shopping() {
-  const { week } = useParams();
+  const { week: weekParam } = useParams();
   const navigate = useNavigate();
+  const [week, setWeek] = useState(null);
   const [list, setList] = useState(null);
   const [loading, setLoading] = useState(true);
   const [checked, setChecked] = useState({});
 
   useEffect(() => {
+    if (weekParam) {
+      setWeek(parseInt(weekParam));
+    } else {
+      const stored = getStoredWeek();
+      if (stored) setWeek(stored);
+      else getCurrentWeek().then(setWeek);
+    }
+  }, [weekParam]);
+
+  useEffect(() => {
+    if (!week) return;
+    setLoading(true);
+    setChecked({});
     getShoppingList(week)
       .then(setList)
       .catch(() => setList(null))
@@ -22,7 +37,7 @@ export default function Shopping() {
   const totalCount = allItems.length;
   const pct = totalCount > 0 ? Math.round((checkedCount / totalCount) * 100) : 0;
 
-  const toggleItem = (key) => setChecked((c) => ({ ...c, [key]: !c[key] }));
+  const toggleItem = (id) => setChecked((c) => ({ ...c, [id]: !c[id] }));
 
   const groups = allItems.reduce((acc, item) => {
     const cat = item.categorie ?? "Overig";
@@ -30,6 +45,12 @@ export default function Shopping() {
     acc[cat].push(item);
     return acc;
   }, {});
+
+  const CAT_ORDER = ["Vlees & vis", "Groente & fruit", "Zuivel & ei", "Granen & koolhydraten",
+                     "Conserven", "Aardappelen", "Fruit & noten", "Kruiden & sauzen", "Overig"];
+  const sortedGroups = Object.entries(groups).sort(
+    ([a], [b]) => (CAT_ORDER.indexOf(a) ?? 99) - (CAT_ORDER.indexOf(b) ?? 99)
+  );
 
   return (
     <div className="bg-bg min-h-screen pb-[100px]">
@@ -44,28 +65,41 @@ export default function Shopping() {
           <ChevronLeft size={18} strokeWidth={1.6} />
         </button>
         <div className="flex-1">
-          <p className="eyebrow">Week {week} · {totalCount} items</p>
+          <p className="eyebrow">Week {week ?? "…"} · {totalCount} items</p>
           <h1 className="text-[22px] font-semibold mt-[2px]" style={{ letterSpacing: '-0.5px' }}>Boodschappen</h1>
         </div>
-        <span className="text-[11px] font-medium px-2 py-[3px] rounded-[6px]" style={{ background: '#e9efe6', color: '#1f3a2c' }}>
-          {list?.geschatte_prijs ? `~ €${list.geschatte_prijs}` : `Week ${week}`}
-        </span>
+      </div>
+
+      {/* Week selector */}
+      <div className="px-5 pt-3 flex gap-[6px]">
+        {[1,2,3,4,5,6,7,8].map((w) => (
+          <button
+            key={w}
+            onClick={() => setWeek(w)}
+            className="flex-1 h-8 rounded-[8px] text-[11px] font-semibold transition-colors"
+            style={{
+              background: week === w ? '#1f3a2c' : '#ffffff',
+              color: week === w ? '#fff' : '#5d655c',
+              border: week === w ? 'none' : '1px solid #e7e4dc',
+            }}
+          >{w}</button>
+        ))}
       </div>
 
       {/* Progress */}
-      <div className="px-5 pt-[14px]">
+      <div className="px-5 pt-4">
         <div className="flex justify-between text-[11px] text-ink2 mb-[6px]">
-          <span>{checkedCount} van {totalCount}</span>
+          <span>{checkedCount} van {totalCount} afgevinkt</span>
           <span>{pct}%</span>
         </div>
         <div className="h-1 rounded-sm overflow-hidden" style={{ background: '#efece4' }}>
-          <div className="h-full rounded-sm transition-all" style={{ width: `${pct}%`, background: '#1f3a2c' }} />
+          <div className="h-full rounded-sm transition-all duration-300" style={{ width: `${pct}%`, background: '#1f3a2c' }} />
         </div>
       </div>
 
       {loading && (
         <div className="px-5 mt-5 space-y-3">
-          {[1,2,3].map(i => <div key={i} className="h-[120px] bg-surface rounded-[14px] border border-line animate-pulse" />)}
+          {[1,2,3].map(i => <div key={i} className="h-[100px] bg-surface rounded-[14px] border border-line animate-pulse" />)}
         </div>
       )}
 
@@ -73,21 +107,21 @@ export default function Shopping() {
         <p className="text-center text-ink3 text-[13px] py-12">Geen boodschappen voor week {week}</p>
       )}
 
-      {!loading && Object.entries(groups).map(([cat, items]) => (
+      {!loading && sortedGroups.map(([cat, items]) => (
         <div key={cat} className="px-5 mt-5">
           <p className="eyebrow mb-2">{cat}</p>
           <div className="bg-surface border border-line rounded-[14px] overflow-hidden">
             {items.map((item, idx) => {
-              const key = `${cat}-${idx}`;
-              const done = checked[key] ?? false;
+              const done = checked[item.id] ?? false;
+              const isVoorraad = item.hoeveelheid?.startsWith("uit voorraad");
               return (
                 <button
-                  key={key}
-                  onClick={() => toggleItem(key)}
+                  key={item.id}
+                  onClick={() => toggleItem(item.id)}
                   className="w-full flex items-center gap-3 px-[14px] py-3 text-left transition-opacity"
                   style={{
                     borderBottom: idx < items.length - 1 ? '1px solid #efece4' : 'none',
-                    opacity: done ? 0.45 : 1,
+                    opacity: done || isVoorraad ? 0.4 : 1,
                   }}
                 >
                   <div
@@ -99,10 +133,20 @@ export default function Shopping() {
                   >
                     {done && <Check size={12} strokeWidth={2.5} className="text-white" />}
                   </div>
-                  <span className="w-14 text-[12px] text-ink3 flex-shrink-0">{item.hoeveelheid ?? ""}</span>
-                  <span className="flex-1 text-[14px]" style={{ textDecoration: done ? 'line-through' : 'none' }}>
-                    {item.naam ?? item.ingredient}
+                  <span
+                    className="flex-1 text-[14px]"
+                    style={{ textDecoration: done ? 'line-through' : 'none' }}
+                  >
+                    {item.product}
                   </span>
+                  <span className="text-[12px] text-ink3 flex-shrink-0 text-right max-w-[110px]">
+                    {isVoorraad ? "voorraad" : item.hoeveelheid}
+                  </span>
+                  {item.prijs_indicatie && !isVoorraad && (
+                    <span className="text-[11px] text-ink3 flex-shrink-0">
+                      €{item.prijs_indicatie.toFixed(2).replace('.', ',')}
+                    </span>
+                  )}
                 </button>
               );
             })}

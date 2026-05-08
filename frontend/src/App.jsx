@@ -1,5 +1,5 @@
 import { BrowserRouter, Routes, Route, NavLink } from "react-router-dom";
-import { Home, BookOpen, Calendar, Settings } from "lucide-react";
+import { Home, BookOpen, Calendar, ShoppingCart, Settings } from "lucide-react";
 import HomePage from "./pages/Home";
 import Recipes from "./pages/Recipes";
 import WeekPlan from "./pages/WeekPlan";
@@ -11,6 +11,7 @@ const NAV = [
   { to: "/", end: true, Icon: Home, label: "Home" },
   { to: "/recepten", Icon: BookOpen, label: "Recepten" },
   { to: "/weekplan", Icon: Calendar, label: "Week" },
+  { to: "/boodschappen", Icon: ShoppingCart, label: "Boodschappen" },
   { to: "/instellingen", Icon: Settings, label: "Instellingen" },
 ];
 
@@ -24,6 +25,7 @@ export default function App() {
           <Route path="/recepten/:id" element={<RecipeDetail />} />
           <Route path="/weekplan" element={<WeekPlan />} />
           <Route path="/instellingen" element={<SettingsPage />} />
+          <Route path="/boodschappen" element={<Shopping />} />
           <Route path="/boodschappen/:week" element={<Shopping />} />
         </Routes>
 
