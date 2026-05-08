@@ -28,6 +28,9 @@ export const getWeekPlan = (week) =>
 export const getShoppingList = (week) =>
   api.get(`/api/shopping/week/${week}`).then((r) => r.data);
 
+export const toggleShoppingItem = (week, itemId) =>
+  api.patch(`/api/shopping/week/${week}/items/${itemId}/check`).then((r) => r.data);
+
 export const aiFillMacros = (naam, ingredienten) =>
   api.post("/api/recipes/ai-fill-macros", { naam, ingredienten }).then((r) => r.data);
 

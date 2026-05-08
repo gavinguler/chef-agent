@@ -55,6 +55,7 @@ class ShoppingList(Base):
     hoeveelheid = Column(Text)
     winkel = Column(String(50), default="lidl")
     prijs_indicatie = Column(Float, nullable=True)
+    checked = Column(Boolean, default=False, nullable=False)
 
 
 class FreezerItem(Base):

@@ -25,6 +25,7 @@ class ShoppingItemOut(BaseModel):
     hoeveelheid: Optional[str] = None
     winkel: str
     prijs_indicatie: Optional[float] = None
+    checked: bool = False
 
     model_config = {"from_attributes": True}
 
@@ -54,6 +55,20 @@ def add_item(week_num: int, item: ShoppingItemIn, db: Session = Depends(get_db))
     db.commit()
     db.refresh(db_item)
     return db_item
+
+
+@router.patch("/week/{week_num}/items/{item_id}/check", response_model=ShoppingItemOut)
+def toggle_check(week_num: int, item_id: uuid.UUID, db: Session = Depends(get_db)):
+    item = db.query(ShoppingList).filter(
+        ShoppingList.id == item_id,
+        ShoppingList.cyclus_week == week_num,
+    ).first()
+    if not item:
+        raise HTTPException(status_code=404, detail="Item niet gevonden")
+    item.checked = not item.checked
+    db.commit()
+    db.refresh(item)
+    return item
 
 
 @router.delete("/week/{week_num}/items/{item_id}", status_code=204)

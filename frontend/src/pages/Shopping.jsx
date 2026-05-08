@@ -1,21 +1,23 @@
 import { useEffect, useState } from "react";
-import { useParams, useNavigate, Link } from "react-router-dom";
-import { ChevronLeft, Check, ChevronRight } from "lucide-react";
-import { getShoppingList, getCurrentWeek } from "../api/client";
+import { useParams, useNavigate } from "react-router-dom";
+import { ChevronLeft, Check } from "lucide-react";
+import { getShoppingList, toggleShoppingItem, getCurrentWeek } from "../api/client";
 import { getStoredWeek } from "../lib/weekStorage";
+
+const CAT_ORDER = ["Vlees & vis", "Groente & fruit", "Zuivel & ei", "Granen & koolhydraten",
+                   "Conserven", "Aardappelen", "Fruit & noten", "Kruiden & sauzen", "Overig"];
 
 export default function Shopping() {
   const { week: weekParam } = useParams();
   const navigate = useNavigate();
   const [week, setWeek] = useState(null);
-  const [list, setList] = useState(null);
+  const [items, setItems] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [checked, setChecked] = useState({});
+  const [toggling, setToggling] = useState(new Set());
 
   useEffect(() => {
-    if (weekParam) {
-      setWeek(parseInt(weekParam));
-    } else {
+    if (weekParam) setWeek(parseInt(weekParam));
+    else {
       const stored = getStoredWeek();
       if (stored) setWeek(stored);
       else getCurrentWeek().then(setWeek);
@@ -25,36 +27,41 @@ export default function Shopping() {
   useEffect(() => {
     if (!week) return;
     setLoading(true);
-    const saved = localStorage.getItem(`shopping_checked_w${week}`);
-    setChecked(saved ? JSON.parse(saved) : {});
     getShoppingList(week)
-      .then(setList)
-      .catch(() => setList(null))
+      .then((data) => setItems(data.items ?? []))
+      .catch(() => setItems([]))
       .finally(() => setLoading(false));
   }, [week]);
 
-  const allItems = list?.items ?? [];
-  const checkedCount = Object.values(checked).filter(Boolean).length;
-  const totalCount = allItems.length;
+  const handleToggle = async (itemId) => {
+    if (toggling.has(itemId)) return;
+    setToggling((s) => new Set(s).add(itemId));
+    // Optimistic update
+    setItems((prev) => prev.map((it) => it.id === itemId ? { ...it, checked: !it.checked } : it));
+    try {
+      const updated = await toggleShoppingItem(week, itemId);
+      setItems((prev) => prev.map((it) => it.id === updated.id ? updated : it));
+    } catch {
+      // Revert on error
+      setItems((prev) => prev.map((it) => it.id === itemId ? { ...it, checked: !it.checked } : it));
+    } finally {
+      setToggling((s) => { const n = new Set(s); n.delete(itemId); return n; });
+    }
+  };
+
+  const checkedCount = items.filter((it) => it.checked).length;
+  const totalCount = items.length;
   const pct = totalCount > 0 ? Math.round((checkedCount / totalCount) * 100) : 0;
 
-  const toggleItem = (id) => setChecked((c) => {
-    const next = { ...c, [id]: !c[id] };
-    localStorage.setItem(`shopping_checked_w${week}`, JSON.stringify(next));
-    return next;
-  });
-
-  const groups = allItems.reduce((acc, item) => {
+  const groups = items.reduce((acc, item) => {
     const cat = item.categorie ?? "Overig";
     if (!acc[cat]) acc[cat] = [];
     acc[cat].push(item);
     return acc;
   }, {});
-
-  const CAT_ORDER = ["Vlees & vis", "Groente & fruit", "Zuivel & ei", "Granen & koolhydraten",
-                     "Conserven", "Aardappelen", "Fruit & noten", "Kruiden & sauzen", "Overig"];
   const sortedGroups = Object.entries(groups).sort(
-    ([a], [b]) => (CAT_ORDER.indexOf(a) ?? 99) - (CAT_ORDER.indexOf(b) ?? 99)
+    ([a], [b]) => (CAT_ORDER.indexOf(a) === -1 ? 99 : CAT_ORDER.indexOf(a)) -
+                  (CAT_ORDER.indexOf(b) === -1 ? 99 : CAT_ORDER.indexOf(b))
   );
 
   return (
@@ -112,35 +119,35 @@ export default function Shopping() {
         <p className="text-center text-ink3 text-[13px] py-12">Geen boodschappen voor week {week}</p>
       )}
 
-      {!loading && sortedGroups.map(([cat, items]) => (
+      {!loading && sortedGroups.map(([cat, catItems]) => (
         <div key={cat} className="px-5 mt-5">
           <p className="eyebrow mb-2">{cat}</p>
           <div className="bg-surface border border-line rounded-[14px] overflow-hidden">
-            {items.map((item, idx) => {
-              const done = checked[item.id] ?? false;
+            {catItems.map((item, idx) => {
               const isVoorraad = item.hoeveelheid?.startsWith("uit voorraad");
               return (
                 <button
                   key={item.id}
-                  onClick={() => toggleItem(item.id)}
+                  onClick={() => handleToggle(item.id)}
+                  disabled={toggling.has(item.id)}
                   className="w-full flex items-center gap-3 px-[14px] py-3 text-left transition-opacity"
                   style={{
-                    borderBottom: idx < items.length - 1 ? '1px solid #efece4' : 'none',
-                    opacity: done || isVoorraad ? 0.4 : 1,
+                    borderBottom: idx < catItems.length - 1 ? '1px solid #efece4' : 'none',
+                    opacity: item.checked || isVoorraad ? 0.4 : 1,
                   }}
                 >
                   <div
-                    className="w-5 h-5 rounded-[6px] flex-shrink-0 grid place-items-center"
+                    className="w-5 h-5 rounded-[6px] flex-shrink-0 grid place-items-center transition-colors"
                     style={{
-                      border: done ? 'none' : '1.5px solid #e7e4dc',
-                      background: done ? '#1f3a2c' : 'transparent',
+                      border: item.checked ? 'none' : '1.5px solid #e7e4dc',
+                      background: item.checked ? '#1f3a2c' : 'transparent',
                     }}
                   >
-                    {done && <Check size={12} strokeWidth={2.5} className="text-white" />}
+                    {item.checked && <Check size={12} strokeWidth={2.5} className="text-white" />}
                   </div>
                   <span
                     className="flex-1 text-[14px]"
-                    style={{ textDecoration: done ? 'line-through' : 'none' }}
+                    style={{ textDecoration: item.checked ? 'line-through' : 'none' }}
                   >
                     {item.product}
                   </span>
