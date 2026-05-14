@@ -1,0 +1,104 @@
+name = "Install Tentacle"
+description = "SSH naar Proxmox via pct exec → installeert Octopus polling tentacle + GitHub Actions self-hosted runner op LXC 224 (192.168.0.200)"
+
+connectivity_policy {}
+
+run_retention_policy {
+    type = "Default"
+}
+
+process {
+    step "install-octopus-tentacle-github-runner" {
+        name = "Install Octopus Tentacle + GitHub Runner"
+
+        action {
+            action_type = "Octopus.Script"
+            properties = {
+                Octopus.Action.RunOnServer = "true"
+                Octopus.Action.Script.ScriptBody = <<-EOT
+                    #!/bin/bash
+                    set -e
+                    
+                    OCTOPUS_SERVER="#{OctopusServerUrl}"
+                    OCTOPUS_API_KEY="#{OctopusApiKey}"
+                    LXC_ID="#{LxcId}"
+                    PROXMOX_IP="#{ProxmoxIp}"
+                    PROXMOX_PASSWORD="#{ProxmoxRootPassword}"
+                    GITHUB_RUNNER_TOKEN="#{GithubRunnerToken}"
+                    GITHUB_REPO="gavinguler/Chef-agent"
+                    
+                    echo "=== Chef Agent: Tentacle + Runner Install ==="
+                    echo "Target LXC: ${LXC_ID} op Proxmox ${PROXMOX_IP}"
+                    
+                    which sshpass || apt-get install -y sshpass -qq
+                    
+                    cat > /tmp/chef-install.sh << END
+                    #!/bin/bash
+                    set -e
+                    export DEBIAN_FRONTEND=noninteractive
+                    
+                    echo '--- Octopus Polling Tentacle ---'
+                    apt-get update -qq
+                    apt-get install --no-install-recommends gnupg curl -y -qq
+                    
+                    if ! [ -f /opt/octopus/tentacle/Tentacle ]; then
+                      curl -sSfL https://apt.octopus.com/public.key | gpg --dearmor -o /etc/apt/trusted.gpg.d/octopus.gpg
+                      echo 'deb https://apt.octopus.com/ stable main' > /etc/apt/sources.list.d/octopus.list
+                      apt-get update -qq && apt-get install tentacle -y
+                    fi
+                    
+                    /opt/octopus/tentacle/Tentacle service --stop --console 2>/dev/null || true
+                    /opt/octopus/tentacle/Tentacle create-instance --config /etc/octopus/default/tentacle-default.config --console
+                    /opt/octopus/tentacle/Tentacle new-certificate --if-blank --console
+                    /opt/octopus/tentacle/Tentacle configure --noListen True --reset-trust --app /home/Octopus/Applications --console
+                    /opt/octopus/tentacle/Tentacle register-with \\
+                      --server "${OCTOPUS_SERVER}" \\
+                      --apiKey "${OCTOPUS_API_KEY}" \\
+                      --role "chef-agent" \\
+                      --environment "home-lab" \\
+                      --comms-style "TentacleActive" \\
+                      --name "chef-agent" \\
+                      --console
+                    /opt/octopus/tentacle/Tentacle service --install --start --console
+                    echo 'Tentacle OK!'
+                    
+                    echo '--- GitHub Actions Self-Hosted Runner ---'
+                    useradd -m -s /bin/bash github-runner 2>/dev/null || true
+                    mkdir -p /opt/github-runner
+                    cd /opt/github-runner
+                    
+                    RUNNER_VER="2.319.1"
+                    if [ ! -f ./run.sh ]; then
+                      curl -sLo runner.tgz "https://github.com/actions/runner/releases/download/v\${RUNNER_VER}/actions-runner-linux-x64-\${RUNNER_VER}.tar.gz"
+                      tar xzf runner.tgz && rm runner.tgz
+                    fi
+                    
+                    chown -R github-runner:github-runner /opt/github-runner
+                    
+                    sudo -u github-runner ./config.sh \\
+                      --url "https://github.com/${GITHUB_REPO}" \\
+                      --token "${GITHUB_RUNNER_TOKEN}" \\
+                      --name "chef-agent-homelab" \\
+                      --labels "self-hosted,chef-agent" \\
+                      --unattended \\
+                      --replace
+                    
+                    ./svc.sh install github-runner
+                    ./svc.sh start
+                    echo 'GitHub Runner OK!'
+                    echo '=== Klaar! ==='
+                    END
+                    
+                    sshpass -p "${PROXMOX_PASSWORD}" scp -o StrictHostKeyChecking=no /tmp/chef-install.sh root@${PROXMOX_IP}:/tmp/
+                    sshpass -p "${PROXMOX_PASSWORD}" ssh -o StrictHostKeyChecking=no root@${PROXMOX_IP} \
+                      "pct push ${LXC_ID} /tmp/chef-install.sh /tmp/chef-install.sh && pct exec ${LXC_ID} -- bash /tmp/chef-install.sh"
+                    
+                    echo ''
+                    echo '=== Installatie voltooid! ==='
+                    echo "Controleer: http://192.168.0.210:8080 -> Infrastructure -> Deployment Targets"
+                    EOT
+                Octopus.Action.Script.Syntax = "Bash"
+            }
+        }
+    }
+}

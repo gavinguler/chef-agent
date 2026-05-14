@@ -1,0 +1,23 @@
+variable "AppName" {
+    value "chef-agent" {}
+}
+
+variable "LxcId" {
+    value "224" {}
+}
+
+variable "LxcIp" {
+    value "192.168.0.200" {}
+}
+
+variable "OctopusServerUrl" {
+    value "http://192.168.0.210:8080" {}
+}
+
+variable "Port" {
+    value "8000" {}
+}
+
+variable "ProxmoxIp" {
+    value "192.168.0.197" {}
+}

@@ -1,0 +1,171 @@
+name = "Fix Tentacle IP Registration"
+description = "Diagnosticeert tentacle connectiviteit en herregistreert met het expliciete IP 192.168.0.200 zodat Octopus server de tentacle kan bereiken op poort 10888."
+
+connectivity_policy {}
+
+run_retention_policy {
+    type = "Default"
+}
+
+process {
+    step "herregistreer-tentacle-met-correct-ip" {
+        name = "Herregistreer tentacle met correct IP"
+
+        action {
+            action_type = "Octopus.Script"
+            properties = {
+                Octopus.Action.RunOnServer = "true"
+                Octopus.Action.Script.ScriptBody = <<-EOT
+                    #!/bin/bash
+                    set -e
+                    
+                    OCTOPUS_SERVER="#{OctopusServerUrl}"
+                    OCTOPUS_API_KEY="#{OctopusApiKey}"
+                    LXC_ID="#{LxcId}"
+                    PROXMOX_IP="#{ProxmoxIp}"
+                    PROXMOX_PASSWORD="#{ProxmoxRootPassword}"
+                    TENTACLE_IP="#{LxcIp}"
+                    TENTACLE_PORT="10888"
+                    
+                    echo "=== Fix Tentacle IP Registration ==="
+                    echo "Tentacle moet bereikbaar zijn op ${TENTACLE_IP}:${TENTACLE_PORT}"
+                    
+                    which sshpass || apt-get install -y sshpass -qq
+                    
+                    echo "--- Test 1: is poort ${TENTACLE_PORT} bereikbaar vanaf Proxmox host? ---"
+                    sshpass -p "${PROXMOX_PASSWORD}" ssh -o StrictHostKeyChecking=no root@${PROXMOX_IP} \
+                      "nc -zv ${TENTACLE_IP} ${TENTACLE_PORT} 2>&1 && echo 'POORT OPEN' || echo 'POORT GESLOTEN'"
+                    
+                    cat > /tmp/fix-tentacle-ip.sh << END
+                    #!/bin/bash
+                    set -e
+                    
+                    echo '--- Status tentacle service ---'
+                    systemctl status tentacle --no-pager 2>/dev/null || echo 'Geen systemctl tentacle'
+                    
+                    echo '--- Luisterende poorten ---'
+                    ss -tlnp | grep ${TENTACLE_PORT} && echo 'Poort ${TENTACLE_PORT} OPEN' || echo 'Poort ${TENTACLE_PORT} GESLOTEN'
+                    
+                    echo '--- Huidig IP van de machine ---'
+                    hostname -I
+                    
+                    echo '--- Huidige tentacle configuratie ---'
+                    /opt/octopus/tentacle/Tentacle show-configuration --console 2>/dev/null | head -30 || true
+                    
+                    echo ''
+                    echo '--- Deregistreer bestaande tentacle ---'
+                    /opt/octopus/tentacle/Tentacle deregister-from \\
+                      --server "${OCTOPUS_SERVER}" \\
+                      --apiKey "${OCTOPUS_API_KEY}" \\
+                      --name "chef-agent" \\
+                      --console 2>/dev/null || echo 'Deregister mislukt (target al weg) - gaat verder'
+                    
+                    echo '--- Herregistreer met expliciet publicHostName ${TENTACLE_IP} ---'
+                    /opt/octopus/tentacle/Tentacle register-with \\
+                      --server "${OCTOPUS_SERVER}" \\
+                      --apiKey "${OCTOPUS_API_KEY}" \\
+                      --role "chef-agent" \\
+                      --environment "home-lab" \\
+                      --comms-style "TentaclePassive" \\
+                      --tentacle-comms-port ${TENTACLE_PORT} \\
+                      --name "chef-agent" \\
+                      --publicHostName "${TENTACLE_IP}" \\
+                      --console
+                    
+                    echo '--- Herstart tentacle service ---'
+                    /opt/octopus/tentacle/Tentacle service --stop --console 2>/dev/null || true
+                    /opt/octopus/tentacle/Tentacle service --start --console
+                    
+                    echo '--- Verificeer poort na herstart ---'
+                    sleep 3
+                    ss -tlnp | grep ${TENTACLE_PORT} && echo 'Poort ${TENTACLE_PORT} OPEN - OK!' || echo 'WAARSCHUWING: poort nog niet zichtbaar'
+                    
+                    echo '--- Thumbprint ---'
+                    /opt/octopus/tentacle/Tentacle show-thumbprint --console
+                    
+                    echo '=== Klaar! ==='
+                    END
+                    
+                    sshpass -p "${PROXMOX_PASSWORD}" scp -o StrictHostKeyChecking=no /tmp/fix-tentacle-ip.sh root@${PROXMOX_IP}:/tmp/
+                    sshpass -p "${PROXMOX_PASSWORD}" ssh -o StrictHostKeyChecking=no root@${PROXMOX_IP} \
+                      "pct push ${LXC_ID} /tmp/fix-tentacle-ip.sh /tmp/fix-tentacle-ip.sh && \
+                       pct exec ${LXC_ID} -- bash /tmp/fix-tentacle-ip.sh"
+                    
+                    echo ''
+                    echo "--- Test 2: is poort ${TENTACLE_PORT} nu bereikbaar vanaf Proxmox host? ---"
+                    sshpass -p "${PROXMOX_PASSWORD}" ssh -o StrictHostKeyChecking=no root@${PROXMOX_IP} \
+                      "nc -zv ${TENTACLE_IP} ${TENTACLE_PORT} 2>&1 && echo 'POORT OPEN - Octopus kan nu verbinden!' || echo 'POORT NOG STEEDS GESLOTEN - check LXC firewall'"
+                    
+                    echo ''
+                    echo '=== Controleer Octopus: http://192.168.0.210:8080 -> Infrastructure -> Deployment Targets ==='
+                    EOT
+                Octopus.Action.Script.Syntax = "Bash"
+            }
+        }
+    }
+
+    step "herregistreer-met-force-en-correct-ip" {
+        name = "Herregistreer met --force en correct IP"
+
+        action {
+            action_type = "Octopus.Script"
+            properties = {
+                Octopus.Action.RunOnServer = "true"
+                Octopus.Action.Script.ScriptBody = <<-EOT
+                    #!/bin/bash
+                    set -e
+                    
+                    OCTOPUS_SERVER="#{OctopusServerUrl}"
+                    OCTOPUS_API_KEY="#{OctopusApiKey}"
+                    LXC_ID="#{LxcId}"
+                    PROXMOX_IP="#{ProxmoxIp}"
+                    PROXMOX_PASSWORD="#{ProxmoxRootPassword}"
+                    TENTACLE_IP="#{LxcIp}"
+                    TENTACLE_PORT="10888"
+                    
+                    which sshpass || apt-get install -y sshpass -qq
+                    
+                    cat > /tmp/reregister.sh << END
+                    #!/bin/bash
+                    set -e
+                    
+                    echo '--- Herregistreer tentacle met --force en --publicHostName ${TENTACLE_IP} ---'
+                    /opt/octopus/tentacle/Tentacle register-with \\
+                      --server "${OCTOPUS_SERVER}" \\
+                      --apiKey "${OCTOPUS_API_KEY}" \\
+                      --role "chef-agent" \\
+                      --environment "home-lab" \\
+                      --comms-style "TentaclePassive" \\
+                      --tentacle-comms-port ${TENTACLE_PORT} \\
+                      --name "chef-agent" \\
+                      --publicHostName "${TENTACLE_IP}" \\
+                      --force \\
+                      --console
+                    
+                    echo '--- Herstart tentacle ---'
+                    /opt/octopus/tentacle/Tentacle service --stop --console 2>/dev/null || true
+                    sleep 2
+                    /opt/octopus/tentacle/Tentacle service --start --console
+                    sleep 3
+                    
+                    echo '--- Poort status ---'
+                    ss -tlnp | grep ${TENTACLE_PORT} && echo 'Poort ${TENTACLE_PORT} OPEN' || echo 'GESLOTEN'
+                    
+                    echo '--- Thumbprint ---'
+                    /opt/octopus/tentacle/Tentacle show-thumbprint --console
+                    END
+                    
+                    sshpass -p "${PROXMOX_PASSWORD}" scp -o StrictHostKeyChecking=no /tmp/reregister.sh root@${PROXMOX_IP}:/tmp/
+                    sshpass -p "${PROXMOX_PASSWORD}" ssh -o StrictHostKeyChecking=no root@${PROXMOX_IP} \
+                      "pct push ${LXC_ID} /tmp/reregister.sh /tmp/reregister.sh && pct exec ${LXC_ID} -- bash /tmp/reregister.sh"
+                    
+                    echo ''
+                    echo '--- Connectiviteitstest vanaf Proxmox ---'
+                    sshpass -p "${PROXMOX_PASSWORD}" ssh -o StrictHostKeyChecking=no root@${PROXMOX_IP} \
+                      "nc -zv ${TENTACLE_IP} ${TENTACLE_PORT} 2>&1 && echo 'BEREIKBAAR' || echo 'NIET BEREIKBAAR'"
+                    EOT
+                Octopus.Action.Script.Syntax = "Bash"
+            }
+        }
+    }
+}

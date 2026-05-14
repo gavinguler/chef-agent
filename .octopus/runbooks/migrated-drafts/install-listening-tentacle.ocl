@@ -1,0 +1,103 @@
+name = "Install Listening Tentacle"
+description = "Installeert/herconfigureert Octopus tentacle als LISTENING (passive) op poort 10888. Octopus verbindt naar de tentacle — geen poort 10943 nodig op de Octopus server. Geschikt voor homelab op hetzelfde subnet."
+
+connectivity_policy {}
+
+run_retention_policy {
+    type = "Default"
+}
+
+process {
+    step "configureer-listening-tentacle-op-lxc-224" {
+        name = "Configureer Listening Tentacle op LXC 224"
+
+        action {
+            action_type = "Octopus.Script"
+            properties = {
+                Octopus.Action.RunOnServer = "true"
+                Octopus.Action.Script.ScriptBody = <<-EOT
+                    #!/bin/bash
+                    set -e
+                    
+                    OCTOPUS_SERVER="#{OctopusServerUrl}"
+                    OCTOPUS_API_KEY="#{OctopusApiKey}"
+                    LXC_ID="#{LxcId}"
+                    PROXMOX_IP="#{ProxmoxIp}"
+                    PROXMOX_PASSWORD="#{ProxmoxRootPassword}"
+                    TENTACLE_PORT="10888"
+                    TENTACLE_IP="#{LxcIp}"
+                    
+                    echo "=== Install Listening Tentacle op ${TENTACLE_IP}:${TENTACLE_PORT} ==="
+                    echo "Octopus server: ${OCTOPUS_SERVER}"
+                    
+                    which sshpass || apt-get install -y sshpass -qq
+                    
+                    cat > /tmp/configure-tentacle.sh << END
+                    #!/bin/bash
+                    set -e
+                    export DEBIAN_FRONTEND=noninteractive
+                    
+                    echo '--- Installeer tentacle als nog niet aanwezig ---'
+                    apt-get update -qq
+                    apt-get install --no-install-recommends gnupg curl -y -qq
+                    
+                    if ! [ -f /opt/octopus/tentacle/Tentacle ]; then
+                      curl -sSfL https://apt.octopus.com/public.key | gpg --dearmor -o /etc/apt/trusted.gpg.d/octopus.gpg
+                      echo 'deb https://apt.octopus.com/ stable main' > /etc/apt/sources.list.d/octopus.list
+                      apt-get update -qq && apt-get install tentacle -y
+                    fi
+                    
+                    echo '--- Stop bestaande tentacle indien actief ---'
+                    /opt/octopus/tentacle/Tentacle service --stop --console 2>/dev/null || true
+                    
+                    echo '--- Configureer als LISTENING tentacle op poort ${TENTACLE_PORT} ---'
+                    /opt/octopus/tentacle/Tentacle create-instance \\
+                      --config /etc/octopus/default/tentacle-default.config \\
+                      --console
+                    
+                    /opt/octopus/tentacle/Tentacle new-certificate --if-blank --console
+                    
+                    /opt/octopus/tentacle/Tentacle configure \\
+                      --port ${TENTACLE_PORT} \\
+                      --noListen False \\
+                      --reset-trust \\
+                      --app /home/Octopus/Applications \\
+                      --console
+                    
+                    echo '--- Registreer bij Octopus server ---'
+                    /opt/octopus/tentacle/Tentacle register-with \\
+                      --server "${OCTOPUS_SERVER}" \\
+                      --apiKey "${OCTOPUS_API_KEY}" \\
+                      --role "chef-agent" \\
+                      --environment "home-lab" \\
+                      --comms-style "TentaclePassive" \\
+                      --tentacle-comms-port ${TENTACLE_PORT} \\
+                      --name "chef-agent" \\
+                      --console
+                    
+                    echo '--- Start tentacle service ---'
+                    /opt/octopus/tentacle/Tentacle service --install --start --console
+                    
+                    echo ''
+                    echo '--- Tentacle thumbprint ---'
+                    /opt/octopus/tentacle/Tentacle show-thumbprint --console
+                    
+                    echo '--- Luisterende poorten ---'
+                    ss -tlnp | grep ${TENTACLE_PORT} && echo 'Poort ${TENTACLE_PORT} is OPEN!' || echo 'WAARSCHUWING: poort ${TENTACLE_PORT} nog niet zichtbaar'
+                    
+                    echo '=== Tentacle OK! ==='
+                    END
+                    
+                    sshpass -p "${PROXMOX_PASSWORD}" scp -o StrictHostKeyChecking=no /tmp/configure-tentacle.sh root@${PROXMOX_IP}:/tmp/
+                    sshpass -p "${PROXMOX_PASSWORD}" ssh -o StrictHostKeyChecking=no root@${PROXMOX_IP} \
+                      "pct push ${LXC_ID} /tmp/configure-tentacle.sh /tmp/configure-tentacle.sh && \
+                       pct exec ${LXC_ID} -- bash /tmp/configure-tentacle.sh"
+                    
+                    echo ''
+                    echo '=== Klaar! Controleer Octopus: http://192.168.0.210:8080 -> Infrastructure -> Deployment Targets ==='
+                    EOT
+                Octopus.Action.Script.Syntax = "Bash"
+            }
+        }
+    }
+}
