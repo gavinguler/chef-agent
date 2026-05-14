@@ -22,8 +22,6 @@ jobs:
           BODY=$(printf '{"ProjectId":"%s","Version":"%s","VersionControlReference":{"GitRef":"refs/heads/master","GitCommit":"%s"}}' \
             "$OCTOPUS_PROJECT_ID" "$VERSION" "${{ github.sha }}")
 
-          echo "Body: $BODY"
-
           RESPONSE=$(curl -s -w "\nHTTP_STATUS:%{http_code}" -X POST "$OCTOPUS_URL/api/$OCTOPUS_SPACE/releases" \
             -H "X-Octopus-ApiKey: ${{ secrets.OCTOPUS_API_KEY }}" \
             -H "Content-Type: application/json" \
