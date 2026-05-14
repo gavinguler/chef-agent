@@ -1,0 +1,22 @@
+[     780ms] [ERROR] TypeError: Cannot read properties of undefined (reading 'slice')
+    at http://chefagent.home/assets/index-6d95608d.js:185:7621
+    at Array.from (<anonymous>)
+    at http://chefagent.home/assets/index-6d95608d.js:185:7506
+    at Object.useMemo (http://chefagent.home/assets/index-6d95608d.js:38:23251)
+    at F.useMemo (http://chefagent.home/assets/index-6d95608d.js:9:6193)
+    at wy (http://chefagent.home/assets/index-6d95608d.js:185:7403)
+    at qs (http://chefagent.home/assets/index-6d95608d.js:38:16949)
+    at hf (http://chefagent.home/assets/index-6d95608d.js:40:43805)
+    at df (http://chefagent.home/assets/index-6d95608d.js:40:39589)
+    at vm (http://chefagent.home/assets/index-6d95608d.js:40:39517) @ http://chefagent.home/assets/index-6d95608d.js:39
+[     850ms] TypeError: Cannot read properties of undefined (reading 'slice')
+    at http://chefagent.home/assets/index-6d95608d.js:185:7621
+    at Array.from (<anonymous>)
+    at http://chefagent.home/assets/index-6d95608d.js:185:7506
+    at Object.useMemo (http://chefagent.home/assets/index-6d95608d.js:38:23251)
+    at F.useMemo (http://chefagent.home/assets/index-6d95608d.js:9:6193)
+    at wy (http://chefagent.home/assets/index-6d95608d.js:185:7403)
+    at qs (http://chefagent.home/assets/index-6d95608d.js:38:16949)
+    at hf (http://chefagent.home/assets/index-6d95608d.js:40:43805)
+    at df (http://chefagent.home/assets/index-6d95608d.js:40:39589)
+    at vm (http://chefagent.home/assets/index-6d95608d.js:40:39517)

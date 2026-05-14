@@ -1,0 +1,98 @@
+- generic [ref=e3]:
+  - generic [ref=e4]:
+    - generic [ref=e5]:
+      - heading "Instellingen" [level=1] [ref=e6]
+      - paragraph [ref=e7]: Configureer je Chef Agent
+    - generic [ref=e8]:
+      - generic [ref=e9]:
+        - generic [ref=e10]:
+          - paragraph [ref=e11]: Huidige cyclus week
+          - paragraph [ref=e12]: "Automatisch: week 2"
+        - generic [ref=e14]:
+          - button "W1" [ref=e15] [cursor=pointer]
+          - button "W2" [ref=e16] [cursor=pointer]
+          - button "W3" [ref=e17] [cursor=pointer]
+          - button "W4" [ref=e18] [cursor=pointer]
+          - button "W5" [ref=e19] [cursor=pointer]
+          - button "W6" [ref=e20] [cursor=pointer]
+          - button "W7" [ref=e21] [cursor=pointer]
+          - button "W8" [ref=e22] [cursor=pointer]
+      - generic [ref=e23]:
+        - paragraph [ref=e25]: Notificaties deze week
+        - generic [ref=e26]:
+          - generic [ref=e27]:
+            - generic [ref=e28]:
+              - generic [ref=e29]: Ma
+              - generic [ref=e31]: ☀️
+            - generic [ref=e32]:
+              - generic [ref=e33]: Di
+              - generic [ref=e35]: ☀️
+            - generic [ref=e36]:
+              - generic [ref=e37]: Wo
+              - generic [ref=e38]:
+                - generic [ref=e39]: ☀️
+                - generic [ref=e40]: 🛒
+            - generic [ref=e41]:
+              - generic [ref=e42]: Do
+              - generic [ref=e44]: ☀️
+            - generic [ref=e45]:
+              - generic [ref=e46]: Vr
+              - generic [ref=e48]: ☀️
+            - generic [ref=e49]:
+              - generic [ref=e50]: Za
+              - generic [ref=e51]:
+                - generic [ref=e52]: ☀️
+                - generic [ref=e53]: 🛒
+            - generic [ref=e54]:
+              - generic [ref=e55]: Zo
+              - generic [ref=e57]: ☀️
+          - generic [ref=e58]:
+            - generic [ref=e59]: ☀️ dagelijks bericht
+            - generic [ref=e60]: 🛒 boodschappen
+      - generic [ref=e61]:
+        - generic [ref=e62]:
+          - generic [ref=e63]:
+            - paragraph [ref=e64]: ☀️ Dagelijks ochtendberichtje
+            - paragraph [ref=e65]: Wat je die dag gaat eten
+          - button [ref=e66] [cursor=pointer]
+        - generic [ref=e68]:
+          - generic [ref=e69]: Tijdstip
+          - textbox [ref=e70]: 07:30
+          - button "Test" [ref=e71] [cursor=pointer]
+      - generic [ref=e72]:
+        - generic [ref=e73]:
+          - generic [ref=e74]:
+            - paragraph [ref=e75]: 🛒 Boodschappenherinnering
+            - paragraph [ref=e76]: Op welke dagen?
+          - button [ref=e77] [cursor=pointer]
+        - generic [ref=e79]:
+          - generic [ref=e80]:
+            - button "Ma" [ref=e81] [cursor=pointer]
+            - button "Di" [ref=e82] [cursor=pointer]
+            - button "Wo" [ref=e83] [cursor=pointer]
+            - button "Do" [ref=e84] [cursor=pointer]
+            - button "Vr" [ref=e85] [cursor=pointer]
+            - button "Za" [ref=e86] [cursor=pointer]
+            - button "Zo" [ref=e87] [cursor=pointer]
+          - generic [ref=e88]:
+            - generic [ref=e89]: Tijdstip
+            - textbox [ref=e90]: 08:00
+            - button "Test" [ref=e91] [cursor=pointer]
+      - button "Instellingen opslaan" [ref=e92] [cursor=pointer]
+  - navigation "Hoofdnavigatie" [ref=e93]:
+    - link "Home" [ref=e94] [cursor=pointer]:
+      - /url: /
+      - img [ref=e95]
+      - text: Home
+    - link "Recepten" [ref=e98] [cursor=pointer]:
+      - /url: /recepten
+      - img [ref=e99]
+      - text: Recepten
+    - link "Week" [ref=e102] [cursor=pointer]:
+      - /url: /weekplan
+      - img [ref=e103]
+      - text: Week
+    - link "Instellingen" [ref=e105] [cursor=pointer]:
+      - /url: /instellingen
+      - img [ref=e106]
+      - text: Instellingen

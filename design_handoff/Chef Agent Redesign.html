@@ -1,0 +1,149 @@
+<!doctype html>
+<html lang="nl">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>Chef Agent — Redesign</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,500;0,9..144,600;1,9..144,400&display=swap" rel="stylesheet">
+<style>
+  html, body { margin: 0; padding: 0; background: #f0eee9; font-family: "Inter", -apple-system, system-ui, sans-serif; }
+  *, *::before, *::after { box-sizing: border-box; }
+  /* font helper */
+  body { -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale; }
+</style>
+<script src="https://unpkg.com/react@18.3.1/umd/react.development.js" integrity="sha384-hD6/rw4ppMLGNu3tX5cjIb+uRZ7UkRJ6BPkLpg4hAu/6onKUg4lLsHAs9EBPT82L" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js" integrity="sha384-u6aeetuaXnQ38mYT8rp6sbXaQe3NL9t+IBXmnYxwkUI2Hw4bsp2Wvmx4yRQF1uAm" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" integrity="sha384-m08KidiNqLdpJqLq95G/LEi8Qvjl/xUYll3QILypMoQ65QorJ9Lvtp2RXYGBFj1y" crossorigin="anonymous"></script>
+</head>
+<body>
+<div id="root"></div>
+
+<script type="text/babel" src="ios-frame.jsx"></script>
+<script type="text/babel" src="design-canvas.jsx"></script>
+<script type="text/babel" src="tweaks-panel.jsx"></script>
+<script type="text/babel" src="icons.jsx"></script>
+<script type="text/babel" src="shared.jsx"></script>
+<script type="text/babel" src="screens-a.jsx"></script>
+<script type="text/babel" src="screens-b.jsx"></script>
+
+<script type="text/babel">
+const { useState } = React;
+
+const TWEAK_DEFAULTS = /*EDITMODE-BEGIN*/{
+  "brandA": "#1f3a2c",
+  "brandB": "#7c3a1f",
+  "showLabels": true,
+  "density": "comfy"
+}/*EDITMODE-END*/;
+
+// Wrap each screen in an iOS frame as a card
+function Frame({ children, w = 402, h = 874 }) {
+  return <IOSDevice width={w} height={h}>{children}</IOSDevice>;
+}
+
+function App() {
+  const [tweaks, setTweak] = useTweaks(TWEAK_DEFAULTS);
+
+  const styleVars = {
+    '--a-brand': tweaks.brandA,
+    '--b-brand': tweaks.brandB,
+  };
+
+  return (
+    <div style={styleVars}>
+      <DesignCanvas>
+        <DCSection id="overview" title="Chef Agent — Redesign" subtitle="Twee richtingen · Nederlandse hoog-fi prototypes voor de 8-weken voedingsplanner">
+          {/* DIRECTION A — Stil */}
+          <DCArtboard id="a-home" label="A · Stil — Home" width={402} height={874}>
+            <Frame><AHome/></Frame>
+          </DCArtboard>
+          <DCArtboard id="a-recepten" label="A · Stil — Recepten" width={402} height={874}>
+            <Frame><ARecipes/></Frame>
+          </DCArtboard>
+          <DCArtboard id="a-week" label="A · Stil — Weekplan" width={402} height={874}>
+            <Frame><AWeek/></Frame>
+          </DCArtboard>
+          <DCArtboard id="a-detail" label="A · Stil — Recept detail" width={402} height={874}>
+            <Frame><ADetail/></Frame>
+          </DCArtboard>
+          <DCArtboard id="a-shopping" label="A · Stil — Boodschappen (nieuw)" width={402} height={874}>
+            <Frame><AShopping/></Frame>
+          </DCArtboard>
+          <DCArtboard id="a-settings" label="A · Stil — Instellingen" width={402} height={874}>
+            <Frame><ASettings/></Frame>
+          </DCArtboard>
+        </DCSection>
+
+        <DCSection id="editorial" title="Direction B · Editorial" subtitle="Cookbook-vibes — Fraunces serif, warm cream, photo-led">
+          <DCArtboard id="b-home" label="B · Editorial — Home" width={402} height={874}>
+            <Frame><BHome/></Frame>
+          </DCArtboard>
+          <DCArtboard id="b-recepten" label="B · Editorial — Recepten" width={402} height={874}>
+            <Frame><BRecipes/></Frame>
+          </DCArtboard>
+          <DCArtboard id="b-week" label="B · Editorial — Weekplan" width={402} height={874}>
+            <Frame><BWeek/></Frame>
+          </DCArtboard>
+          <DCArtboard id="b-detail" label="B · Editorial — Recept detail" width={402} height={874}>
+            <Frame><BDetail/></Frame>
+          </DCArtboard>
+          <DCArtboard id="b-settings" label="B · Editorial — Instellingen" width={402} height={874}>
+            <Frame><BSettings/></Frame>
+          </DCArtboard>
+        </DCSection>
+
+        <DCPostIt top={24} right={24} rotate={2} width={220}>
+          Decisions to make:<br/>
+          • A or B for primary direction<br/>
+          • Photo-led vs text-led recipe list<br/>
+          • Keep emoji food categories or fully icon-driven?
+        </DCPostIt>
+      </DesignCanvas>
+
+      <TweaksPanel title="Tweaks">
+        <TweakSection title="Direction A — Stil">
+          <TweakColor
+            label="Brand"
+            value={tweaks.brandA}
+            onChange={(v) => setTweak('brandA', v)}
+            options={['#1f3a2c', '#16a34a', '#1e3a8a', '#3a1f3a']}
+          />
+        </TweakSection>
+        <TweakSection title="Direction B — Editorial">
+          <TweakColor
+            label="Brand"
+            value={tweaks.brandB}
+            onChange={(v) => setTweak('brandB', v)}
+            options={['#7c3a1f', '#b45309', '#5b3a1f', '#3a1f1f']}
+          />
+        </TweakSection>
+        <TweakSection title="Density">
+          <TweakRadio
+            label="Compactheid"
+            value={tweaks.density}
+            onChange={(v) => setTweak('density', v)}
+            options={[['comfy','Comfy'],['tight','Tight']]}
+          />
+          <TweakToggle
+            label="Toon nav-labels"
+            value={tweaks.showLabels}
+            onChange={(v) => setTweak('showLabels', v)}
+          />
+        </TweakSection>
+      </TweaksPanel>
+
+      {/* Tweaked styles applied via global CSS vars */}
+      <style>{`
+        /* override A.brand fills via CSS custom prop fallback — limited but visible */
+        [style*="${'#1f3a2c'}"] { /* no-op selector to acknowledge */ }
+      `}</style>
+    </div>
+  );
+}
+
+ReactDOM.createRoot(document.getElementById('root')).render(<App/>);
+</script>
+</body>
+</html>

@@ -1,0 +1,61 @@
+- generic [ref=e3]:
+  - generic [ref=e4]:
+    - generic [ref=e7]:
+      - generic [ref=e8]:
+        - paragraph [ref=e9]: Vrijdag · 8 mei
+        - heading "Goedenavond, Gavin." [level=1] [ref=e10]
+      - button [ref=e11] [cursor=pointer]:
+        - img [ref=e12]
+    - generic [ref=e16]:
+      - generic [ref=e18]: 🍽️ –
+      - generic [ref=e20]: Vanavond · diner
+      - generic [ref=e23]:
+        - button "Recept openen" [ref=e24] [cursor=pointer]
+        - link "Boodschappen" [ref=e25] [cursor=pointer]:
+          - /url: /boodschappen/1
+          - img [ref=e26]
+          - text: Boodschappen
+    - generic [ref=e30]:
+      - generic [ref=e31]:
+        - paragraph [ref=e32]: Deze week
+        - link "Volledig plan →" [ref=e33] [cursor=pointer]:
+          - /url: /weekplan
+      - generic [ref=e34]:
+        - generic [ref=e35]:
+          - paragraph [ref=e36]: Ma
+          - paragraph [ref=e37]: "4"
+        - generic [ref=e38]:
+          - paragraph [ref=e39]: Di
+          - paragraph [ref=e40]: "5"
+        - generic [ref=e41]:
+          - paragraph [ref=e42]: Wo
+          - paragraph [ref=e43]: "6"
+        - generic [ref=e44]:
+          - paragraph [ref=e45]: Do
+          - paragraph [ref=e46]: "7"
+        - generic [ref=e47]:
+          - paragraph [ref=e48]: Vr
+          - paragraph [ref=e49]: "8"
+        - generic [ref=e50]:
+          - paragraph [ref=e51]: Za
+          - paragraph [ref=e52]: "9"
+        - generic [ref=e53]:
+          - paragraph [ref=e54]: Zo
+          - paragraph [ref=e55]: "10"
+  - navigation [ref=e56]:
+    - link "Home" [ref=e57] [cursor=pointer]:
+      - /url: /
+      - img [ref=e58]
+      - generic [ref=e61]: Home
+    - link "Recepten" [ref=e62] [cursor=pointer]:
+      - /url: /recepten
+      - img [ref=e63]
+      - generic [ref=e65]: Recepten
+    - link "Week" [ref=e66] [cursor=pointer]:
+      - /url: /weekplan
+      - img [ref=e67]
+      - generic [ref=e69]: Week
+    - link "Instellingen" [ref=e70] [cursor=pointer]:
+      - /url: /instellingen
+      - img [ref=e71]
+      - generic [ref=e74]: Instellingen

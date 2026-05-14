@@ -1,0 +1,57 @@
+- generic [ref=e3]:
+  - generic [ref=e4]:
+    - generic [ref=e7]:
+      - generic [ref=e8]:
+        - paragraph [ref=e9]: Vrijdag · 8 mei
+        - heading "Goedenavond, Gavin." [level=1] [ref=e10]
+      - button [ref=e11] [cursor=pointer]:
+        - img [ref=e12]
+    - generic [ref=e16]:
+      - paragraph [ref=e17]: Vandaag
+      - link "Volledig plan →" [ref=e18] [cursor=pointer]:
+        - /url: /weekplan
+    - generic [ref=e24]:
+      - paragraph [ref=e26]: Deze week
+      - generic [ref=e27]:
+        - generic [ref=e28]:
+          - paragraph [ref=e29]: Ma
+          - paragraph [ref=e30]: "4"
+        - generic [ref=e31]:
+          - paragraph [ref=e32]: Di
+          - paragraph [ref=e33]: "5"
+        - generic [ref=e34]:
+          - paragraph [ref=e35]: Wo
+          - paragraph [ref=e36]: "6"
+        - generic [ref=e37]:
+          - paragraph [ref=e38]: Do
+          - paragraph [ref=e39]: "7"
+        - generic [ref=e40]:
+          - paragraph [ref=e41]: Vr
+          - paragraph [ref=e42]: "8"
+        - generic [ref=e43]:
+          - paragraph [ref=e44]: Za
+          - paragraph [ref=e45]: "9"
+        - generic [ref=e46]:
+          - paragraph [ref=e47]: Zo
+          - paragraph [ref=e48]: "10"
+  - navigation [ref=e49]:
+    - link "Home" [ref=e50] [cursor=pointer]:
+      - /url: /
+      - img [ref=e51]
+      - generic [ref=e54]: Home
+    - link "Recepten" [ref=e55] [cursor=pointer]:
+      - /url: /recepten
+      - img [ref=e56]
+      - generic [ref=e58]: Recepten
+    - link "Week" [ref=e59] [cursor=pointer]:
+      - /url: /weekplan
+      - img [ref=e60]
+      - generic [ref=e62]: Week
+    - link "Boodschappen" [ref=e63] [cursor=pointer]:
+      - /url: /boodschappen
+      - img [ref=e64]
+      - generic [ref=e68]: Boodschappen
+    - link "Instellingen" [ref=e69] [cursor=pointer]:
+      - /url: /instellingen
+      - img [ref=e70]
+      - generic [ref=e73]: Instellingen

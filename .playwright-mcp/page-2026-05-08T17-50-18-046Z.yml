@@ -1,0 +1,124 @@
+- generic [ref=e3]:
+  - generic [ref=e4]:
+    - generic [ref=e6]:
+      - button [ref=e7] [cursor=pointer]:
+        - img [ref=e8]
+      - generic [ref=e10]:
+        - paragraph [ref=e11]: Week 2 · 17 items
+        - heading "Boodschappen" [level=1] [ref=e12]
+    - generic [ref=e13]:
+      - button "1" [ref=e14] [cursor=pointer]
+      - button "2" [ref=e15] [cursor=pointer]
+      - button "3" [ref=e16] [cursor=pointer]
+      - button "4" [ref=e17] [cursor=pointer]
+      - button "5" [ref=e18] [cursor=pointer]
+      - button "6" [ref=e19] [cursor=pointer]
+      - button "7" [ref=e20] [cursor=pointer]
+      - button "8" [ref=e21] [cursor=pointer]
+    - generic [ref=e23]:
+      - generic [ref=e24]: 0 van 17 afgevinkt
+      - generic [ref=e25]: 0%
+    - generic [ref=e27]:
+      - paragraph [ref=e28]: Vlees & vis
+      - generic [ref=e29]:
+        - button "Witvis (kabeljauw) 180 g €3,50" [ref=e30] [cursor=pointer]:
+          - generic [ref=e32]: Witvis (kabeljauw)
+          - generic [ref=e33]: 180 g
+          - generic [ref=e34]: €3,50
+        - button "Lidl 3-ster kipfilet 250 g €2,80" [ref=e35] [cursor=pointer]:
+          - generic [ref=e37]: Lidl 3-ster kipfilet
+          - generic [ref=e38]: 250 g
+          - generic [ref=e39]: €2,80
+    - generic [ref=e40]:
+      - paragraph [ref=e41]: Groente & fruit
+      - generic [ref=e42]:
+        - button "Aardappel kruimig (puree) 500 g extra €1,00" [ref=e43] [cursor=pointer]:
+          - generic [ref=e45]: Aardappel kruimig (puree)
+          - generic [ref=e46]: 500 g extra
+          - generic [ref=e47]: €1,00
+        - button "Paksoi 300 g €1,80" [ref=e48] [cursor=pointer]:
+          - generic [ref=e50]: Paksoi
+          - generic [ref=e51]: 300 g
+          - generic [ref=e52]: €1,80
+        - button "Verse gember 1 stukje €0,80" [ref=e53] [cursor=pointer]:
+          - generic [ref=e55]: Verse gember
+          - generic [ref=e56]: 1 stukje
+          - generic [ref=e57]: €0,80
+        - button "Champignons 250 g €1,80" [ref=e58] [cursor=pointer]:
+          - generic [ref=e60]: Champignons
+          - generic [ref=e61]: 250 g
+          - generic [ref=e62]: €1,80
+    - generic [ref=e63]:
+      - paragraph [ref=e64]: Granen & koolhydraten
+      - generic [ref=e65]:
+        - button "Zilvervliesrijst 1 kg 1 pak €2,00" [ref=e66] [cursor=pointer]:
+          - generic [ref=e68]: Zilvervliesrijst 1 kg
+          - generic [ref=e69]: 1 pak
+          - generic [ref=e70]: €2,00
+        - button "Couscous voorraad" [ref=e71] [cursor=pointer]:
+          - generic [ref=e73]: Couscous
+          - generic [ref=e74]: voorraad
+    - generic [ref=e75]:
+      - paragraph [ref=e76]: Conserven
+      - generic [ref=e77]:
+        - button "Tomatenblokjes 400 g blik 3 blikken €2,10" [ref=e78] [cursor=pointer]:
+          - generic [ref=e80]: Tomatenblokjes 400 g blik
+          - generic [ref=e81]: 3 blikken
+          - generic [ref=e82]: €2,10
+        - button "Runderbouillon 200 ml of 1 blokje €0,80" [ref=e83] [cursor=pointer]:
+          - generic [ref=e85]: Runderbouillon
+          - generic [ref=e86]: 200 ml of 1 blokje
+          - generic [ref=e87]: €0,80
+        - button "Kikkererwten blik 400 g 3 blikken €2,10" [ref=e88] [cursor=pointer]:
+          - generic [ref=e90]: Kikkererwten blik 400 g
+          - generic [ref=e91]: 3 blikken
+          - generic [ref=e92]: €2,10
+        - button "Kokosmelk voorraad" [ref=e93] [cursor=pointer]:
+          - generic [ref=e95]: Kokosmelk
+          - generic [ref=e96]: voorraad
+    - generic [ref=e97]:
+      - paragraph [ref=e98]: Kruiden & sauzen
+      - generic [ref=e99]:
+        - button "Sojasaus 250 ml 1 fles €2,00" [ref=e100] [cursor=pointer]:
+          - generic [ref=e102]: Sojasaus 250 ml
+          - generic [ref=e103]: 1 fles
+          - generic [ref=e104]: €2,00
+        - button "Sriracha 1 flesje €2,50" [ref=e105] [cursor=pointer]:
+          - generic [ref=e107]: Sriracha
+          - generic [ref=e108]: 1 flesje
+          - generic [ref=e109]: €2,50
+        - button "Honing 1 klein potje €2,50" [ref=e110] [cursor=pointer]:
+          - generic [ref=e112]: Honing
+          - generic [ref=e113]: 1 klein potje
+          - generic [ref=e114]: €2,50
+        - button "Verse tijm + laurier klein bosje €1,50" [ref=e115] [cursor=pointer]:
+          - generic [ref=e117]: Verse tijm + laurier
+          - generic [ref=e118]: klein bosje
+          - generic [ref=e119]: €1,50
+    - generic [ref=e120]:
+      - paragraph [ref=e121]: Overig
+      - button "Rode wijn (optioneel) 100 ml €2,50" [ref=e123] [cursor=pointer]:
+        - generic [ref=e125]: Rode wijn (optioneel)
+        - generic [ref=e126]: 100 ml
+        - generic [ref=e127]: €2,50
+  - navigation [ref=e128]:
+    - link "Home" [ref=e129] [cursor=pointer]:
+      - /url: /
+      - img [ref=e130]
+      - generic [ref=e133]: Home
+    - link "Recepten" [ref=e134] [cursor=pointer]:
+      - /url: /recepten
+      - img [ref=e135]
+      - generic [ref=e137]: Recepten
+    - link "Week" [ref=e138] [cursor=pointer]:
+      - /url: /weekplan
+      - img [ref=e139]
+      - generic [ref=e141]: Week
+    - link "Boodschappen" [ref=e142] [cursor=pointer]:
+      - /url: /boodschappen
+      - img [ref=e143]
+      - generic [ref=e147]: Boodschappen
+    - link "Instellingen" [ref=e148] [cursor=pointer]:
+      - /url: /instellingen
+      - img [ref=e149]
+      - generic [ref=e152]: Instellingen
