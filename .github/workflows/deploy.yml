@@ -1,0 +1,22 @@
+name: Deploy to Chef Agent
+
+on:
+  push:
+    branches: [main]
+
+jobs:
+  deploy:
+    name: Deploy via Octopus Deploy
+    runs-on: [self-hosted, chef-agent]
+
+    steps:
+      - name: Create and Deploy Octopus Release
+        uses: OctopusDeployLabs/create-release-deploy-action@v3
+        with:
+          api_key: ${{ secrets.OCTOPUS_API_KEY }}
+          server: http://192.168.0.210:8080
+          project: chef-agent
+          release_number: "0.0.${{ github.run_number }}"
+          deploy_to: home-lab
+          progress: true
+          wait_for_deployment: true
