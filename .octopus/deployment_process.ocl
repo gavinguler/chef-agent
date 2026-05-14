@@ -16,7 +16,7 @@ step "run-a-script" {
         worker_pool_variable = ""
 
         git_dependencies {
-            default_branch = "main"
+            default_branch = "master"
             git_credential_id = "GitCredentials-2"
             git_credential_type = "Library"
             repository_uri = "https://github.com/gavinguler/chef-agent"
