@@ -9,8 +9,8 @@ echo "=== Deploying Chef Agent ==="
 cd "$APP_DIR"
 
 echo "Pulling latest code from main..."
-git fetch origin main
-git reset --hard origin/main
+git fetch origin master
+git reset --hard origin/master
 
 echo "Installing Python dependencies..."
 .venv/bin/pip install -r requirements.txt --quiet
