@@ -8,15 +8,37 @@ jobs:
   deploy:
     name: Deploy via Octopus Deploy
     runs-on: [self-hosted, chef-agent]
+    env:
+      OCTOPUS_URL: http://192.168.0.210:8080
+      OCTOPUS_SPACE: Spaces-1
+      OCTOPUS_PROJECT_ID: Projects-21
+      OCTOPUS_ENV_ID: Environments-1
 
     steps:
-      - name: Create and Deploy Octopus Release
-        uses: OctopusDeployLabs/create-release-deploy-action@v3
-        with:
-          api_key: ${{ secrets.OCTOPUS_API_KEY }}
-          server: http://192.168.0.210:8080
-          project: chef-agent
-          release_number: "0.0.${{ github.run_number }}"
-          deploy_to: home-lab
-          progress: true
-          wait_for_deployment: true
+      - name: Create Octopus Release
+        id: release
+        run: |
+          VERSION="0.0.${{ github.run_number }}"
+          BODY=$(printf '{"ProjectId":"%s","Version":"%s","GitCommit":"%s","GitRef":"refs/heads/master"}' \
+            "$OCTOPUS_PROJECT_ID" "$VERSION" "${{ github.sha }}")
+
+          RESPONSE=$(curl -sf -X POST "$OCTOPUS_URL/api/$OCTOPUS_SPACE/releases" \
+            -H "X-Octopus-ApiKey: ${{ secrets.OCTOPUS_API_KEY }}" \
+            -H "Content-Type: application/json" \
+            -d "$BODY")
+
+          RELEASE_ID=$(echo "$RESPONSE" | python3 -c "import sys,json; print(json.load(sys.stdin)['Id'])")
+          echo "release_id=$RELEASE_ID" >> $GITHUB_OUTPUT
+          echo "Release $VERSION aangemaakt: $RELEASE_ID"
+
+      - name: Deploy Release to home-lab
+        run: |
+          BODY=$(printf '{"ReleaseId":"%s","EnvironmentId":"%s"}' \
+            "${{ steps.release.outputs.release_id }}" "$OCTOPUS_ENV_ID")
+
+          curl -sf -X POST "$OCTOPUS_URL/api/$OCTOPUS_SPACE/deployments" \
+            -H "X-Octopus-ApiKey: ${{ secrets.OCTOPUS_API_KEY }}" \
+            -H "Content-Type: application/json" \
+            -d "$BODY"
+
+          echo "Deploy gestart naar home-lab!"
