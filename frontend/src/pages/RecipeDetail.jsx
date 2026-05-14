@@ -79,9 +79,33 @@ export default function RecipeDetail() {
     [recipe.koolhydraten_g ? `${Math.round(recipe.koolhydraten_g)}g` : null, "KH"],
   ].filter(([v]) => v != null);
 
-  const ingredientLines = recipe.instructies
-    ? recipe.instructies.split("\n").filter(Boolean).slice(0, 12)
+  const rawLines = recipe.instructies
+    ? recipe.instructies.split("\n").map(l => l.trim()).filter(Boolean)
     : [];
+
+  const INGREDIENT_RE = /^([-•*–]\s*|(\d[\d/,.½¼¾]*\s*(g|ml|kg|l|dl|el|tl|stuks?|blikjes?|zakjes?|teen|takjes?|snufjes?|bosjes?|handvol|kop|eetlepel|theelepel)\b))/i;
+
+  const hasStructure = rawLines.some(l =>
+    INGREDIENT_RE.test(l) || /^(stap\s*\d|(\d+)\s*[.:)]\s+\S)/i.test(l)
+  );
+  const ingredients = [];
+  const steps = [];
+
+  if (hasStructure) {
+    rawLines.forEach(line => {
+      if (INGREDIENT_RE.test(line)) {
+        ingredients.push(line.replace(/^[-•*–]\s*/, ""));
+      } else {
+        steps.push(line);
+      }
+    });
+  } else {
+    steps.push(...rawLines);
+  }
+
+  const displaySteps = steps
+    .map(s => s.replace(/^stap\s*\d+\s*[.:)?\s]*/i, "").replace(/^\d+\s*[.:)]\s*/, "").trim())
+    .filter(Boolean);
 
   if (editing) {
     return (
@@ -228,23 +252,46 @@ export default function RecipeDetail() {
           </div>
         )}
 
-        {/* Ingredients card */}
-        {ingredientLines.length > 0 && (
+        {/* Instructions */}
+        {rawLines.length > 0 ? (
           <>
-            <p className="eyebrow mt-6 mb-[10px]">Bereiding</p>
-            <div className="bg-surface border border-line rounded-[14px] overflow-hidden">
-              {ingredientLines.map((line, idx) => (
-                <div
-                  key={idx}
-                  className="flex px-[14px] py-[11px] text-[13px]"
-                  style={{ borderBottom: idx < ingredientLines.length - 1 ? '1px solid #efece4' : 'none' }}
-                >
-                  <span className="w-16 text-ink3 flex-shrink-0">{idx + 1}.</span>
-                  <span className="flex-1">{line}</span>
+            {ingredients.length > 0 && (
+              <>
+                <p className="eyebrow mt-6 mb-3">Ingrediënten</p>
+                <div className="space-y-[10px]">
+                  {ingredients.map((ing, i) => (
+                    <div key={i} className="flex items-start gap-3">
+                      <span className="mt-[7px] w-[6px] h-[6px] rounded-full flex-shrink-0" style={{ background: '#c2603a' }} />
+                      <span className="text-[14px] leading-[1.5]">{ing}</span>
+                    </div>
+                  ))}
                 </div>
-              ))}
-            </div>
+              </>
+            )}
+
+            {displaySteps.length > 0 && (
+              <>
+                <p className="eyebrow mt-6 mb-4">Bereiding</p>
+                <div className="space-y-5">
+                  {displaySteps.map((step, i) => (
+                    <div key={i} className="flex items-start gap-4">
+                      <span
+                        className="flex-shrink-0 w-8 h-8 rounded-full text-white text-[13px] font-bold grid place-items-center"
+                        style={{ background: '#1a1f1a' }}
+                      >
+                        {i + 1}
+                      </span>
+                      <p className="text-[14px] leading-[1.65] pt-[5px] flex-1">{step}</p>
+                    </div>
+                  ))}
+                </div>
+              </>
+            )}
           </>
+        ) : (
+          <div className="mt-6 px-4 py-6 rounded-[14px] border border-line text-center" style={{ borderStyle: 'dashed' }}>
+            <p className="text-[13px] text-ink3">Nog geen bereiding — klik op bewerken om stappen toe te voegen</p>
+          </div>
         )}
 
         {/* AI macro button */}
