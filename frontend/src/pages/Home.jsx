@@ -1,6 +1,6 @@
 import { useEffect, useState, useMemo } from "react";
 import { useNavigate } from "react-router-dom";
-import { Bell, ShoppingCart, ChevronRight, Snowflake } from "lucide-react";
+import { Bell, ShoppingCart } from "lucide-react";
 import { getWeekPlan, getCurrentWeek } from "../api/client";
 import { getStoredWeek } from "../lib/weekStorage";
 import {
@@ -177,7 +177,7 @@ export default function Home() {
       <div className="hidden lg:block">
         <DesktopShell
           title="Vandaag"
-          subtitle={`${thema ? thema + ' · ' : ''}week ${cycleWeek}`}
+          subtitle={`${todayNl.charAt(0).toUpperCase() + todayNl.slice(1)} · week ${cycleWeek}${thema ? ' · ' + thema : ''}`}
         >
           {loading ? (
             <div className="animate-pulse bg-surface rounded-[12px] h-64" />
