@@ -1,200 +1,149 @@
-import { useEffect, useState } from "react";
-import { useNavigate, useSearchParams } from "react-router-dom";
-import { Search, Plus, ChevronRight, Sparkles } from "lucide-react";
-import { getRecipes, createRecipe, deleteRecipe, aiFillMacros } from "../api/client";
+import { useEffect, useState, useMemo } from "react";
+import { useNavigate } from "react-router-dom";
+import { Plus } from "lucide-react";
+import { getRecipes } from "../api/client";
+import {
+  IOSStatusBar, IOSLargeHeader, IOSGroupHeader, IOSGroup, IOSRow,
+  IOSSearchField, IOSSegmented, IOSTabBar,
+} from "../components/IOSPrimitives";
+import DesktopShell from "../components/DesktopShell";
 
-const FILTERS = ["Alle", "Diner", "Lunch", "Ontbijt", "Snack"];
+const FILTERS = ["Alle", "Diner", "Lunch", "Veggie"];
+
+function useRecipes() {
+  const [recipes, setRecipes] = useState([]);
+  const [loading, setLoading] = useState(true);
+  useEffect(() => {
+    getRecipes().then(setRecipes).finally(() => setLoading(false));
+  }, []);
+  return { recipes, loading };
+}
 
 export default function Recipes() {
   const navigate = useNavigate();
-  const [recipes, setRecipes] = useState([]);
+  const { recipes, loading } = useRecipes();
   const [search, setSearch] = useState("");
-  const [debouncedSearch, setDebouncedSearch] = useState("");
-  const [initialized, setInitialized] = useState(false);
-  const [activeFilter, setActiveFilter] = useState("Alle");
-  const [showForm, setShowForm] = useState(false);
-  const [formData, setFormData] = useState({ naam: "", ingredienten: "", categorie: "diner" });
-  const [macros, setMacros] = useState(null);
-  const [loading, setLoading] = useState(false);
-  const [saving, setSaving] = useState(false);
-  const [error, setError] = useState(null);
-  const [searchParams] = useSearchParams();
+  const [filter, setFilter] = useState("Alle");
+  const [debounced, setDebounced] = useState("");
 
   useEffect(() => {
-    if (searchParams.get("new") === "1") setShowForm(true);
-  }, [searchParams]);
-
-  useEffect(() => {
-    const t = setTimeout(() => setDebouncedSearch(search), 300);
+    const t = setTimeout(() => setDebounced(search), 300);
     return () => clearTimeout(t);
   }, [search]);
 
-  useEffect(() => {
-    let cancelled = false;
-    getRecipes(debouncedSearch)
-      .then((data) => { if (!cancelled) { setRecipes(data); setInitialized(true); } })
-      .catch(console.error);
-    return () => { cancelled = true; };
-  }, [debouncedSearch]);
-
-  const filteredRecipes = activeFilter === "Alle"
-    ? recipes
-    : recipes.filter(r => r.categorie?.toLowerCase() === activeFilter.toLowerCase());
-
-  const handleFormDataChange = (field, value) => {
-    setFormData((prev) => ({ ...prev, [field]: value }));
-    if (field === "naam" || field === "ingredienten") setMacros(null);
-  };
-
-  const handleAiFill = async () => {
-    if (!formData.naam || !formData.ingredienten) return;
-    setLoading(true); setError(null);
-    try {
-      setMacros(await aiFillMacros(formData.naam, formData.ingredienten.split("\n").filter(Boolean)));
-    } catch { setError("AI service niet beschikbaar"); }
-    finally { setLoading(false); }
-  };
-
-  const handleCreate = async (e) => {
-    e.preventDefault(); setSaving(true); setError(null);
-    try {
-      await createRecipe({ naam: formData.naam, categorie: formData.categorie, ...macros });
-      setFormData({ naam: "", ingredienten: "", categorie: "diner" });
-      setMacros(null); setShowForm(false);
-      getRecipes(debouncedSearch).then(setRecipes).catch(console.error);
-    } catch { setError("Opslaan mislukt, probeer opnieuw"); }
-    finally { setSaving(false); }
-  };
+  const filtered = useMemo(() => {
+    return recipes.filter(r => {
+      const matchSearch = !debounced || r.naam?.toLowerCase().includes(debounced.toLowerCase());
+      const matchFilter = filter === "Alle"
+        || (filter === "Diner" && r.categorie?.toLowerCase() === "diner")
+        || (filter === "Lunch" && r.categorie?.toLowerCase() === "lunch")
+        || (filter === "Veggie" && r.is_vegetarisch);
+      return matchSearch && matchFilter;
+    });
+  }, [recipes, debounced, filter]);
 
   return (
-    <div className="bg-bg min-h-screen pb-[100px]">
-      <div className="h-[54px]" />
+    <>
+      {/* ── Mobile ── */}
+      <div className="lg:hidden min-h-screen bg-bg pb-[100px]">
+        <IOSStatusBar />
+        <IOSLargeHeader
+          title="Recepten"
+          accessory={
+            <button className="w-[32px] h-[32px] rounded-full bg-brand flex items-center justify-center">
+              <Plus size={20} className="text-white" />
+            </button>
+          }
+        />
 
-      {/* Header */}
-      <div className="px-5 pt-[14px] pb-3 flex justify-between items-center">
-        <h1 className="h1-page">Recepten</h1>
-        <button
-          onClick={() => { setShowForm((v) => !v); setError(null); }}
-          className="h-9 px-[14px] rounded-[18px] flex items-center gap-[5px] text-[13px] font-medium"
-          style={{ background: showForm ? '#e7e4dc' : '#1a1f1a', color: showForm ? '#1a1f1a' : '#fff' }}
+        <IOSSearchField placeholder="Zoek recepten..." value={search} onChange={setSearch} />
+        <IOSSegmented items={FILTERS} value={filter} onChange={setFilter} />
+
+        <IOSGroupHeader>{filtered.length} gerechten</IOSGroupHeader>
+        <IOSGroup>
+          {loading ? (
+            <div className="h-32 animate-pulse" />
+          ) : filtered.map((r, i) => (
+            <IOSRow
+              key={r.id}
+              icon={
+                r.image_url
+                  ? <img src={r.image_url} alt={r.naam} className="w-full h-full object-cover rounded-[7px]" />
+                  : <span className="text-[16px]">🍽️</span>
+              }
+              iconBg={r.image_url ? "transparent" : "#e5e5ea"}
+              title={r.naam}
+              sub={[r.categorie, r.eiwit_g ? `${Math.round(r.eiwit_g)}g eiwit` : null, r.kcal ? `${r.kcal} kcal` : null].filter(Boolean).join(' · ')}
+              last={i === filtered.length - 1}
+              onClick={() => navigate(`/recepten/${r.id}`)}
+            />
+          ))}
+        </IOSGroup>
+
+        <IOSTabBar />
+      </div>
+
+      {/* ── Desktop ── */}
+      <div className="hidden lg:block">
+        <DesktopShell
+          title="Recepten"
+          subtitle={`${filtered.length} gerechten`}
+          accessory={
+            <button className="flex items-center gap-2 px-4 py-2 rounded-[8px] bg-brand text-white text-[14px] font-semibold">
+              <Plus size={16} />
+              Nieuw recept
+            </button>
+          }
         >
-          <Plus size={16} strokeWidth={1.8} /> {showForm ? "Annuleer" : "Nieuw"}
-        </button>
-      </div>
-
-      {/* Search */}
-      <div className="px-5 pb-3">
-        <div className="flex items-center gap-2 px-[14px] py-[10px] bg-surface rounded-[12px] border border-line">
-          <Search size={16} strokeWidth={1.6} className="text-ink3 flex-shrink-0" />
-          <input
-            aria-label="Zoek recept"
-            className="flex-1 bg-transparent text-[14px] text-ink placeholder-ink3 focus:outline-none"
-            placeholder="Zoek recept..."
-            value={search}
-            onChange={(e) => setSearch(e.target.value)}
-          />
-        </div>
-      </div>
-
-      {/* Filter chips */}
-      <div className="px-5 pb-4 flex gap-[6px] flex-wrap">
-        {FILTERS.map((f) => (
-          <button
-            key={f}
-            onClick={() => setActiveFilter(f)}
-            className="px-3 py-[5px] rounded-[14px] text-[12px] font-medium transition-colors"
-            style={{
-              background: activeFilter === f ? '#1a1f1a' : '#ffffff',
-              color: activeFilter === f ? '#fff' : '#5d655c',
-              border: activeFilter === f ? 'none' : '1px solid #e7e4dc',
-            }}
-          >{f}</button>
-        ))}
-      </div>
-
-      {/* New recipe form */}
-      {showForm && (
-        <div className="px-5 mb-4">
-          <form onSubmit={handleCreate} className="bg-surface rounded-[14px] border border-line p-4">
-            <p className="text-[13px] font-semibold mb-3">Nieuw recept</p>
-            <input
-              className="w-full border border-line bg-line2 rounded-[10px] px-3 py-[10px] text-[13px] mb-2 focus:outline-none focus:ring-1 focus:ring-brand"
-              placeholder="Naam recept"
-              value={formData.naam}
-              onChange={(e) => handleFormDataChange("naam", e.target.value)}
-              required
-            />
-            <select
-              className="w-full border border-line bg-line2 rounded-[10px] px-3 py-[10px] text-[13px] mb-2"
-              value={formData.categorie}
-              onChange={(e) => handleFormDataChange("categorie", e.target.value)}
-            >
-              <option value="ontbijt">Ontbijt</option>
-              <option value="lunch">Lunch</option>
-              <option value="diner">Diner</option>
-              <option value="snack">Snack</option>
-            </select>
-            <textarea
-              className="w-full border border-line bg-line2 rounded-[10px] px-3 py-[10px] text-[13px] mb-2 h-20 resize-none focus:outline-none focus:ring-1 focus:ring-brand"
-              placeholder={"Ingrediënten (één per regel)\nbijv:\n450g gehakt\n200g pasta"}
-              value={formData.ingredienten}
-              onChange={(e) => handleFormDataChange("ingredienten", e.target.value)}
-            />
-            {error && <p className="text-[12px] mb-2" style={{ color: '#c2603a' }}>{error}</p>}
-            {macros && (
-              <div className="flex gap-2 mb-3 flex-wrap">
-                <span className="text-[11px] font-medium px-2 py-1 rounded-[6px]" style={{ background: '#e9efe6', color: '#1f3a2c' }}>{macros.eiwit_g}g eiwit</span>
-                <span className="text-[11px] font-medium px-2 py-1 rounded-[6px]" style={{ background: '#fef3e2', color: '#92400e' }}>{macros.kcal} kcal</span>
-                <span className="text-[11px] font-medium px-2 py-1 rounded-[6px]" style={{ background: '#fdeee8', color: '#9a3412' }}>{macros.vet_g}g vet</span>
-                <span className="text-[11px] font-medium px-2 py-1 rounded-[6px]" style={{ background: '#f0ebff', color: '#5b21b6' }}>{macros.koolhydraten_g}g KH</span>
-              </div>
-            )}
+          {/* Filter bar */}
+          <div className="flex items-center gap-3 mb-6">
             <div className="flex gap-2">
-              <button
-                type="button" onClick={handleAiFill} disabled={loading || saving}
-                className="flex-1 flex items-center justify-center gap-[6px] border border-line bg-line2 text-ink2 text-[13px] font-medium py-[10px] rounded-[10px] disabled:opacity-50"
-              >
-                <Sparkles size={14} strokeWidth={1.6} style={{ color: '#c2603a' }} />
-                {loading ? "AI bezig..." : "Macro's schatten"}
-              </button>
-              <button
-                type="submit" disabled={loading || saving}
-                className="flex-1 bg-brand text-white text-[13px] font-medium py-[10px] rounded-[10px] disabled:opacity-50"
-              >
-                {saving ? "Opslaan..." : "Opslaan"}
-              </button>
+              {FILTERS.map(f => (
+                <button
+                  key={f}
+                  onClick={() => setFilter(f)}
+                  className="px-3 py-[6px] rounded-full text-[13px] font-medium transition-colors"
+                  style={filter === f
+                    ? { background: '#1f7a4d', color: '#fff' }
+                    : { background: 'rgba(120,120,128,0.16)', color: 'rgba(60,60,67,0.6)' }
+                  }
+                >
+                  {f}
+                </button>
+              ))}
             </div>
-          </form>
-        </div>
-      )}
+          </div>
 
-      {/* Recipe list */}
-      <div className="px-5 flex flex-col gap-[10px]">
-        {initialized && filteredRecipes.length === 0 && (
-          <p className="text-center text-ink3 text-[13px] py-12">Geen recepten gevonden</p>
-        )}
-        {filteredRecipes.map((r) => (
-          <button
-            key={r.id}
-            onClick={() => navigate(`/recepten/${r.id}`)}
-            className="bg-surface rounded-[14px] border border-line p-[10px] flex gap-3 items-center text-left w-full"
-          >
-            <div className="w-16 h-16 rounded-[10px] bg-line2 flex-shrink-0 flex items-center justify-center">
-              <span className="text-[22px]">{r.categorie === "ontbijt" ? "🥣" : r.categorie === "lunch" ? "🥗" : r.categorie === "snack" ? "🍎" : "🍽️"}</span>
+          {/* Grid */}
+          {loading ? (
+            <div className="animate-pulse bg-surface rounded-[12px] h-64" />
+          ) : (
+            <div className="grid gap-4" style={{ gridTemplateColumns: 'repeat(auto-fill, minmax(200px, 1fr))' }}>
+              {filtered.map(r => (
+                <div
+                  key={r.id}
+                  onClick={() => navigate(`/recepten/${r.id}`)}
+                  className="bg-surface rounded-[12px] overflow-hidden cursor-pointer hover:shadow-md transition-shadow"
+                >
+                  <div className="h-[130px] bg-fill flex items-center justify-center">
+                    {r.image_url
+                      ? <img src={r.image_url} alt={r.naam} className="w-full h-full object-cover" />
+                      : <span className="text-4xl">🍽️</span>
+                    }
+                  </div>
+                  <div className="p-3">
+                    <p className="text-[11px] font-bold uppercase tracking-wide text-ink2">{r.categorie}</p>
+                    <p className="text-[15px] font-semibold text-ink mt-1 leading-snug">{r.naam}</p>
+                    <p className="text-[12px] text-ink2 mt-1">
+                      {[r.eiwit_g ? `${Math.round(r.eiwit_g)}g eiwit` : null, r.kcal ? `${r.kcal} kcal` : null].filter(Boolean).join(' · ')}
+                    </p>
+                  </div>
+                </div>
+              ))}
             </div>
-            <div className="flex-1 min-w-0">
-              <p className="eyebrow mb-[2px]">{r.categorie ?? "recept"}</p>
-              <p className="text-[14px] font-semibold tracking-tight truncate mb-[5px]">{r.naam}</p>
-              <div className="flex gap-[10px] text-[11px] text-ink2">
-                {r.eiwit_g && <span>{Math.round(r.eiwit_g)}g eiwit</span>}
-                {r.eiwit_g && r.kcal && <span>·</span>}
-                {r.kcal && <span>{r.kcal} kcal</span>}
-              </div>
-            </div>
-            <ChevronRight size={16} strokeWidth={1.6} className="text-ink3 flex-shrink-0" />
-          </button>
-        ))}
+          )}
+        </DesktopShell>
       </div>
-    </div>
+    </>
   );
 }
