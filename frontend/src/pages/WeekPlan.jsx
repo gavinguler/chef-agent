@@ -82,27 +82,33 @@ export default function WeekPlan() {
                 <p className="text-red-700 text-[14px]">{error}</p>
               </div>
             )}
-            <IOSGroupHeader>Maaltijden deze week</IOSGroupHeader>
-            <IOSGroup>
-              {DAYS_NL.map((day, i) => {
-                const dagData = weekPlan?.dagen?.find(d => d.dag?.toLowerCase() === day);
-                const diner = dagData?.maaltijden?.find(m => m.maaltijd_type === "diner");
-                const isToday = day === todayNl;
-                return (
-                  <IOSRow
-                    key={day}
-                    icon={
-                      <span className="text-[12px] font-bold text-white">{DAYS_SHORT[i]}</span>
-                    }
-                    iconBg={isToday ? '#1f7a4d' : 'rgba(120,120,128,0.3)'}
-                    title={diner?.naam ?? "Niet ingesteld"}
-                    sub={diner?.eiwit_g ? `${Math.round(diner.eiwit_g)}g eiwit` : ""}
-                    last={i === 6}
-                    onClick={diner?.recept_id ? () => navigate(`/recepten/${diner.recept_id}`) : undefined}
-                  />
-                );
-              })}
-            </IOSGroup>
+            {DAYS_NL.map((day, i) => {
+              const dagData = weekPlan?.dagen?.find(d => d.dag?.toLowerCase() === day);
+              const dayMeals = MEAL_TYPES
+                .map(type => ({ type, meal: dagData?.maaltijden?.find(m => m.maaltijd_type === type) }))
+                .filter(x => x.meal);
+              const isToday = day === todayNl;
+              return (
+                <div key={day}>
+                  <IOSGroupHeader>
+                    {DAYS_SHORT[i]}{isToday ? ' · Vandaag' : ''}
+                  </IOSGroupHeader>
+                  <IOSGroup>
+                    {dayMeals.length > 0 ? dayMeals.map(({ type, meal }, j) => (
+                      <IOSRow
+                        key={type}
+                        title={meal.naam}
+                        sub={MEAL_LABEL[type] + (meal.eiwit_g ? ` · ${Math.round(meal.eiwit_g)}g eiwit` : "")}
+                        last={j === dayMeals.length - 1}
+                        onClick={meal.recept_id ? () => navigate(`/recepten/${meal.recept_id}`) : undefined}
+                      />
+                    )) : (
+                      <IOSRow title="Geen maaltijden gepland" last />
+                    )}
+                  </IOSGroup>
+                </div>
+              );
+            })}
 
             <IOSGroupHeader>Boodschappen</IOSGroupHeader>
             <IOSGroup>
@@ -172,32 +178,36 @@ export default function WeekPlan() {
                 })}
               </div>
 
-              {/* Diner row */}
-              <div className="grid gap-3" style={{ gridTemplateColumns: `120px repeat(7, 1fr)` }}>
-                <div className="flex items-center">
-                  <p className="text-[13px] font-semibold text-ink2">{MEAL_LABEL["diner"]}</p>
-                </div>
-                {DAYS_NL.map((day, i) => {
-                  const dagData = weekPlan?.dagen?.find(d => d.dag?.toLowerCase() === day);
-                  const maaltijd = dagData?.maaltijden?.find(m => m.maaltijd_type === "diner");
-                  const isToday = day === todayNl;
-                  return (
-                    <div
-                      key={`diner-${day}`}
-                      onClick={() => maaltijd?.recept_id && navigate(`/recepten/${maaltijd.recept_id}`)}
-                      className={`bg-surface rounded-[8px] p-3 ${maaltijd?.recept_id ? 'cursor-pointer hover:shadow-sm' : ''}`}
-                      style={isToday ? { background: 'rgba(31,122,77,0.06)', outline: '1.5px solid rgba(31,122,77,0.3)' } : {}}
-                    >
-                      {maaltijd
-                        ? <>
-                            <p className="text-[13px] font-medium text-ink leading-snug">{maaltijd.naam}</p>
-                            {maaltijd.eiwit_g && <p className="text-[11px] text-ink2 mt-1">{Math.round(maaltijd.eiwit_g)}g eiwit</p>}
-                          </>
-                        : <p className="text-[12px] text-ink3 italic">—</p>
-                      }
+              {/* All meal type rows */}
+              <div className="space-y-2">
+                {MEAL_TYPES.map(mealType => (
+                  <div key={mealType} className="grid gap-2" style={{ gridTemplateColumns: `120px repeat(7, 1fr)` }}>
+                    <div className="flex items-center">
+                      <p className="text-[13px] font-semibold text-ink2">{MEAL_LABEL[mealType]}</p>
                     </div>
-                  );
-                })}
+                    {DAYS_NL.map(day => {
+                      const dagData = weekPlan?.dagen?.find(d => d.dag?.toLowerCase() === day);
+                      const maaltijd = dagData?.maaltijden?.find(m => m.maaltijd_type === mealType);
+                      const isToday = day === todayNl;
+                      return (
+                        <div
+                          key={`${mealType}-${day}`}
+                          onClick={() => maaltijd?.recept_id && navigate(`/recepten/${maaltijd.recept_id}`)}
+                          className={`bg-surface rounded-[8px] p-2 min-h-[52px] ${maaltijd?.recept_id ? 'cursor-pointer hover:shadow-sm' : ''}`}
+                          style={isToday ? { background: 'rgba(31,122,77,0.06)', outline: '1.5px solid rgba(31,122,77,0.3)' } : {}}
+                        >
+                          {maaltijd
+                            ? <>
+                                <p className="text-[12px] font-medium text-ink leading-snug">{maaltijd.naam}</p>
+                                {maaltijd.eiwit_g && <p className="text-[10px] text-ink2 mt-px">{Math.round(maaltijd.eiwit_g)}g</p>}
+                              </>
+                            : <p className="text-[11px] text-ink3">—</p>
+                          }
+                        </div>
+                      );
+                    })}
+                  </div>
+                ))}
               </div>
             </div>
           )}
