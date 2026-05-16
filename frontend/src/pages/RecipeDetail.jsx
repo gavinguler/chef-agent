@@ -56,9 +56,9 @@ export default function RecipeDetail() {
     ? recipe.ingredienten.split("\n").filter(Boolean)
     : Array.isArray(recipe.ingredienten) ? recipe.ingredienten : [];
 
-  const bereidingSteps = typeof recipe.bereiding === "string"
-    ? recipe.bereiding.split("\n").filter(Boolean)
-    : [];
+  const bereidingSteps = typeof recipe.instructies === "string"
+    ? recipe.instructies.split("\n").filter(Boolean)
+    : Array.isArray(recipe.instructies) ? recipe.instructies : [];
 
   return (
     <>
