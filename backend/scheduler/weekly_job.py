@@ -1,14 +1,17 @@
 import asyncio
-from datetime import datetime
+from datetime import datetime, date, timedelta
 from sqlalchemy.orm import Session
 from backend.db.session import SessionLocal
 from backend.db.models import MealPlan, ShoppingList, FreezerItem, NutritionCycle
 from backend.telegram.bot import send_weekly_message
+from backend.config import settings
 
 
 def get_current_cycle_week() -> int:
-    week_of_year = datetime.now().isocalendar()[1]
-    return ((week_of_year - 1) % 8) + 1
+    jan4 = date(settings.cycle_anchor_year, 1, 4)
+    anchor = jan4 + timedelta(days=(settings.cycle_anchor_iso_week - 1) * 7 - (jan4.isoweekday() - 1))
+    weeks_since = (date.today() - anchor).days // 7
+    return (weeks_since % 8) + 1
 
 
 def build_week_data(db: Session, cyclus_week: int) -> dict:
@@ -17,6 +20,7 @@ def build_week_data(db: Session, cyclus_week: int) -> dict:
 
     dag_namen = ["maandag", "dinsdag", "woensdag", "donderdag", "vrijdag", "zaterdag", "zondag"]
     batch_dagen = {"donderdag", "zondag"}
+    maaltijd_volgorde = {"ontbijt": 0, "lunch": 1, "snack": 2, "diner": 3, "avondsnack": 4}
 
     dagen = []
     for dag in dag_namen:
@@ -25,6 +29,7 @@ def build_week_data(db: Session, cyclus_week: int) -> dict:
             .filter(MealPlan.cyclus_week == cyclus_week, MealPlan.dag == dag)
             .all()
         )
+        entries.sort(key=lambda e: maaltijd_volgorde.get(e.maaltijd_type, 99))
         maaltijden = []
         totaal_eiwit = 0.0
         totaal_kcal = 0

@@ -1,0 +1,1092 @@
+changes:
+- week: 1
+  dag: dinsdag
+  maaltijd_type: snack
+  nieuw_recept: Yoghurt-bowl + appel + pindakaas
+  oud_recept: Eieren + banaan
+  oud_kcal: 220
+  nieuw_kcal: 420
+- week: 1
+  dag: dinsdag
+  maaltijd_type: diner
+  nieuw_recept: Zalm met aardappel en spinazie
+  oud_recept: Zalm met citroen
+  oud_kcal: 360
+  nieuw_kcal: 620
+- week: 1
+  dag: dinsdag
+  maaltijd_type: avondsnack
+  nieuw_recept: Brood met pindakaas en banaan
+  oud_recept: null
+  oud_kcal: 0
+  nieuw_kcal: 520
+- week: 1
+  dag: donderdag
+  maaltijd_type: snack
+  nieuw_recept: Yoghurt-bowl + appel + pindakaas
+  oud_recept: Kwark + appel + pindakaas
+  oud_kcal: 420
+  nieuw_kcal: 420
+- week: 1
+  dag: donderdag
+  maaltijd_type: lunch
+  nieuw_recept: Wraps met eieren en avocado
+  oud_recept: Eieren ontbijt met brood
+  oud_kcal: 480
+  nieuw_kcal: 580
+- week: 1
+  dag: zaterdag
+  maaltijd_type: snack
+  nieuw_recept: Yoghurt-bowl + banaan + pindakaas
+  oud_recept: Appel + gemengde noten
+  oud_kcal: 240
+  nieuw_kcal: 430
+- week: 1
+  dag: zaterdag
+  maaltijd_type: diner
+  nieuw_recept: Hartige pannenkoeken met ei en spinazie
+  oud_recept: Kipfilet airfryer
+  oud_kcal: 400
+  nieuw_kcal: 680
+- week: 1
+  dag: zondag
+  maaltijd_type: snack
+  nieuw_recept: Yoghurt-bowl + bessen + noten
+  oud_recept: Kwark + bessen + noten
+  oud_kcal: 430
+  nieuw_kcal: 430
+- week: 1
+  dag: zondag
+  maaltijd_type: lunch
+  nieuw_recept: Caprese met mozzarella en eieren
+  oud_recept: Eieren omelet met kaas en brood
+  oud_kcal: 480
+  nieuw_kcal: 540
+- week: 1
+  dag: maandag
+  maaltijd_type: snack
+  nieuw_recept: Yoghurt-bowl + appel + pindakaas
+  oud_recept: Kwark + appel + pindakaas
+  oud_kcal: 420
+  nieuw_kcal: 420
+- week: 2
+  dag: dinsdag
+  maaltijd_type: snack
+  nieuw_recept: Yoghurt-bowl + appel + pindakaas
+  oud_recept: Eieren + banaan
+  oud_kcal: 220
+  nieuw_kcal: 420
+- week: 2
+  dag: dinsdag
+  maaltijd_type: diner
+  nieuw_recept: Witvis met aardappel en groente
+  oud_recept: Witvis (kabeljauw) oven
+  oud_kcal: 280
+  nieuw_kcal: 550
+- week: 2
+  dag: donderdag
+  maaltijd_type: snack
+  nieuw_recept: Yoghurt-bowl + havermout + banaan
+  oud_recept: Kwark + appel + pindakaas
+  oud_kcal: 420
+  nieuw_kcal: 490
+- week: 2
+  dag: donderdag
+  maaltijd_type: diner
+  nieuw_recept: Kikkererwten-stoof met couscous en feta
+  oud_recept: Kikkererwten-stoof (batch)
+  oud_kcal: 340
+  nieuw_kcal: 580
+- week: 2
+  dag: vrijdag
+  maaltijd_type: snack
+  nieuw_recept: Yoghurt-bowl + banaan + pindakaas
+  oud_recept: Kwark + banaan + pindakaas
+  oud_kcal: 430
+  nieuw_kcal: 430
+- week: 2
+  dag: vrijdag
+  maaltijd_type: lunch
+  nieuw_recept: Kikkererwten-stoof met couscous en feta
+  oud_recept: Kikkererwten-stoof (batch)
+  oud_kcal: 340
+  nieuw_kcal: 580
+- week: 2
+  dag: zaterdag
+  maaltijd_type: snack
+  nieuw_recept: Yoghurt-bowl + banaan + pindakaas
+  oud_recept: Appel + gemengde noten
+  oud_kcal: 240
+  nieuw_kcal: 430
+- week: 2
+  dag: zondag
+  maaltijd_type: snack
+  nieuw_recept: Yoghurt-bowl + bessen + noten
+  oud_recept: Kwark + bessen + noten
+  oud_kcal: 430
+  nieuw_kcal: 430
+- week: 2
+  dag: zondag
+  maaltijd_type: lunch
+  nieuw_recept: Eieren omelet met spinazie en paprika
+  oud_recept: Eieren met groente en brood
+  oud_kcal: 440
+  nieuw_kcal: 580
+- week: 2
+  dag: maandag
+  maaltijd_type: snack
+  nieuw_recept: Yoghurt-bowl + appel + pindakaas
+  oud_recept: Kwark + appel + pindakaas
+  oud_kcal: 420
+  nieuw_kcal: 420
+- week: 3
+  dag: maandag
+  maaltijd_type: snack
+  nieuw_recept: Yoghurt-bowl + appel + pindakaas
+  oud_recept: Kwark + appel + pindakaas
+  oud_kcal: 420
+  nieuw_kcal: 420
+- week: 3
+  dag: maandag
+  maaltijd_type: diner
+  nieuw_recept: Rosbief met aardappel en groente
+  oud_recept: Rosbief slow roast
+  oud_kcal: 350
+  nieuw_kcal: 620
+- week: 3
+  dag: dinsdag
+  maaltijd_type: snack
+  nieuw_recept: Yoghurt-bowl + appel + pindakaas
+  oud_recept: Eieren + banaan
+  oud_kcal: 220
+  nieuw_kcal: 420
+- week: 3
+  dag: dinsdag
+  maaltijd_type: diner
+  nieuw_recept: Zalm met aardappel en spinazie
+  oud_recept: Zalm met citroen
+  oud_kcal: 360
+  nieuw_kcal: 620
+- week: 3
+  dag: donderdag
+  maaltijd_type: snack
+  nieuw_recept: Yoghurt-bowl + havermout + banaan
+  oud_recept: Kwark + appel + pindakaas
+  oud_kcal: 420
+  nieuw_kcal: 490
+- week: 3
+  dag: donderdag
+  maaltijd_type: diner
+  nieuw_recept: Shakshuka met brood en feta
+  oud_recept: Shakshuka (batch)
+  oud_kcal: 300
+  nieuw_kcal: 550
+- week: 3
+  dag: vrijdag
+  maaltijd_type: snack
+  nieuw_recept: Yoghurt-bowl + banaan + pindakaas
+  oud_recept: Kwark + banaan + pindakaas
+  oud_kcal: 430
+  nieuw_kcal: 430
+- week: 3
+  dag: vrijdag
+  maaltijd_type: lunch
+  nieuw_recept: Shakshuka met brood en feta
+  oud_recept: Shakshuka (batch)
+  oud_kcal: 300
+  nieuw_kcal: 550
+- week: 3
+  dag: zaterdag
+  maaltijd_type: snack
+  nieuw_recept: Yoghurt-bowl + banaan + pindakaas
+  oud_recept: Appel + gemengde noten
+  oud_kcal: 240
+  nieuw_kcal: 430
+- week: 3
+  dag: zaterdag
+  maaltijd_type: diner
+  nieuw_recept: Hartige pannenkoeken met ei en spinazie
+  oud_recept: Kipfilet airfryer
+  oud_kcal: 400
+  nieuw_kcal: 680
+- week: 4
+  dag: dinsdag
+  maaltijd_type: snack
+  nieuw_recept: Yoghurt-bowl + appel + pindakaas
+  oud_recept: Eieren + banaan
+  oud_kcal: 220
+  nieuw_kcal: 420
+- week: 4
+  dag: dinsdag
+  maaltijd_type: diner
+  nieuw_recept: Witvis met aardappel en groente
+  oud_recept: Witvis (kabeljauw) oven
+  oud_kcal: 280
+  nieuw_kcal: 550
+- week: 4
+  dag: donderdag
+  maaltijd_type: snack
+  nieuw_recept: Yoghurt-bowl + havermout + banaan
+  oud_recept: Kwark + appel + pindakaas
+  oud_kcal: 420
+  nieuw_kcal: 490
+- week: 4
+  dag: donderdag
+  maaltijd_type: diner
+  nieuw_recept: Kikkererwten-stoof met couscous en feta
+  oud_recept: Kikkererwten-stoof (batch)
+  oud_kcal: 340
+  nieuw_kcal: 580
+- week: 4
+  dag: vrijdag
+  maaltijd_type: snack
+  nieuw_recept: Yoghurt-bowl + banaan + pindakaas
+  oud_recept: Kwark + banaan + pindakaas
+  oud_kcal: 430
+  nieuw_kcal: 430
+- week: 4
+  dag: vrijdag
+  maaltijd_type: lunch
+  nieuw_recept: Kikkererwten-stoof met couscous en feta
+  oud_recept: Kikkererwten-stoof (batch)
+  oud_kcal: 340
+  nieuw_kcal: 580
+- week: 4
+  dag: zaterdag
+  maaltijd_type: snack
+  nieuw_recept: Yoghurt-bowl + banaan + pindakaas
+  oud_recept: Appel + gemengde noten
+  oud_kcal: 240
+  nieuw_kcal: 430
+- week: 4
+  dag: zondag
+  maaltijd_type: snack
+  nieuw_recept: Yoghurt-bowl + bessen + noten
+  oud_recept: Kwark + bessen + noten
+  oud_kcal: 430
+  nieuw_kcal: 430
+- week: 4
+  dag: zondag
+  maaltijd_type: lunch
+  nieuw_recept: Eieren omelet met spinazie en paprika
+  oud_recept: Eieren omelet met groente en brood
+  oud_kcal: 440
+  nieuw_kcal: 580
+- week: 5
+  dag: dinsdag
+  maaltijd_type: snack
+  nieuw_recept: Yoghurt-bowl + appel + pindakaas
+  oud_recept: Eieren + banaan
+  oud_kcal: 220
+  nieuw_kcal: 420
+- week: 5
+  dag: dinsdag
+  maaltijd_type: diner
+  nieuw_recept: Zalm met aardappel en spinazie
+  oud_recept: Zalm met citroen
+  oud_kcal: 360
+  nieuw_kcal: 620
+- week: 5
+  dag: donderdag
+  maaltijd_type: snack
+  nieuw_recept: Yoghurt-bowl + havermout + banaan
+  oud_recept: Kwark + appel + pindakaas
+  oud_kcal: 420
+  nieuw_kcal: 490
+- week: 5
+  dag: donderdag
+  maaltijd_type: lunch
+  nieuw_recept: Wraps met eieren en avocado
+  oud_recept: Eieren ontbijt met brood
+  oud_kcal: 480
+  nieuw_kcal: 580
+- week: 5
+  dag: vrijdag
+  maaltijd_type: snack
+  nieuw_recept: Yoghurt-bowl + banaan + pindakaas
+  oud_recept: Kwark + banaan + pindakaas
+  oud_kcal: 430
+  nieuw_kcal: 430
+- week: 5
+  dag: vrijdag
+  maaltijd_type: lunch
+  nieuw_recept: Linzendahl met rijst en koriander
+  oud_recept: Rode linzendahl (batch)
+  oud_kcal: 390
+  nieuw_kcal: 620
+- week: 5
+  dag: zaterdag
+  maaltijd_type: snack
+  nieuw_recept: Yoghurt-bowl + banaan + pindakaas
+  oud_recept: Appel + gemengde noten
+  oud_kcal: 240
+  nieuw_kcal: 430
+- week: 5
+  dag: zaterdag
+  maaltijd_type: diner
+  nieuw_recept: Hartige pannenkoeken met ei en spinazie
+  oud_recept: Kipfilet airfryer
+  oud_kcal: 400
+  nieuw_kcal: 680
+- week: 5
+  dag: zondag
+  maaltijd_type: snack
+  nieuw_recept: Yoghurt-bowl + bessen + noten
+  oud_recept: Kwark + bessen + noten
+  oud_kcal: 430
+  nieuw_kcal: 430
+- week: 5
+  dag: zondag
+  maaltijd_type: lunch
+  nieuw_recept: Caprese met mozzarella en eieren
+  oud_recept: Eieren omelet met kaas en brood
+  oud_kcal: 480
+  nieuw_kcal: 540
+- week: 6
+  dag: dinsdag
+  maaltijd_type: snack
+  nieuw_recept: Yoghurt-bowl + appel + pindakaas
+  oud_recept: Eieren + banaan
+  oud_kcal: 220
+  nieuw_kcal: 420
+- week: 6
+  dag: dinsdag
+  maaltijd_type: diner
+  nieuw_recept: Zoete pannenkoeken met fruit en yoghurt
+  oud_recept: Zalm honing-soja
+  oud_kcal: 380
+  nieuw_kcal: 680
+- week: 6
+  dag: donderdag
+  maaltijd_type: snack
+  nieuw_recept: Yoghurt-bowl + havermout + banaan
+  oud_recept: Kwark + appel + pindakaas
+  oud_kcal: 420
+  nieuw_kcal: 490
+- week: 6
+  dag: donderdag
+  maaltijd_type: diner
+  nieuw_recept: Shakshuka met brood en feta
+  oud_recept: Shakshuka (batch)
+  oud_kcal: 300
+  nieuw_kcal: 550
+- week: 6
+  dag: vrijdag
+  maaltijd_type: snack
+  nieuw_recept: Yoghurt-bowl + banaan + pindakaas
+  oud_recept: Kwark + banaan + pindakaas
+  oud_kcal: 430
+  nieuw_kcal: 430
+- week: 6
+  dag: vrijdag
+  maaltijd_type: lunch
+  nieuw_recept: Shakshuka met brood en feta
+  oud_recept: Shakshuka (batch)
+  oud_kcal: 300
+  nieuw_kcal: 550
+- week: 6
+  dag: zaterdag
+  maaltijd_type: snack
+  nieuw_recept: Yoghurt-bowl + banaan + pindakaas
+  oud_recept: Appel + gemengde noten
+  oud_kcal: 240
+  nieuw_kcal: 430
+- week: 6
+  dag: maandag
+  maaltijd_type: snack
+  nieuw_recept: Yoghurt-bowl + appel + pindakaas
+  oud_recept: Kwark + appel + pindakaas
+  oud_kcal: 420
+  nieuw_kcal: 420
+- week: 7
+  dag: dinsdag
+  maaltijd_type: snack
+  nieuw_recept: Yoghurt-bowl + appel + pindakaas
+  oud_recept: Eieren + banaan
+  oud_kcal: 220
+  nieuw_kcal: 420
+- week: 7
+  dag: dinsdag
+  maaltijd_type: diner
+  nieuw_recept: Zalm met aardappel en spinazie
+  oud_recept: Zalm honing-soja
+  oud_kcal: 380
+  nieuw_kcal: 620
+- week: 7
+  dag: donderdag
+  maaltijd_type: snack
+  nieuw_recept: Yoghurt-bowl + havermout + banaan
+  oud_recept: Kwark + appel + pindakaas
+  oud_kcal: 420
+  nieuw_kcal: 490
+- week: 7
+  dag: donderdag
+  maaltijd_type: lunch
+  nieuw_recept: Wraps met eieren en avocado
+  oud_recept: Wrap met eieren en avocado
+  oud_kcal: 520
+  nieuw_kcal: 580
+- week: 7
+  dag: vrijdag
+  maaltijd_type: snack
+  nieuw_recept: Yoghurt-bowl + banaan + pindakaas
+  oud_recept: Kwark + banaan + pindakaas
+  oud_kcal: 430
+  nieuw_kcal: 430
+- week: 7
+  dag: vrijdag
+  maaltijd_type: lunch
+  nieuw_recept: Linzendahl met rijst en koriander
+  oud_recept: Rode linzendahl (batch)
+  oud_kcal: 390
+  nieuw_kcal: 620
+- week: 7
+  dag: zaterdag
+  maaltijd_type: snack
+  nieuw_recept: Yoghurt-bowl + banaan + pindakaas
+  oud_recept: Appel + gemengde noten
+  oud_kcal: 240
+  nieuw_kcal: 430
+- week: 7
+  dag: zaterdag
+  maaltijd_type: diner
+  nieuw_recept: Hartige pannenkoeken met ei en spinazie
+  oud_recept: Kipfilet airfryer
+  oud_kcal: 400
+  nieuw_kcal: 680
+- week: 7
+  dag: zondag
+  maaltijd_type: snack
+  nieuw_recept: Yoghurt-bowl + bessen + noten
+  oud_recept: Kwark + bessen + noten
+  oud_kcal: 430
+  nieuw_kcal: 430
+- week: 7
+  dag: zondag
+  maaltijd_type: lunch
+  nieuw_recept: Caprese met mozzarella en eieren
+  oud_recept: Eieren met avocado en soja
+  oud_kcal: 520
+  nieuw_kcal: 540
+- week: 7
+  dag: maandag
+  maaltijd_type: snack
+  nieuw_recept: Yoghurt-bowl + appel + pindakaas
+  oud_recept: Kwark + appel + pindakaas
+  oud_kcal: 420
+  nieuw_kcal: 420
+- week: 8
+  dag: dinsdag
+  maaltijd_type: snack
+  nieuw_recept: Yoghurt-bowl + appel + pindakaas
+  oud_recept: Eieren + banaan
+  oud_kcal: 220
+  nieuw_kcal: 420
+- week: 8
+  dag: dinsdag
+  maaltijd_type: diner
+  nieuw_recept: Zalm met aardappel en spinazie
+  oud_recept: Zalm met citroen
+  oud_kcal: 360
+  nieuw_kcal: 620
+- week: 8
+  dag: donderdag
+  maaltijd_type: snack
+  nieuw_recept: Yoghurt-bowl + havermout + banaan
+  oud_recept: Kwark + appel + pindakaas
+  oud_kcal: 420
+  nieuw_kcal: 490
+- week: 8
+  dag: donderdag
+  maaltijd_type: lunch
+  nieuw_recept: Wraps met eieren en avocado
+  oud_recept: Eieren ontbijt met brood
+  oud_kcal: 480
+  nieuw_kcal: 580
+- week: 8
+  dag: vrijdag
+  maaltijd_type: snack
+  nieuw_recept: Yoghurt-bowl + banaan + pindakaas
+  oud_recept: Kwark + banaan + pindakaas
+  oud_kcal: 430
+  nieuw_kcal: 430
+- week: 8
+  dag: vrijdag
+  maaltijd_type: lunch
+  nieuw_recept: Linzencurry met rijst en koriander
+  oud_recept: Linzecurry (batch)
+  oud_kcal: 380
+  nieuw_kcal: 620
+- week: 8
+  dag: zaterdag
+  maaltijd_type: snack
+  nieuw_recept: Yoghurt-bowl + banaan + pindakaas
+  oud_recept: Appel + gemengde noten
+  oud_kcal: 240
+  nieuw_kcal: 430
+- week: 8
+  dag: zondag
+  maaltijd_type: snack
+  nieuw_recept: Yoghurt-bowl + bessen + noten
+  oud_recept: Kwark + bessen + noten
+  oud_kcal: 430
+  nieuw_kcal: 430
+- week: 8
+  dag: zondag
+  maaltijd_type: lunch
+  nieuw_recept: Eieren omelet met spinazie en paprika
+  oud_recept: Eieren omelet met brood
+  oud_kcal: 400
+  nieuw_kcal: 580
+- week: 1
+  dag: dinsdag
+  maaltijd_type: ontbijt
+  nieuw_recept: Yoghurt-bowl met muesli en fruit
+  oud_recept: Kwark met muesli en fruit
+  oud_kcal: 520
+  nieuw_kcal: 520
+- week: 1
+  dag: donderdag
+  maaltijd_type: ontbijt
+  nieuw_recept: Yoghurt-bowl met muesli en fruit
+  oud_recept: Kwark met muesli en fruit
+  oud_kcal: 520
+  nieuw_kcal: 520
+- week: 1
+  dag: maandag
+  maaltijd_type: ontbijt
+  nieuw_recept: Yoghurt-bowl met muesli en fruit
+  oud_recept: Kwark met muesli en fruit
+  oud_kcal: 520
+  nieuw_kcal: 520
+- week: 2
+  dag: dinsdag
+  maaltijd_type: ontbijt
+  nieuw_recept: Yoghurt-bowl met muesli en fruit
+  oud_recept: Kwark met muesli en fruit
+  oud_kcal: 520
+  nieuw_kcal: 520
+- week: 2
+  dag: donderdag
+  maaltijd_type: ontbijt
+  nieuw_recept: Yoghurt-bowl met muesli en fruit
+  oud_recept: Kwark met muesli en fruit
+  oud_kcal: 520
+  nieuw_kcal: 520
+- week: 2
+  dag: vrijdag
+  maaltijd_type: ontbijt
+  nieuw_recept: Yoghurt-bowl met muesli en fruit
+  oud_recept: Kwark met muesli en fruit
+  oud_kcal: 520
+  nieuw_kcal: 520
+- week: 2
+  dag: maandag
+  maaltijd_type: ontbijt
+  nieuw_recept: Yoghurt-bowl met muesli en fruit
+  oud_recept: Kwark met muesli en fruit
+  oud_kcal: 520
+  nieuw_kcal: 520
+- week: 3
+  dag: maandag
+  maaltijd_type: ontbijt
+  nieuw_recept: Yoghurt-bowl met muesli en fruit
+  oud_recept: Kwark met muesli en fruit
+  oud_kcal: 520
+  nieuw_kcal: 520
+- week: 3
+  dag: dinsdag
+  maaltijd_type: ontbijt
+  nieuw_recept: Yoghurt-bowl met muesli en fruit
+  oud_recept: Kwark met muesli en fruit
+  oud_kcal: 520
+  nieuw_kcal: 520
+- week: 3
+  dag: donderdag
+  maaltijd_type: ontbijt
+  nieuw_recept: Yoghurt-bowl met muesli en fruit
+  oud_recept: Kwark met muesli en fruit
+  oud_kcal: 520
+  nieuw_kcal: 520
+- week: 3
+  dag: vrijdag
+  maaltijd_type: ontbijt
+  nieuw_recept: Yoghurt-bowl met muesli en fruit
+  oud_recept: Kwark met muesli en fruit
+  oud_kcal: 520
+  nieuw_kcal: 520
+- week: 4
+  dag: dinsdag
+  maaltijd_type: ontbijt
+  nieuw_recept: Yoghurt-bowl met muesli en fruit
+  oud_recept: Kwark met muesli en fruit
+  oud_kcal: 520
+  nieuw_kcal: 520
+- week: 4
+  dag: donderdag
+  maaltijd_type: ontbijt
+  nieuw_recept: Yoghurt-bowl met muesli en fruit
+  oud_recept: Kwark met muesli en fruit
+  oud_kcal: 520
+  nieuw_kcal: 520
+- week: 4
+  dag: vrijdag
+  maaltijd_type: ontbijt
+  nieuw_recept: Yoghurt-bowl met muesli en fruit
+  oud_recept: Kwark met muesli en fruit
+  oud_kcal: 520
+  nieuw_kcal: 520
+- week: 5
+  dag: dinsdag
+  maaltijd_type: ontbijt
+  nieuw_recept: Yoghurt-bowl met muesli en fruit
+  oud_recept: Kwark met muesli en fruit
+  oud_kcal: 520
+  nieuw_kcal: 520
+- week: 5
+  dag: donderdag
+  maaltijd_type: ontbijt
+  nieuw_recept: Yoghurt-bowl met muesli en fruit
+  oud_recept: Kwark met muesli en fruit
+  oud_kcal: 520
+  nieuw_kcal: 520
+- week: 5
+  dag: vrijdag
+  maaltijd_type: ontbijt
+  nieuw_recept: Yoghurt-bowl met muesli en fruit
+  oud_recept: Kwark met muesli en fruit
+  oud_kcal: 520
+  nieuw_kcal: 520
+- week: 6
+  dag: dinsdag
+  maaltijd_type: ontbijt
+  nieuw_recept: Yoghurt-bowl met muesli en fruit
+  oud_recept: Kwark met muesli en fruit
+  oud_kcal: 520
+  nieuw_kcal: 520
+- week: 6
+  dag: donderdag
+  maaltijd_type: ontbijt
+  nieuw_recept: Yoghurt-bowl met muesli en fruit
+  oud_recept: Kwark met muesli en fruit
+  oud_kcal: 520
+  nieuw_kcal: 520
+- week: 6
+  dag: vrijdag
+  maaltijd_type: ontbijt
+  nieuw_recept: Yoghurt-bowl met muesli en fruit
+  oud_recept: Kwark met muesli en fruit
+  oud_kcal: 520
+  nieuw_kcal: 520
+- week: 6
+  dag: maandag
+  maaltijd_type: ontbijt
+  nieuw_recept: Yoghurt-bowl met muesli en fruit
+  oud_recept: Kwark met muesli en fruit
+  oud_kcal: 520
+  nieuw_kcal: 520
+- week: 7
+  dag: dinsdag
+  maaltijd_type: ontbijt
+  nieuw_recept: Yoghurt-bowl met muesli en fruit
+  oud_recept: Kwark met muesli en fruit
+  oud_kcal: 520
+  nieuw_kcal: 520
+- week: 7
+  dag: donderdag
+  maaltijd_type: ontbijt
+  nieuw_recept: Yoghurt-bowl met muesli en fruit
+  oud_recept: Kwark met muesli en fruit
+  oud_kcal: 520
+  nieuw_kcal: 520
+- week: 7
+  dag: vrijdag
+  maaltijd_type: ontbijt
+  nieuw_recept: Yoghurt-bowl met muesli en fruit
+  oud_recept: Kwark met muesli en fruit
+  oud_kcal: 520
+  nieuw_kcal: 520
+- week: 7
+  dag: maandag
+  maaltijd_type: ontbijt
+  nieuw_recept: Yoghurt-bowl met muesli en fruit
+  oud_recept: Kwark met muesli en fruit
+  oud_kcal: 520
+  nieuw_kcal: 520
+- week: 8
+  dag: dinsdag
+  maaltijd_type: ontbijt
+  nieuw_recept: Yoghurt-bowl met muesli en fruit
+  oud_recept: Kwark met muesli en fruit
+  oud_kcal: 520
+  nieuw_kcal: 520
+- week: 8
+  dag: donderdag
+  maaltijd_type: ontbijt
+  nieuw_recept: Yoghurt-bowl met muesli en fruit
+  oud_recept: Kwark met muesli en fruit
+  oud_kcal: 520
+  nieuw_kcal: 520
+- week: 8
+  dag: vrijdag
+  maaltijd_type: ontbijt
+  nieuw_recept: Yoghurt-bowl met muesli en fruit
+  oud_recept: Kwark met muesli en fruit
+  oud_kcal: 520
+  nieuw_kcal: 520
+- week: 1
+  dag: donderdag
+  maaltijd_type: avondsnack
+  nieuw_recept: Brood met pindakaas, banaan en honing
+  oud_recept: null
+  oud_kcal: 0
+  nieuw_kcal: 660
+- week: 1
+  dag: maandag
+  maaltijd_type: avondsnack
+  nieuw_recept: Brood met pindakaas, banaan en honing
+  oud_recept: null
+  oud_kcal: 0
+  nieuw_kcal: 660
+- week: 1
+  dag: zaterdag
+  maaltijd_type: avondsnack
+  nieuw_recept: Brood met pindakaas, banaan en honing
+  oud_recept: null
+  oud_kcal: 0
+  nieuw_kcal: 560
+- week: 1
+  dag: zondag
+  maaltijd_type: avondsnack
+  nieuw_recept: Brood met pindakaas en banaan
+  oud_recept: null
+  oud_kcal: 0
+  nieuw_kcal: 520
+- week: 2
+  dag: dinsdag
+  maaltijd_type: avondsnack
+  nieuw_recept: Brood met pindakaas en banaan
+  oud_recept: null
+  oud_kcal: 0
+  nieuw_kcal: 520
+- week: 2
+  dag: donderdag
+  maaltijd_type: avondsnack
+  nieuw_recept: Pannenkoek-snack met pindakaas
+  oud_recept: null
+  oud_kcal: 0
+  nieuw_kcal: 380
+- week: 2
+  dag: maandag
+  maaltijd_type: avondsnack
+  nieuw_recept: Brood met pindakaas, banaan en honing
+  oud_recept: null
+  oud_kcal: 0
+  nieuw_kcal: 660
+- week: 2
+  dag: vrijdag
+  maaltijd_type: avondsnack
+  nieuw_recept: Brood met pindakaas, banaan en honing
+  oud_recept: null
+  oud_kcal: 0
+  nieuw_kcal: 660
+- week: 2
+  dag: zaterdag
+  maaltijd_type: avondsnack
+  nieuw_recept: Brood met pindakaas, banaan en honing
+  oud_recept: null
+  oud_kcal: 0
+  nieuw_kcal: 880
+- week: 2
+  dag: zondag
+  maaltijd_type: avondsnack
+  nieuw_recept: Brood met pindakaas en banaan
+  oud_recept: null
+  oud_kcal: 0
+  nieuw_kcal: 520
+- week: 3
+  dag: dinsdag
+  maaltijd_type: avondsnack
+  nieuw_recept: Brood met pindakaas en banaan
+  oud_recept: null
+  oud_kcal: 0
+  nieuw_kcal: 520
+- week: 3
+  dag: donderdag
+  maaltijd_type: avondsnack
+  nieuw_recept: Brood met pindakaas en banaan
+  oud_recept: null
+  oud_kcal: 0
+  nieuw_kcal: 520
+- week: 3
+  dag: maandag
+  maaltijd_type: avondsnack
+  nieuw_recept: Brood met pindakaas, banaan en honing
+  oud_recept: null
+  oud_kcal: 0
+  nieuw_kcal: 660
+- week: 3
+  dag: vrijdag
+  maaltijd_type: avondsnack
+  nieuw_recept: Brood met pindakaas, banaan en honing
+  oud_recept: null
+  oud_kcal: 0
+  nieuw_kcal: 660
+- week: 3
+  dag: zaterdag
+  maaltijd_type: avondsnack
+  nieuw_recept: Brood met pindakaas, banaan en honing
+  oud_recept: null
+  oud_kcal: 0
+  nieuw_kcal: 660
+- week: 4
+  dag: dinsdag
+  maaltijd_type: avondsnack
+  nieuw_recept: Brood met pindakaas en banaan
+  oud_recept: null
+  oud_kcal: 0
+  nieuw_kcal: 520
+- week: 4
+  dag: donderdag
+  maaltijd_type: avondsnack
+  nieuw_recept: Pannenkoek-snack met pindakaas
+  oud_recept: null
+  oud_kcal: 0
+  nieuw_kcal: 380
+- week: 4
+  dag: vrijdag
+  maaltijd_type: avondsnack
+  nieuw_recept: Brood met pindakaas, banaan en honing
+  oud_recept: null
+  oud_kcal: 0
+  nieuw_kcal: 660
+- week: 4
+  dag: zaterdag
+  maaltijd_type: avondsnack
+  nieuw_recept: Brood met pindakaas, banaan en honing
+  oud_recept: null
+  oud_kcal: 0
+  nieuw_kcal: 880
+- week: 4
+  dag: zondag
+  maaltijd_type: avondsnack
+  nieuw_recept: Brood met pindakaas en banaan
+  oud_recept: null
+  oud_kcal: 0
+  nieuw_kcal: 520
+- week: 5
+  dag: dinsdag
+  maaltijd_type: avondsnack
+  nieuw_recept: Brood met pindakaas en banaan
+  oud_recept: null
+  oud_kcal: 0
+  nieuw_kcal: 520
+- week: 5
+  dag: donderdag
+  maaltijd_type: avondsnack
+  nieuw_recept: Brood met pindakaas en banaan
+  oud_recept: null
+  oud_kcal: 0
+  nieuw_kcal: 520
+- week: 5
+  dag: vrijdag
+  maaltijd_type: avondsnack
+  nieuw_recept: Brood met pindakaas en banaan
+  oud_recept: null
+  oud_kcal: 0
+  nieuw_kcal: 520
+- week: 5
+  dag: zaterdag
+  maaltijd_type: avondsnack
+  nieuw_recept: Brood met pindakaas en banaan
+  oud_recept: null
+  oud_kcal: 0
+  nieuw_kcal: 520
+- week: 5
+  dag: zondag
+  maaltijd_type: avondsnack
+  nieuw_recept: Brood met pindakaas en banaan
+  oud_recept: null
+  oud_kcal: 0
+  nieuw_kcal: 520
+- week: 6
+  dag: dinsdag
+  maaltijd_type: avondsnack
+  nieuw_recept: Brood met pindakaas en banaan
+  oud_recept: null
+  oud_kcal: 0
+  nieuw_kcal: 520
+- week: 6
+  dag: donderdag
+  maaltijd_type: avondsnack
+  nieuw_recept: Brood met pindakaas en banaan
+  oud_recept: null
+  oud_kcal: 0
+  nieuw_kcal: 520
+- week: 6
+  dag: maandag
+  maaltijd_type: avondsnack
+  nieuw_recept: Brood met pindakaas en banaan
+  oud_recept: null
+  oud_kcal: 0
+  nieuw_kcal: 520
+- week: 6
+  dag: vrijdag
+  maaltijd_type: avondsnack
+  nieuw_recept: Brood met pindakaas, banaan en honing
+  oud_recept: null
+  oud_kcal: 0
+  nieuw_kcal: 660
+- week: 6
+  dag: zaterdag
+  maaltijd_type: avondsnack
+  nieuw_recept: Brood met pindakaas, banaan en honing
+  oud_recept: null
+  oud_kcal: 0
+  nieuw_kcal: 920
+- week: 7
+  dag: dinsdag
+  maaltijd_type: avondsnack
+  nieuw_recept: Brood met pindakaas en banaan
+  oud_recept: null
+  oud_kcal: 0
+  nieuw_kcal: 520
+- week: 7
+  dag: donderdag
+  maaltijd_type: avondsnack
+  nieuw_recept: Brood met pindakaas en banaan
+  oud_recept: null
+  oud_kcal: 0
+  nieuw_kcal: 520
+- week: 7
+  dag: maandag
+  maaltijd_type: avondsnack
+  nieuw_recept: Brood met pindakaas, banaan en honing
+  oud_recept: null
+  oud_kcal: 0
+  nieuw_kcal: 660
+- week: 7
+  dag: vrijdag
+  maaltijd_type: avondsnack
+  nieuw_recept: Brood met pindakaas en banaan
+  oud_recept: null
+  oud_kcal: 0
+  nieuw_kcal: 520
+- week: 7
+  dag: zaterdag
+  maaltijd_type: avondsnack
+  nieuw_recept: Brood met pindakaas en banaan
+  oud_recept: null
+  oud_kcal: 0
+  nieuw_kcal: 520
+- week: 7
+  dag: zondag
+  maaltijd_type: avondsnack
+  nieuw_recept: Brood met pindakaas en banaan
+  oud_recept: null
+  oud_kcal: 0
+  nieuw_kcal: 520
+- week: 8
+  dag: dinsdag
+  maaltijd_type: avondsnack
+  nieuw_recept: Brood met pindakaas en banaan
+  oud_recept: null
+  oud_kcal: 0
+  nieuw_kcal: 520
+- week: 8
+  dag: donderdag
+  maaltijd_type: avondsnack
+  nieuw_recept: Brood met pindakaas, banaan en honing
+  oud_recept: null
+  oud_kcal: 0
+  nieuw_kcal: 660
+- week: 8
+  dag: vrijdag
+  maaltijd_type: avondsnack
+  nieuw_recept: Brood met pindakaas en banaan
+  oud_recept: null
+  oud_kcal: 0
+  nieuw_kcal: 520
+- week: 8
+  dag: zaterdag
+  maaltijd_type: avondsnack
+  nieuw_recept: Brood met pindakaas, banaan en honing
+  oud_recept: null
+  oud_kcal: 0
+  nieuw_kcal: 840
+- week: 8
+  dag: zondag
+  maaltijd_type: avondsnack
+  nieuw_recept: Brood met pindakaas, banaan en honing
+  oud_recept: null
+  oud_kcal: 0
+  nieuw_kcal: 660
+nieuwe_recepten:
+- naam: Yoghurt-bowl met muesli en fruit
+  kcal: 520
+  eiwit: 42
+  categorie: ontbijt
+- naam: Yoghurt-bowl + appel + pindakaas
+  kcal: 420
+  eiwit: 35
+  categorie: snack
+- naam: Yoghurt-bowl + banaan + pindakaas
+  kcal: 430
+  eiwit: 32
+  categorie: snack
+- naam: Yoghurt-bowl + bessen + noten
+  kcal: 430
+  eiwit: 33
+  categorie: snack
+- naam: Yoghurt-bowl + havermout + banaan
+  kcal: 490
+  eiwit: 32
+  categorie: snack
+- naam: Hartige pannenkoeken met ei en spinazie
+  kcal: 680
+  eiwit: 40
+  categorie: diner
+- naam: Zoete pannenkoeken met fruit en yoghurt
+  kcal: 680
+  eiwit: 28
+  categorie: diner
+- naam: Zalm met aardappel en spinazie
+  kcal: 620
+  eiwit: 42
+  categorie: diner
+- naam: Witvis met aardappel en groente
+  kcal: 550
+  eiwit: 42
+  categorie: diner
+- naam: Rosbief met aardappel en groente
+  kcal: 620
+  eiwit: 56
+  categorie: diner
+- naam: Shakshuka met brood en feta
+  kcal: 550
+  eiwit: 30
+  categorie: diner
+- naam: Kikkererwten-stoof met couscous en feta
+  kcal: 580
+  eiwit: 28
+  categorie: lunch
+- naam: Linzendahl met rijst en koriander
+  kcal: 620
+  eiwit: 26
+  categorie: lunch
+- naam: Linzencurry met rijst en koriander
+  kcal: 620
+  eiwit: 28
+  categorie: lunch
+- naam: Brood met pindakaas en banaan
+  kcal: 520
+  eiwit: 16
+  categorie: avondsnack
+- naam: Pannenkoek-snack met pindakaas
+  kcal: 380
+  eiwit: 14
+  categorie: avondsnack
+- naam: Brood met pindakaas, banaan en honing
+  kcal: 660
+  eiwit: 18
+  categorie: avondsnack

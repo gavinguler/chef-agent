@@ -9,7 +9,7 @@ DAG_AFKORTINGEN = {
 }
 KANTOOR_DAGEN = {"maandag", "woensdag"}
 CATEGORIE_VOLGORDE = ["zuivel", "groente", "koolhydraten", "fruit", "conserven"]
-MEAL_EMOJI = {"ontbijt": "🥣", "lunch": "🥗", "diner": "🍽️"}
+MEAL_EMOJI = {"ontbijt": "🥣", "lunch": "🥗", "diner": "🍽️", "snack": "🍎", "avondsnack": "🌙"}
 MAAND_NL = ["", "jan", "feb", "mrt", "apr", "mei", "jun", "jul", "aug", "sep", "okt", "nov", "dec"]
 
 

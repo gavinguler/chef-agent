@@ -24,7 +24,7 @@ def get_current_week():
     anchor = _iso_week_start(settings.cycle_anchor_year, settings.cycle_anchor_iso_week)
     weeks_since = (date.today() - anchor).days // 7
     return {"week": (weeks_since % 8) + 1}
-MEAL_TYPES = ["ontbijt", "lunch", "snack", "diner"]
+MEAL_TYPES = ["ontbijt", "lunch", "snack", "diner", "avondsnack"]
 
 
 class SetMealIn(BaseModel):
