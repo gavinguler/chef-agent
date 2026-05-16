@@ -37,7 +37,7 @@ export default function Recipes() {
       const matchFilter = filter === "Alle"
         || (filter === "Diner" && r.categorie?.toLowerCase() === "diner")
         || (filter === "Lunch" && r.categorie?.toLowerCase() === "lunch")
-        || (filter === "Veggie" && r.is_vegetarisch);
+        || (filter === "Veggie" && r.categorie?.toLowerCase() === "veggie");
       return matchSearch && matchFilter;
     });
   }, [recipes, debounced, filter]);
@@ -97,6 +97,21 @@ export default function Recipes() {
         >
           {/* Filter bar */}
           <div className="flex items-center gap-3 mb-6">
+            <div
+              className="flex items-center gap-2 h-[34px] rounded-[8px] px-3"
+              style={{ background: 'rgba(120,120,128,0.16)' }}
+            >
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="rgba(60,60,67,0.6)" strokeWidth="2.5">
+                <circle cx="11" cy="11" r="8" />
+                <path d="m21 21-4.35-4.35" />
+              </svg>
+              <input
+                className="bg-transparent text-[14px] text-ink outline-none w-[180px]"
+                placeholder="Zoek recepten..."
+                value={search}
+                onChange={e => setSearch(e.target.value)}
+              />
+            </div>
             <div className="flex gap-2">
               {FILTERS.map(f => (
                 <button
