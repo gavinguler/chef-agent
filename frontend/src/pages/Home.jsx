@@ -10,8 +10,10 @@ import DesktopShell, { Panel, Stat } from "../components/DesktopShell";
 import ProteinRing from "../components/ProteinRing";
 import ThinBar from "../components/ThinBar";
 
-const DAG_NL    = ["zondag","maandag","dinsdag","woensdag","donderdag","vrijdag","zaterdag"];
+const DAG_NL       = ["zondag","maandag","dinsdag","woensdag","donderdag","vrijdag","zaterdag"];
 const DAG_SHORT_NL = ["zo","ma","di","wo","do","vr","za"];
+const MEAL_TYPES   = ["ontbijt","lunch","snack","diner","avondsnack"];
+const MEAL_LABEL   = { ontbijt:"Ontbijt", lunch:"Lunch", snack:"Snack", diner:"Diner", avondsnack:"Avondsnack" };
 
 function usePlan() {
   const [cycleWeek, setCycleWeek] = useState(null);
@@ -62,6 +64,10 @@ export default function Home() {
   const eiwit = dagData?.totaal_eiwit_g ?? 0;
   const kcal = dagData?.totaal_kcal ?? 0;
   const thema = weekPlan?.vlees_thema ?? "";
+
+  const todayMeals = MEAL_TYPES
+    .map(type => ({ type, meal: maaltijden.find(x => x.maaltijd_type === type) }))
+    .filter(x => x.meal);
 
   const nextDays = weekDates.filter(d => !d.isToday).slice(0, 3).map(d => {
     const dag = weekPlan?.dagen?.find(x => x.dag === d.dayNl);
@@ -124,6 +130,24 @@ export default function Home() {
               </div>
             </div>
           </div>
+        )}
+
+        {/* Alle maaltijden vandaag */}
+        {todayMeals.length > 0 && (
+          <>
+            <IOSGroupHeader>Maaltijden vandaag</IOSGroupHeader>
+            <IOSGroup>
+              {todayMeals.map(({ type, meal }, i) => (
+                <IOSRow
+                  key={type}
+                  title={meal.naam}
+                  sub={MEAL_LABEL[type] + (meal.eiwit_g ? ` · ${Math.round(meal.eiwit_g)}g eiwit` : "")}
+                  last={i === todayMeals.length - 1}
+                  onClick={meal.recept_id ? () => navigate(`/recepten/${meal.recept_id}`) : undefined}
+                />
+              ))}
+            </IOSGroup>
+          </>
         )}
 
         {/* Macro's */}
@@ -255,6 +279,25 @@ export default function Home() {
                   <ThinBar v={kcal} max={2700} label="Calorieën" unit="kcal" />
                   <ThinBar v={eiwit} max={160} label="Eiwit" unit="g" />
                 </Panel>
+                {todayMeals.length > 0 && (
+                  <Panel title="Maaltijden vandaag">
+                    {todayMeals.map(({ type, meal }, i) => (
+                      <div
+                        key={type}
+                        onClick={() => meal.recept_id && navigate(`/recepten/${meal.recept_id}`)}
+                        className={`flex items-center justify-between py-[10px] ${meal.recept_id ? 'cursor-pointer hover:opacity-70' : ''} ${i < todayMeals.length - 1 ? 'border-b border-sep' : ''}`}
+                      >
+                        <div>
+                          <p className="text-[11px] font-semibold uppercase tracking-wide text-ink2">{MEAL_LABEL[type]}</p>
+                          <p className="text-[14px] text-ink mt-px leading-snug">{meal.naam}</p>
+                        </div>
+                        {meal.eiwit_g && (
+                          <p className="text-[13px] text-ink2 flex-shrink-0 ml-3">{Math.round(meal.eiwit_g)}g</p>
+                        )}
+                      </div>
+                    ))}
+                  </Panel>
+                )}
               </div>
             </div>
           )}
