@@ -19,6 +19,7 @@ export default function WeekPlan() {
   const [selectedWeek, setSelectedWeek] = useState(null);
   const [weekPlan, setWeekPlan] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
 
   const todayIndex = new Date().getDay();
   const todayNl = DAYS_NL[todayIndex === 0 ? 6 : todayIndex - 1];
@@ -33,7 +34,8 @@ export default function WeekPlan() {
     if (!selectedWeek) return;
     setLoading(true);
     getWeekPlan(selectedWeek)
-      .then(setWeekPlan)
+      .then(data => { setError(null); setWeekPlan(data); })
+      .catch(() => setError("Kon weekplan niet laden"))
       .finally(() => setLoading(false));
   }, [selectedWeek]);
 
@@ -75,10 +77,15 @@ export default function WeekPlan() {
           <div className="mx-4 animate-pulse bg-surface rounded-[10px] h-40" />
         ) : (
           <>
+            {error && !loading && (
+              <div className="mx-4 bg-red-50 border border-red-200 rounded-[10px] p-3">
+                <p className="text-red-700 text-[14px]">{error}</p>
+              </div>
+            )}
             <IOSGroupHeader>Maaltijden deze week</IOSGroupHeader>
             <IOSGroup>
               {DAYS_NL.map((day, i) => {
-                const dagData = weekPlan?.dagen?.find(d => d.dag === day);
+                const dagData = weekPlan?.dagen?.find(d => d.dag?.toLowerCase() === day);
                 const diner = dagData?.maaltijden?.find(m => m.maaltijd_type === "diner");
                 const isToday = day === todayNl;
                 return (
@@ -171,7 +178,7 @@ export default function WeekPlan() {
                   <p className="text-[13px] font-semibold text-ink2">{MEAL_LABEL["diner"]}</p>
                 </div>
                 {DAYS_NL.map((day, i) => {
-                  const dagData = weekPlan?.dagen?.find(d => d.dag === day);
+                  const dagData = weekPlan?.dagen?.find(d => d.dag?.toLowerCase() === day);
                   const maaltijd = dagData?.maaltijden?.find(m => m.maaltijd_type === "diner");
                   const isToday = day === todayNl;
                   return (
