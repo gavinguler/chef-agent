@@ -1,4 +1,4 @@
-import { Link, NavLink } from "react-router-dom";
+import { NavLink } from "react-router-dom";
 import { ChevronLeft, ChevronRight, Home, BookOpen, Calendar, ShoppingCart, Settings } from "lucide-react";
 
 export function IOSStatusBar() {
@@ -62,11 +62,12 @@ export function IOSRow({ icon, iconBg, title, sub, detail, accessory, last, dest
     </>
   );
 
-  const cls = `flex items-center gap-3 px-4 py-[11px] min-h-[44px] bg-surface ${onClick ? 'active:bg-gray-50 cursor-pointer' : ''} ${!last ? 'border-b' : ''} border-sep`;
+  const cls = `flex items-center gap-3 px-4 py-[11px] min-h-[44px] bg-surface ${onClick ? 'active:bg-gray-50 cursor-pointer' : ''}`;
+  const sepStyle = !last ? { borderBottom: '0.5px solid rgba(60,60,67,0.12)' } : {};
 
   return onClick
-    ? <div onClick={onClick} className={cls}>{content}</div>
-    : <div className={cls}>{content}</div>;
+    ? <div onClick={onClick} className={cls} style={sepStyle}>{content}</div>
+    : <div className={cls} style={sepStyle}>{content}</div>;
 }
 
 export function IOSToggle({ on, onChange }) {
@@ -98,9 +99,8 @@ export function IOSSearchField({ placeholder, value, onChange }) {
           <path d="m21 21-4.35-4.35" />
         </svg>
         <input
-          className="flex-1 bg-transparent text-[15px] text-ink outline-none"
+          className="flex-1 bg-transparent text-[15px] text-ink outline-none placeholder:text-ink3"
           placeholder={placeholder}
-          style={{ '::placeholder': { color: 'rgba(60,60,67,0.3)' } }}
           value={value}
           onChange={e => onChange(e.target.value)}
         />
