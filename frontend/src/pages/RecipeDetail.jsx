@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
-import { Star, Sparkles } from "lucide-react";
-import { getRecipe, aiFillMacros } from "../api/client";
+import { Star, Sparkles, Image } from "lucide-react";
+import { getRecipe, aiFillMacros, refreshRecipeImage } from "../api/client";
 import {
   IOSStatusBar, IOSLargeHeader, IOSGroupHeader, IOSGroup, IOSRow, IOSTabBar,
 } from "../components/IOSPrimitives";
@@ -13,10 +13,22 @@ export default function RecipeDetail() {
   const [recipe, setRecipe] = useState(null);
   const [loading, setLoading] = useState(true);
   const [aiLoading, setAiLoading] = useState(false);
+  const [imageLoading, setImageLoading] = useState(false);
 
   useEffect(() => {
     getRecipe(id).then(setRecipe).finally(() => setLoading(false));
   }, [id]);
+
+  async function handleRefreshImage() {
+    if (!recipe) return;
+    setImageLoading(true);
+    try {
+      const result = await refreshRecipeImage(recipe.id);
+      setRecipe(r => ({ ...r, image_url: result.image_url }));
+    } finally {
+      setImageLoading(false);
+    }
+  }
 
   async function handleAiFill() {
     if (!recipe) return;
@@ -129,6 +141,13 @@ export default function RecipeDetail() {
           <IOSGroupHeader>AI</IOSGroupHeader>
           <IOSGroup>
             <IOSRow
+              icon={<Image size={16} className="text-white" />}
+              iconBg="#0a84ff"
+              title="Foto genereren met AI"
+              onClick={imageLoading ? undefined : handleRefreshImage}
+              detail={imageLoading ? "…" : undefined}
+            />
+            <IOSRow
               icon={<Sparkles size={16} className="text-white" />}
               iconBg="#af52de"
               title="Macro's opnieuw schatten met AI"
@@ -149,6 +168,15 @@ export default function RecipeDetail() {
           subtitle={recipe.categorie}
           accessory={
             <div className="flex gap-3">
+              <button
+                onClick={handleRefreshImage}
+                disabled={imageLoading}
+                className="flex items-center gap-2 px-4 py-2 rounded-[8px] text-[14px] font-semibold text-white disabled:opacity-50"
+                style={{ background: '#0a84ff' }}
+              >
+                <Image size={16} />
+                {imageLoading ? "Bezig…" : "Foto genereren"}
+              </button>
               <button
                 onClick={handleAiFill}
                 disabled={aiLoading}
