@@ -6,8 +6,8 @@ import { getStoredWeek, setStoredWeek } from "../lib/weekStorage";
 
 const DAYS = ["maandag", "dinsdag", "woensdag", "donderdag", "vrijdag", "zaterdag", "zondag"];
 const DAY_SHORT = ["Ma", "Di", "Wo", "Do", "Vr", "Za", "Zo"];
-const MEAL_LABEL = { ontbijt: "Ontbijt", lunch: "Lunch", snack: "Snack", diner: "Diner" };
-const MEAL_TYPES = ["ontbijt", "lunch", "snack", "diner"];
+const MEAL_LABEL = { ontbijt: "Ontbijt", lunch: "Lunch", snack: "Snack", diner: "Diner", avondsnack: "Avondsnack" };
+const MEAL_TYPES = ["ontbijt", "lunch", "snack", "diner", "avondsnack"];
 
 const KOOKSCHEMA = {
   1: { batches: [
