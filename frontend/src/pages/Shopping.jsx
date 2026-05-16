@@ -35,7 +35,6 @@ export default function Shopping() {
 
   const { list, loading } = useShoppingData(week);
 
-  const storageKey = `shopping-checked-${week}`;
   const [checked, setChecked] = useState(() => {
     try { return new Set(JSON.parse(localStorage.getItem(`shopping-checked-${paramWeek || 'current'}`) ?? "[]")); }
     catch { return new Set(); }
@@ -81,9 +80,9 @@ export default function Shopping() {
           <span>{checkedCount} van {totalItems}</span>
           <span>{Math.round(progress * 100)}%</span>
         </div>
-        <div className="h-1 rounded-full overflow-hidden" style={{ background: 'rgba(120,120,128,0.16)' }}>
+        <div className="h-1 rounded-sm overflow-hidden" style={{ background: 'rgba(120,120,128,0.16)' }}>
           <div
-            className="h-full rounded-full transition-all duration-300"
+            className="h-full rounded-sm transition-all duration-300"
             style={{ width: `${progress * 100}%`, background: '#1f7a4d' }}
           />
         </div>
