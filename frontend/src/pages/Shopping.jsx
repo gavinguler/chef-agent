@@ -7,12 +7,12 @@ import DesktopShell from "../components/DesktopShell";
 
 function useShoppingData(week) {
   const [list, setList] = useState(null);
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(false);
 
   useEffect(() => {
     if (!week) return;
     setLoading(true);
-    getShoppingList(week).then(setList).finally(() => setLoading(false));
+    getShoppingList(week).then(setList).catch(() => setList(null)).finally(() => setLoading(false));
   }, [week]);
 
   return { list, loading };
@@ -29,7 +29,7 @@ export default function Shopping() {
     } else {
       const stored = getStoredWeek();
       if (stored) setWeek(stored);
-      else getCurrentWeek().then(setWeek);
+      else getCurrentWeek().then(setWeek).catch(() => {});
     }
   }, [paramWeek]);
 
@@ -72,23 +72,19 @@ export default function Shopping() {
   const checkedCount = allItems.filter(id => checked.has(id)).length;
   const progress = totalItems > 0 ? checkedCount / totalItems : 0;
 
-  const ShoppingContent = () => (
+  // ── Mobile checklist ──────────────────────────────────────
+  const MobileList = () => (
     <>
-      {/* Progress */}
       <div className="px-4 mb-4">
         <div className="flex justify-between text-[13px] text-ink2 mb-2">
           <span>{checkedCount} van {totalItems}</span>
           <span>{Math.round(progress * 100)}%</span>
         </div>
         <div className="h-1 rounded-sm overflow-hidden" style={{ background: 'rgba(120,120,128,0.16)' }}>
-          <div
-            className="h-full rounded-sm transition-all duration-300"
-            style={{ width: `${progress * 100}%`, background: '#1f7a4d' }}
-          />
+          <div className="h-full rounded-sm transition-all duration-300" style={{ width: `${progress * 100}%`, background: '#1f7a4d' }} />
         </div>
       </div>
 
-      {/* Categories */}
       {categories.map(cat => {
         const items = cat.items ?? cat.boodschappen ?? [];
         return (
@@ -102,34 +98,17 @@ export default function Shopping() {
                   <div
                     key={itemId}
                     onClick={() => toggle(itemId)}
-                    className={`flex items-center gap-3 px-4 py-[11px] min-h-[44px] cursor-pointer active:bg-gray-50 ${i < items.length - 1 ? 'border-b' : ''}`}
+                    className="flex items-center gap-3 px-4 py-[11px] min-h-[44px] cursor-pointer"
                     style={i < items.length - 1 ? { borderBottom: '0.5px solid rgba(60,60,67,0.12)' } : {}}
                   >
-                    {/* Checkbox */}
                     <div
                       className="w-6 h-6 rounded-full flex items-center justify-center flex-shrink-0 border-2 transition-colors duration-150"
-                      style={isDone
-                        ? { background: '#1f7a4d', borderColor: '#1f7a4d' }
-                        : { borderColor: 'rgba(60,60,67,0.3)' }
-                      }
+                      style={isDone ? { background: '#1f7a4d', borderColor: '#1f7a4d' } : { borderColor: 'rgba(60,60,67,0.3)' }}
                     >
-                      {isDone && (
-                        <svg width="12" height="10" viewBox="0 0 12 10" fill="none">
-                          <path d="M1 5l3 3 7-7" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
-                        </svg>
-                      )}
+                      {isDone && <svg width="12" height="10" viewBox="0 0 12 10" fill="none"><path d="M1 5l3 3 7-7" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" /></svg>}
                     </div>
-
-                    {/* Quantity */}
-                    {item.hoeveelheid && (
-                      <span className="w-[60px] flex-shrink-0 text-[14px] text-ink2">{item.hoeveelheid}</span>
-                    )}
-
-                    {/* Name */}
-                    <span
-                      className="flex-1 text-[17px] text-ink transition-opacity duration-150"
-                      style={isDone ? { textDecoration: 'line-through', opacity: 0.45 } : {}}
-                    >
+                    {item.hoeveelheid && <span className="w-[60px] flex-shrink-0 text-[14px] text-ink2">{item.hoeveelheid}</span>}
+                    <span className="flex-1 text-[17px] text-ink" style={isDone ? { textDecoration: 'line-through', opacity: 0.45 } : {}}>
                       {item.naam}
                     </span>
                   </div>
@@ -142,6 +121,53 @@ export default function Shopping() {
     </>
   );
 
+  // ── Desktop checklist (cleaner, no iOS margins) ───────────
+  const DesktopList = () => (
+    <div className="space-y-3">
+      {categories.map(cat => {
+        const items = cat.items ?? cat.boodschappen ?? [];
+        return (
+          <div key={cat.naam}>
+            <p className="text-[11px] font-bold uppercase tracking-wider text-ink2 mb-2 px-1">{cat.naam}</p>
+            <div className="bg-surface rounded-[10px] overflow-hidden" style={{ boxShadow: '0 1px 2px rgba(0,0,0,0.04)' }}>
+              {items.map((item, i) => {
+                const itemId = item.id ?? `${cat.naam}-${item.naam}`;
+                const isDone = checked.has(itemId);
+                return (
+                  <div
+                    key={itemId}
+                    onClick={() => toggle(itemId)}
+                    className="flex items-center gap-3 px-4 py-[10px] min-h-[42px] cursor-pointer hover:bg-black/[0.02] transition-colors"
+                    style={i < items.length - 1 ? { borderBottom: '0.5px solid rgba(60,60,67,0.08)' } : {}}
+                  >
+                    <div
+                      className="w-[22px] h-[22px] rounded-full flex-shrink-0 flex items-center justify-center transition-colors"
+                      style={isDone
+                        ? { background: '#1f7a4d' }
+                        : { border: '1.5px solid rgba(60,60,67,0.3)' }
+                      }
+                    >
+                      {isDone && <svg width="11" height="9" viewBox="0 0 11 9" fill="none"><path d="M1 4.5l3 3 6-7" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" /></svg>}
+                    </div>
+                    {item.hoeveelheid && (
+                      <span className="w-[64px] flex-shrink-0 text-[13px] text-ink2 tabular-nums">{item.hoeveelheid}</span>
+                    )}
+                    <span
+                      className="flex-1 text-[14px] text-ink"
+                      style={isDone ? { textDecoration: 'line-through', color: 'rgba(60,60,67,0.4)' } : {}}
+                    >
+                      {item.naam}
+                    </span>
+                  </div>
+                );
+              })}
+            </div>
+          </div>
+        );
+      })}
+    </div>
+  );
+
   return (
     <>
       {/* ── Mobile ── */}
@@ -150,16 +176,22 @@ export default function Shopping() {
         <IOSLargeHeader
           title="Boodschappen"
           onBack={() => navigate(-1)}
-          accessory={
-            <button className="text-brand text-[17px]">Deel</button>
-          }
+          accessory={<button className="text-brand text-[17px] font-medium">Deel</button>}
         />
-        <p className="px-4 mb-3 text-[15px] text-ink2">Week {week} · {totalItems} items</p>
+        <p className="px-4 mb-3 text-[15px] text-ink2">
+          Week {week ?? "—"} · {totalItems} items
+        </p>
 
-        {loading ? (
+        {!week ? (
           <div className="mx-4 animate-pulse bg-surface rounded-[10px] h-40" />
+        ) : loading ? (
+          <div className="mx-4 animate-pulse bg-surface rounded-[10px] h-40" />
+        ) : categories.length === 0 ? (
+          <div className="mx-4 bg-surface rounded-[10px] p-6 text-center">
+            <p className="text-[17px] text-ink2">Geen boodschappen voor week {week}</p>
+          </div>
         ) : (
-          <ShoppingContent />
+          <MobileList />
         )}
 
         <IOSTabBar />
@@ -169,14 +201,52 @@ export default function Shopping() {
       <div className="hidden lg:block">
         <DesktopShell
           title="Boodschappen"
-          subtitle={`Week ${week} · ${checkedCount} van ${totalItems} afgevinkt`}
+          subtitle={week ? `Week ${week} · ${checkedCount} van ${totalItems} afgevinkt` : undefined}
         >
           <div className="p-6">
-            {loading ? (
+            {!week || loading ? (
               <div className="animate-pulse bg-surface rounded-[12px] h-64" />
+            ) : categories.length === 0 ? (
+              <div className="bg-surface rounded-[12px] p-10 text-center max-w-lg">
+                <p className="text-[17px] font-semibold text-ink mb-2">Geen boodschappenlijst</p>
+                <p className="text-[14px] text-ink2">Er is nog geen lijst gegenereerd voor week {week}.</p>
+              </div>
             ) : (
-              <div className="max-w-2xl">
-                <ShoppingContent />
+              <div className="grid gap-6" style={{ gridTemplateColumns: '1fr 280px' }}>
+                {/* Left: lijst */}
+                <DesktopList />
+
+                {/* Right: voortgang */}
+                <div className="space-y-4">
+                  <div className="bg-surface rounded-[12px] p-4" style={{ boxShadow: '0 1px 2px rgba(0,0,0,0.04)' }}>
+                    <p className="text-[11px] font-bold uppercase tracking-wider text-ink2 mb-3">Voortgang</p>
+                    <div className="flex items-baseline gap-2 mb-3">
+                      <span className="text-[28px] font-bold text-ink">{checkedCount}</span>
+                      <span className="text-[14px] text-ink2">/ {totalItems} items</span>
+                    </div>
+                    <div className="h-[6px] rounded-full overflow-hidden" style={{ background: 'rgba(120,120,128,0.16)' }}>
+                      <div
+                        className="h-full rounded-full transition-all duration-300"
+                        style={{ width: `${progress * 100}%`, background: '#1f7a4d' }}
+                      />
+                    </div>
+                    <p className="text-[13px] text-ink2 mt-2">{Math.round(progress * 100)}% afgevinkt</p>
+                  </div>
+
+                  <div className="bg-surface rounded-[12px] p-4" style={{ boxShadow: '0 1px 2px rgba(0,0,0,0.04)' }}>
+                    <p className="text-[11px] font-bold uppercase tracking-wider text-ink2 mb-3">Categorieën</p>
+                    {categories.map(cat => {
+                      const items = cat.items ?? cat.boodschappen ?? [];
+                      const catChecked = items.filter(item => checked.has(item.id ?? `${cat.naam}-${item.naam}`)).length;
+                      return (
+                        <div key={cat.naam} className="flex items-center justify-between py-[7px]" style={{ borderBottom: '0.5px solid rgba(60,60,67,0.08)' }}>
+                          <span className="text-[13px] text-ink">{cat.naam}</span>
+                          <span className="text-[12px] text-ink2">{catChecked}/{items.length}</span>
+                        </div>
+                      );
+                    })}
+                  </div>
+                </div>
               </div>
             )}
           </div>
