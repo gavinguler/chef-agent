@@ -11,6 +11,7 @@ from backend.db.session import get_db, SessionLocal
 from backend.scheduler.manager import scheduler, reschedule_notification_jobs
 from backend.scheduler.weekly_job import run_weekly_job
 from backend.services.wiki_sync import sync_all_recipes_to_wiki
+from backend.db.seed import seed as seed_db
 
 FRONTEND_DIST = Path(__file__).parent.parent / "frontend" / "dist"
 
@@ -33,6 +34,7 @@ async def lifespan(app: FastAPI):
     finally:
         db.close()
 
+    seed_db()
     scheduler.start()
     yield
     scheduler.shutdown()

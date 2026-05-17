@@ -253,6 +253,7 @@ def seed():
     try:
         _seed_recipes(db)
         _seed_meal_plans(db)
+        _seed_shopping_and_freezer(db)
     finally:
         db.close()
 
@@ -285,6 +286,15 @@ def _seed_recipes(db):
     for nc in NUTRITION_CYCLE:
         db.add(NutritionCycle(**nc))
 
+    db.commit()
+    print(f"Recepten geseed: {len(RECIPES)} recepten, {len(NUTRITION_CYCLE)} weken.")
+
+
+def _seed_shopping_and_freezer(db):
+    if db.query(ShoppingList).count() > 0:
+        print("Boodschappenlijst al aanwezig — overgeslagen.")
+        return
+
     for week in range(1, 9):
         for item in SHOPPING_BASE_WEEK:
             db.add(ShoppingList(cyclus_week=week, **item))
@@ -292,7 +302,7 @@ def _seed_recipes(db):
             db.add(FreezerItem(cyclus_week=week, **fi))
 
     db.commit()
-    print(f"Recepten geseed: {len(RECIPES)} recepten, {len(NUTRITION_CYCLE)} weken.")
+    print(f"Boodschappen geseed: {len(SHOPPING_BASE_WEEK)} items × 8 weken.")
 
 
 def _seed_meal_plans(db):

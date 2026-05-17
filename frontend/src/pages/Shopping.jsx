@@ -12,7 +12,19 @@ function useShoppingData(week) {
   useEffect(() => {
     if (!week) return;
     setLoading(true);
-    getShoppingList(week).then(setList).catch(() => setList(null)).finally(() => setLoading(false));
+    getShoppingList(week)
+      .then(data => {
+        const grouped = {};
+        for (const item of data.items ?? []) {
+          const cat = item.categorie ?? "overig";
+          if (!grouped[cat]) grouped[cat] = [];
+          grouped[cat].push({ ...item, naam: item.product });
+        }
+        const categories = Object.entries(grouped).map(([naam, items]) => ({ naam, items }));
+        setList({ week: data.week, categories });
+      })
+      .catch(() => setList(null))
+      .finally(() => setLoading(false));
   }, [week]);
 
   return { list, loading };
