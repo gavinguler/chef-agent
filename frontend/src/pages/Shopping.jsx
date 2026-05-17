@@ -35,6 +35,10 @@ export default function Shopping() {
   const navigate = useNavigate();
   const [week, setWeek] = useState(null);
 
+  function selectWeek(w) {
+    navigate(`/boodschappen/${w}`);
+  }
+
   useEffect(() => {
     if (paramWeek) {
       setWeek(Number(paramWeek));
@@ -185,13 +189,30 @@ export default function Shopping() {
       {/* ── Mobile ── */}
       <div className="lg:hidden min-h-screen bg-bg pb-[100px]">
         <IOSStatusBar />
-        <IOSLargeHeader
-          title="Boodschappen"
-          onBack={() => navigate(-1)}
-          accessory={<button className="text-brand text-[17px] font-medium">Deel</button>}
-        />
-        <p className="px-4 mb-3 text-[15px] text-ink2">
-          Week {week ?? "—"} · {totalItems} items
+        <IOSLargeHeader title="Boodschappen" />
+
+        {/* Week picker */}
+        <div className="px-4 mb-3 flex items-center gap-2">
+          <span className="text-[13px] text-ink2 flex-shrink-0">Week</span>
+          <div className="flex gap-[6px] overflow-x-auto pb-px">
+            {Array.from({ length: 8 }, (_, i) => i + 1).map(w => (
+              <button
+                key={w}
+                onClick={() => selectWeek(w)}
+                className="w-8 h-8 rounded-[7px] text-[13px] font-semibold flex-shrink-0"
+                style={week === w
+                  ? { background: '#1f7a4d', color: '#fff' }
+                  : { background: 'rgba(120,120,128,0.16)', color: 'rgba(60,60,67,0.6)' }
+                }
+              >
+                {w}
+              </button>
+            ))}
+          </div>
+        </div>
+
+        <p className="px-4 mb-3 text-[13px] text-ink2">
+          {totalItems} items · {checkedCount} afgevinkt
         </p>
 
         {!week ? (
@@ -214,6 +235,23 @@ export default function Shopping() {
         <DesktopShell
           title="Boodschappen"
           subtitle={week ? `Week ${week} · ${checkedCount} van ${totalItems} afgevinkt` : undefined}
+          accessory={
+            <div className="flex items-center gap-1">
+              {Array.from({ length: 8 }, (_, i) => i + 1).map(w => (
+                <button
+                  key={w}
+                  onClick={() => selectWeek(w)}
+                  className="w-7 h-7 rounded-[6px] text-[12px] font-semibold"
+                  style={week === w
+                    ? { background: '#1f7a4d', color: '#fff' }
+                    : { background: 'rgba(120,120,128,0.16)', color: 'rgba(60,60,67,0.6)' }
+                  }
+                >
+                  {w}
+                </button>
+              ))}
+            </div>
+          }
         >
           <div className="p-6">
             {!week || loading ? (
