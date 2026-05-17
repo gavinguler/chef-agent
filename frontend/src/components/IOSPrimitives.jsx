@@ -33,7 +33,7 @@ export function IOSGroupHeader({ children }) {
 export function IOSGroup({ children, footer }) {
   return (
     <div className="mx-4">
-      <div className="bg-surface rounded-[10px] overflow-hidden">
+      <div className="bg-surface rounded-[10px]">
         {children}
       </div>
       {footer && <p className="text-[13px] text-ink2 px-4 pt-2">{footer}</p>}
