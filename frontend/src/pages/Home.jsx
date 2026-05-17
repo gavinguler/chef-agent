@@ -212,6 +212,49 @@ export default function Home() {
           ))}
         </IOSGroup>
 
+        {/* Batch kookreminder */}
+        {weekPlan && (() => {
+          const DAG_VOLGORDE = ["maandag","dinsdag","woensdag","donderdag","vrijdag","zaterdag","zondag"];
+          const todayIdx = DAG_VOLGORDE.indexOf(todayNl);
+          const upcomingBatch = weekPlan.dagen
+            ?.filter(d => d.is_batch && DAG_VOLGORDE.indexOf(d.dag) >= todayIdx)
+            .sort((a, b) => DAG_VOLGORDE.indexOf(a.dag) - DAG_VOLGORDE.indexOf(b.dag))[0];
+          if (!upcomingBatch) return null;
+          const batchDiner = upcomingBatch.maaltijden?.find(m => m.maaltijd_type === 'diner');
+          if (!batchDiner) return null;
+          const isToday = upcomingBatch.dag === todayNl;
+          const consumers = weekPlan.dagen
+            .filter(d => DAG_VOLGORDE.indexOf(d.dag) > DAG_VOLGORDE.indexOf(upcomingBatch.dag) &&
+              d.maaltijden?.some(m => m.naam?.toLowerCase().includes('(batch)')))
+            .map(d => d.dag.charAt(0).toUpperCase() + d.dag.slice(1));
+          return (
+            <>
+              <IOSGroupHeader>Batch koken</IOSGroupHeader>
+              <IOSGroup>
+                <div className="px-4 py-3 flex items-start gap-3">
+                  <span className="text-2xl leading-none mt-0.5">🍳</span>
+                  <div className="flex-1">
+                    <p className="text-[15px] font-semibold text-ink">
+                      {isToday ? 'Vandaag extra koken' : `${upcomingBatch.dag.charAt(0).toUpperCase() + upcomingBatch.dag.slice(1)} extra koken`}
+                    </p>
+                    <p className="text-[14px] text-ink mt-[2px]">{batchDiner.naam}</p>
+                    {consumers.length > 0 && (
+                      <p className="text-[13px] text-ink2 mt-1">
+                        Voedt lunch op {consumers.join(' en ')}
+                      </p>
+                    )}
+                  </div>
+                  {isToday && (
+                    <span className="text-[11px] font-bold px-2 py-[3px] rounded-full" style={{ background: 'rgba(31,122,77,0.12)', color: '#1f7a4d' }}>
+                      VANDAAG
+                    </span>
+                  )}
+                </div>
+              </IOSGroup>
+            </>
+          );
+        })()}
+
         <IOSTabBar />
       </div>
 

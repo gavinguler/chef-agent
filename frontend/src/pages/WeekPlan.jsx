@@ -196,26 +196,33 @@ export default function WeekPlan() {
             })}
 
             {/* Batch kookmomenten */}
-            {weekPlan?.dagen?.some(d => d.is_batch) && (
-              <>
-                <IOSGroupHeader>Batch kookmomenten</IOSGroupHeader>
-                <IOSGroup>
-                  {weekPlan.dagen.filter(d => d.is_batch).map((dagData, i, arr) => {
-                    const batchMeals = dagData.maaltijden?.filter(m => m.maaltijd_type === 'lunch') ?? [];
-                    return (
-                      <IOSRow
-                        key={dagData.dag}
-                        title={dagData.dag.charAt(0).toUpperCase() + dagData.dag.slice(1)}
-                        sub={batchMeals.length > 0
-                          ? batchMeals.map(m => m.naam).join(', ')
-                          : 'Voorbereiding voor de rest van de week'}
-                        last={i === arr.length - 1}
-                      />
-                    );
-                  })}
-                </IOSGroup>
-              </>
-            )}
+            {weekPlan?.dagen?.some(d => d.is_batch) && (() => {
+              const DAG_VOLGORDE = ["maandag","dinsdag","woensdag","donderdag","vrijdag","zaterdag","zondag"];
+              return (
+                <>
+                  <IOSGroupHeader>Batch kookmomenten</IOSGroupHeader>
+                  <IOSGroup>
+                    {weekPlan.dagen.filter(d => d.is_batch).map((dagData, i, arr) => {
+                      const diner = dagData.maaltijden?.find(m => m.maaltijd_type === 'diner');
+                      const batchIdx = DAG_VOLGORDE.indexOf(dagData.dag);
+                      const consumers = weekPlan.dagen
+                        .filter(d => DAG_VOLGORDE.indexOf(d.dag) > batchIdx &&
+                          d.maaltijden?.some(m => m.naam?.toLowerCase().includes('(batch)')))
+                        .map(d => d.dag.charAt(0).toUpperCase() + d.dag.slice(1));
+                      const consumerStr = consumers.length > 0 ? ` → ${consumers.join(' + ')} lunch` : '';
+                      return (
+                        <IOSRow
+                          key={dagData.dag}
+                          title={`🍳 ${dagData.dag.charAt(0).toUpperCase() + dagData.dag.slice(1)}`}
+                          sub={diner ? `Kook extra: ${diner.naam}${consumerStr}` : 'Voorbereiding voor de rest van de week'}
+                          last={i === arr.length - 1}
+                        />
+                      );
+                    })}
+                  </IOSGroup>
+                </>
+              );
+            })()}
 
             <IOSGroupHeader>Boodschappen</IOSGroupHeader>
             <IOSGroup>
@@ -336,37 +343,48 @@ export default function WeekPlan() {
                 </div>
 
                 {/* Batch kookmomenten */}
-                {weekPlan?.dagen?.some(d => d.is_batch) && (
-                  <div className="mt-3 rounded-[10px] overflow-hidden" style={{ background: '#fff', boxShadow: '0 1px 2px rgba(0,0,0,0.04)' }}>
-                    <div className="px-4 py-3 flex items-center gap-2" style={{ borderBottom: '0.5px solid rgba(0,0,0,0.06)' }}>
-                      <span style={{ fontSize: 14 }}>🍳</span>
-                      <p className="text-[11px] font-bold uppercase tracking-wider text-ink2">Batch kookmomenten</p>
+                {weekPlan?.dagen?.some(d => d.is_batch) && (() => {
+                  const DAG_VOLGORDE = ["maandag","dinsdag","woensdag","donderdag","vrijdag","zaterdag","zondag"];
+                  return (
+                    <div className="mt-3 rounded-[10px] overflow-hidden" style={{ background: '#fff', boxShadow: '0 1px 2px rgba(0,0,0,0.04)' }}>
+                      <div className="px-4 py-3 flex items-center gap-2" style={{ borderBottom: '0.5px solid rgba(0,0,0,0.06)' }}>
+                        <span style={{ fontSize: 14 }}>🍳</span>
+                        <p className="text-[11px] font-bold uppercase tracking-wider text-ink2">Batch kookmomenten</p>
+                      </div>
+                      <div className="flex">
+                        {weekPlan.dagen.filter(d => d.is_batch).map((dagData, i, arr) => {
+                          const diner = dagData.maaltijden?.find(m => m.maaltijd_type === 'diner');
+                          const batchIdx = DAG_VOLGORDE.indexOf(dagData.dag);
+                          const consumers = weekPlan.dagen
+                            .filter(d => DAG_VOLGORDE.indexOf(d.dag) > batchIdx &&
+                              d.maaltijden?.some(m => m.naam?.toLowerCase().includes('(batch)')))
+                            .map(d => d.dag.charAt(0).toUpperCase() + d.dag.slice(1));
+                          return (
+                            <div
+                              key={dagData.dag}
+                              className="flex-1 px-4 py-3"
+                              style={i < arr.length - 1 ? { borderRight: '0.5px solid rgba(0,0,0,0.06)' } : {}}
+                            >
+                              <p className="text-[12px] font-semibold text-ink mb-1">
+                                {dagData.dag.charAt(0).toUpperCase() + dagData.dag.slice(1)}
+                              </p>
+                              {diner ? (
+                                <>
+                                  <p className="text-[12px] text-ink leading-snug">Kook extra: <strong>{diner.naam}</strong></p>
+                                  {consumers.length > 0 && (
+                                    <p className="text-[11px] text-ink2 mt-1">→ {consumers.join(' + ')} lunch</p>
+                                  )}
+                                </>
+                              ) : (
+                                <p className="text-[12px] text-ink2">Voorbereiding voor de week</p>
+                              )}
+                            </div>
+                          );
+                        })}
+                      </div>
                     </div>
-                    <div className="flex">
-                      {weekPlan.dagen.filter(d => d.is_batch).map((dagData, i, arr) => {
-                        const batchMeals = dagData.maaltijden?.filter(m => m.maaltijd_type === 'lunch') ?? [];
-                        return (
-                          <div
-                            key={dagData.dag}
-                            className="flex-1 px-4 py-3"
-                            style={i < arr.length - 1 ? { borderRight: '0.5px solid rgba(0,0,0,0.06)' } : {}}
-                          >
-                            <p className="text-[12px] font-semibold text-ink mb-1">
-                              {dagData.dag.charAt(0).toUpperCase() + dagData.dag.slice(1)}
-                            </p>
-                            {batchMeals.length > 0 ? (
-                              batchMeals.map(m => (
-                                <p key={m.naam} className="text-[12px] text-ink2 leading-snug">{m.naam}</p>
-                              ))
-                            ) : (
-                              <p className="text-[12px] text-ink2">Voorbereiding voor de week</p>
-                            )}
-                          </div>
-                        );
-                      })}
-                    </div>
-                  </div>
-                )}
+                  );
+                })()}
 
                 {/* Totals row */}
                 {weekPlan && (
