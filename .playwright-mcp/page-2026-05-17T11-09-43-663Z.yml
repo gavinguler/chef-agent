@@ -1,0 +1,37 @@
+- generic [ref=e3]:
+  - generic [ref=e6]:
+    - heading "Recepten" [level=1] [ref=e7]
+    - button [ref=e9] [cursor=pointer]:
+      - img [ref=e10]
+  - generic [ref=e12]:
+    - img [ref=e13]
+    - textbox "Zoek recepten..." [ref=e16]
+  - generic [ref=e18]:
+    - button "Alle" [ref=e19] [cursor=pointer]
+    - button "Diner" [ref=e20] [cursor=pointer]
+    - button "Lunch" [ref=e21] [cursor=pointer]
+    - button "Ontbijt" [ref=e22] [cursor=pointer]
+    - button "Snack" [ref=e23] [cursor=pointer]
+    - button "Veggie" [ref=e24] [cursor=pointer]
+  - paragraph [ref=e25]: 0 gerechten
+  - navigation [ref=e27]:
+    - link "Vandaag" [ref=e28] [cursor=pointer]:
+      - /url: /
+      - img [ref=e29]
+      - generic [ref=e32]: Vandaag
+    - link "Recepten" [ref=e33] [cursor=pointer]:
+      - /url: /recepten
+      - img [ref=e34]
+      - generic [ref=e36]: Recepten
+    - link "Week" [ref=e37] [cursor=pointer]:
+      - /url: /weekplan
+      - img [ref=e38]
+      - generic [ref=e40]: Week
+    - link "Lijst" [ref=e41] [cursor=pointer]:
+      - /url: /boodschappen
+      - img [ref=e42]
+      - generic [ref=e46]: Lijst
+    - link "Instellingen" [ref=e47] [cursor=pointer]:
+      - /url: /instellingen
+      - img [ref=e48]
+      - generic [ref=e51]: Instellingen

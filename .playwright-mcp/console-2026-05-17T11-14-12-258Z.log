@@ -1,0 +1,31 @@
+[      93ms] [INFO] %cDownload the React DevTools for a better development experience: https://reactjs.org/link/react-devtools font-weight:bold @ http://localhost:5174/node_modules/.vite/deps/chunk-WALXKXZM.js?v=5fd3f82f:21579
+[     108ms] [WARNING] ⚠️ React Router Future Flag Warning: React Router will begin wrapping state updates in `React.startTransition` in v7. You can use the `v7_startTransition` future flag to opt-in early. For more information, see https://reactrouter.com/v6/upgrading/future#v7_starttransition. @ http://localhost:5174/node_modules/.vite/deps/react-router-dom.js?v=5fd3f82f:4451
+[     108ms] [WARNING] ⚠️ React Router Future Flag Warning: Relative route resolution within Splat routes is changing in v7. You can use the `v7_relativeSplatPath` future flag to opt-in early. For more information, see https://reactrouter.com/v6/upgrading/future#v7_relativesplatpath. @ http://localhost:5174/node_modules/.vite/deps/react-router-dom.js?v=5fd3f82f:4451
+[     126ms] [ERROR] Failed to load resource: the server responded with a status of 404 (Not Found) @ http://localhost:5174/api/meal-plans/current-week:0
+[     127ms] [ERROR] Failed to load resource: the server responded with a status of 404 (Not Found) @ http://localhost:5174/api/recipes:0
+[     127ms] [ERROR] Failed to load resource: the server responded with a status of 404 (Not Found) @ http://localhost:5174/api/meal-plans/week/5:0
+[     127ms] [ERROR] Failed to load resource: the server responded with a status of 404 (Not Found) @ http://localhost:5174/api/meal-plans/week/1:0
+[     127ms] [ERROR] Failed to load resource: the server responded with a status of 404 (Not Found) @ http://localhost:5174/api/meal-plans/week/2:0
+[     127ms] [ERROR] Failed to load resource: the server responded with a status of 404 (Not Found) @ http://localhost:5174/api/meal-plans/week/3:0
+[     127ms] [ERROR] Failed to load resource: the server responded with a status of 404 (Not Found) @ http://localhost:5174/api/meal-plans/week/4:0
+[     127ms] [ERROR] Failed to load resource: the server responded with a status of 404 (Not Found) @ http://localhost:5174/api/meal-plans/week/7:0
+[     127ms] [ERROR] Failed to load resource: the server responded with a status of 404 (Not Found) @ http://localhost:5174/api/meal-plans/week/8:0
+[     127ms] [ERROR] Failed to load resource: the server responded with a status of 404 (Not Found) @ http://localhost:5174/api/meal-plans/current-week:0
+[     127ms] [ERROR] Failed to load resource: the server responded with a status of 404 (Not Found) @ http://localhost:5174/api/meal-plans/week/6:0
+[     127ms] [ERROR] Failed to load resource: the server responded with a status of 404 (Not Found) @ http://localhost:5174/api/meal-plans/week/1:0
+[     128ms] [ERROR] Failed to load resource: the server responded with a status of 404 (Not Found) @ http://localhost:5174/api/meal-plans/week/2:0
+[     128ms] [ERROR] Failed to load resource: the server responded with a status of 404 (Not Found) @ http://localhost:5174/api/meal-plans/week/3:0
+[     128ms] [ERROR] Failed to load resource: the server responded with a status of 404 (Not Found) @ http://localhost:5174/api/recipes:0
+[     128ms] [ERROR] Failed to load resource: the server responded with a status of 404 (Not Found) @ http://localhost:5174/api/meal-plans/week/5:0
+[     128ms] [ERROR] Failed to load resource: the server responded with a status of 404 (Not Found) @ http://localhost:5174/api/meal-plans/week/7:0
+[     128ms] [ERROR] Failed to load resource: the server responded with a status of 404 (Not Found) @ http://localhost:5174/api/meal-plans/week/8:0
+[     128ms] [ERROR] Failed to load resource: the server responded with a status of 404 (Not Found) @ http://localhost:5174/api/meal-plans/current-week:0
+[     128ms] [ERROR] Failed to load resource: the server responded with a status of 404 (Not Found) @ http://localhost:5174/api/meal-plans/week/6:0
+[     128ms] [ERROR] Failed to load resource: the server responded with a status of 404 (Not Found) @ http://localhost:5174/api/meal-plans/week/4:0
+[     128ms] [ERROR] Failed to load resource: the server responded with a status of 404 (Not Found) @ http://localhost:5174/api/meal-plans/current-week:0
+[     160ms] AxiosError: Request failed with status code 404
+    at settle (http://localhost:5174/node_modules/.vite/deps/axios.js?v=5fd3f82f:1448:12)
+    at XMLHttpRequest.onloadend (http://localhost:5174/node_modules/.vite/deps/axios.js?v=5fd3f82f:1852:7)
+[     161ms] AxiosError: Request failed with status code 404
+    at settle (http://localhost:5174/node_modules/.vite/deps/axios.js?v=5fd3f82f:1448:12)
+    at XMLHttpRequest.onloadend (http://localhost:5174/node_modules/.vite/deps/axios.js?v=5fd3f82f:1852:7)

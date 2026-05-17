@@ -1,0 +1,70 @@
+- generic [ref=e4]:
+  - generic [ref=e11]: Chef Agent
+  - generic [ref=e12]:
+    - complementary [ref=e13]:
+      - generic [ref=e14]:
+        - generic [ref=e16]: C
+        - generic [ref=e17]: Chef Agent
+      - generic [ref=e18]:
+        - paragraph [ref=e19]: Persoonlijk
+        - link "Vandaag" [ref=e20] [cursor=pointer]:
+          - /url: /
+          - img [ref=e21]
+          - generic [ref=e24]: Vandaag
+        - link "Weekplan" [ref=e25] [cursor=pointer]:
+          - /url: /weekplan
+          - img [ref=e26]
+          - generic [ref=e28]: Weekplan
+        - link "Recepten" [ref=e29] [cursor=pointer]:
+          - /url: /recepten
+          - img [ref=e30]
+          - generic [ref=e32]: Recepten
+        - link "Boodschappen" [ref=e33] [cursor=pointer]:
+          - /url: /boodschappen
+          - img [ref=e34]
+          - generic [ref=e38]: Boodschappen
+        - link "Instellingen" [ref=e39] [cursor=pointer]:
+          - /url: /instellingen
+          - img [ref=e40]
+          - generic [ref=e43]: Instellingen
+      - generic [ref=e46]:
+        - generic [ref=e48]: G
+        - generic [ref=e49]:
+          - paragraph [ref=e50]: Gavin
+          - paragraph [ref=e51]: Pro · 8-weken plan
+    - generic [ref=e52]:
+      - banner [ref=e53]:
+        - heading "Instellingen" [level=1] [ref=e55]
+      - main [ref=e56]:
+        - generic [ref=e57]:
+          - paragraph [ref=e58]: Cyclus
+          - generic [ref=e60]:
+            - generic [ref=e61]:
+              - paragraph [ref=e63]: Echte cyclus week
+              - generic [ref=e64]: —
+            - generic [ref=e65]:
+              - paragraph [ref=e67]: Actieve week
+              - generic [ref=e69]:
+                - button "1" [ref=e70] [cursor=pointer]
+                - button "2" [ref=e71] [cursor=pointer]
+                - button "3" [ref=e72] [cursor=pointer]
+                - button "4" [ref=e73] [cursor=pointer]
+                - button "5" [ref=e74] [cursor=pointer]
+                - button "6" [ref=e75] [cursor=pointer]
+                - button "7" [ref=e76] [cursor=pointer]
+                - button "8" [ref=e77] [cursor=pointer]
+          - paragraph [ref=e78]: Telegram
+          - generic [ref=e80]:
+            - generic [ref=e81]:
+              - img [ref=e83]
+              - generic [ref=e85]:
+                - paragraph [ref=e86]: Verbonden
+                - paragraph [ref=e87]: Telegram bot actief
+            - paragraph [ref=e90]: Dagelijks bericht
+            - paragraph [ref=e93]: Boodschappen herinnering
+            - generic [ref=e94] [cursor=pointer]:
+              - paragraph [ref=e96]: Stuur dagelijks testbericht
+              - img [ref=e97]
+            - generic [ref=e99] [cursor=pointer]:
+              - paragraph [ref=e101]: Stuur boodschappen testbericht
+              - img [ref=e102]

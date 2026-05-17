@@ -1,0 +1,73 @@
+- generic [ref=e3]:
+  - generic [ref=e6]:
+    - heading "Vandaag" [level=1] [ref=e7]
+    - button [ref=e9] [cursor=pointer]:
+      - img [ref=e10]
+  - paragraph [ref=e13]: week
+  - paragraph [ref=e14]: Vandaag
+  - generic [ref=e17]:
+    - generic [ref=e18]:
+      - img [ref=e19]
+      - generic [ref=e22]: 0%
+    - generic [ref=e23]:
+      - generic [ref=e25]:
+        - generic [ref=e26]: Calorieën
+        - generic [ref=e27]: 0 / 2700 kcal
+      - generic [ref=e30]:
+        - generic [ref=e31]: Eiwit
+        - generic [ref=e32]: 0 / 160 g
+  - paragraph [ref=e34]: Deze week
+  - generic [ref=e35]:
+    - generic [ref=e36]:
+      - generic [ref=e37]: ma
+      - generic [ref=e38]: "11"
+    - generic [ref=e39]:
+      - generic [ref=e40]: di
+      - generic [ref=e41]: "12"
+    - generic [ref=e42]:
+      - generic [ref=e43]: wo
+      - generic [ref=e44]: "13"
+    - generic [ref=e45]:
+      - generic [ref=e46]: do
+      - generic [ref=e47]: "14"
+    - generic [ref=e48]:
+      - generic [ref=e49]: vr
+      - generic [ref=e50]: "15"
+    - generic [ref=e51]:
+      - generic [ref=e52]: za
+      - generic [ref=e53]: "16"
+    - generic [ref=e54]:
+      - generic [ref=e55]: zo
+      - generic [ref=e56]: "17"
+  - paragraph [ref=e57]: Komende dagen
+  - generic [ref=e59]:
+    - generic [ref=e61]:
+      - paragraph [ref=e62]: Niet ingesteld
+      - paragraph [ref=e63]: MA ·
+    - generic [ref=e65]:
+      - paragraph [ref=e66]: Niet ingesteld
+      - paragraph [ref=e67]: DI ·
+    - generic [ref=e69]:
+      - paragraph [ref=e70]: Niet ingesteld
+      - paragraph [ref=e71]: WO ·
+  - navigation [ref=e73]:
+    - link "Vandaag" [ref=e74] [cursor=pointer]:
+      - /url: /
+      - img [ref=e75]
+      - generic [ref=e78]: Vandaag
+    - link "Recepten" [ref=e79] [cursor=pointer]:
+      - /url: /recepten
+      - img [ref=e80]
+      - generic [ref=e82]: Recepten
+    - link "Week" [ref=e83] [cursor=pointer]:
+      - /url: /weekplan
+      - img [ref=e84]
+      - generic [ref=e86]: Week
+    - link "Lijst" [ref=e87] [cursor=pointer]:
+      - /url: /boodschappen
+      - img [ref=e88]
+      - generic [ref=e92]: Lijst
+    - link "Instellingen" [ref=e93] [cursor=pointer]:
+      - /url: /instellingen
+      - img [ref=e94]
+      - generic [ref=e97]: Instellingen

@@ -1,0 +1,75 @@
+- generic [ref=e4]:
+  - generic [ref=e11]: Chef Agent
+  - generic [ref=e12]:
+    - complementary [ref=e13]:
+      - generic [ref=e14]:
+        - generic [ref=e16]: C
+        - generic [ref=e17]: Chef Agent
+      - generic [ref=e18]:
+        - paragraph [ref=e19]: Persoonlijk
+        - link "Vandaag" [ref=e20] [cursor=pointer]:
+          - /url: /
+          - img [ref=e21]
+          - generic [ref=e24]: Vandaag
+        - link "Weekplan" [ref=e25] [cursor=pointer]:
+          - /url: /weekplan
+          - img [ref=e26]
+          - generic [ref=e28]: Weekplan
+        - link "Recepten" [ref=e29] [cursor=pointer]:
+          - /url: /recepten
+          - img [ref=e30]
+          - generic [ref=e32]: Recepten
+        - link "Boodschappen" [ref=e33] [cursor=pointer]:
+          - /url: /boodschappen
+          - img [ref=e34]
+          - generic [ref=e38]: Boodschappen
+        - link "Instellingen" [ref=e39] [cursor=pointer]:
+          - /url: /instellingen
+          - img [ref=e40]
+          - generic [ref=e43]: Instellingen
+      - generic [ref=e46]:
+        - generic [ref=e48]: G
+        - generic [ref=e49]:
+          - paragraph [ref=e50]: Gavin
+          - paragraph [ref=e51]: Pro · 8-weken plan
+    - generic [ref=e52]:
+      - banner [ref=e53]:
+        - generic [ref=e54]:
+          - heading "Recepten" [level=1] [ref=e55]
+          - paragraph [ref=e56]: 0 gerechten in je bibliotheek
+        - generic [ref=e58]:
+          - generic [ref=e59]:
+            - img [ref=e60]
+            - textbox "Zoek recepten…" [ref=e63]
+          - button "Nieuw recept" [ref=e64] [cursor=pointer]:
+            - img [ref=e65]
+            - text: Nieuw recept
+      - main [ref=e66]:
+        - generic [ref=e67]:
+          - complementary [ref=e68]:
+            - generic [ref=e69]:
+              - paragraph [ref=e70]: Categorie
+              - button "Alle" [ref=e71] [cursor=pointer]:
+                - img [ref=e73]
+                - generic [ref=e75]: Alle
+              - button "Diner" [ref=e76] [cursor=pointer]:
+                - generic [ref=e78]: Diner
+              - button "Lunch" [ref=e79] [cursor=pointer]:
+                - generic [ref=e81]: Lunch
+              - button "Ontbijt" [ref=e82] [cursor=pointer]:
+                - generic [ref=e84]: Ontbijt
+              - button "Snack" [ref=e85] [cursor=pointer]:
+                - generic [ref=e87]: Snack
+              - button "Veggie" [ref=e88] [cursor=pointer]:
+                - generic [ref=e90]: Veggie
+          - generic [ref=e92]:
+            - generic [ref=e93]:
+              - button "Alle" [ref=e94] [cursor=pointer]
+              - button "Diner" [ref=e95] [cursor=pointer]
+              - button "Lunch" [ref=e96] [cursor=pointer]
+              - button "Ontbijt" [ref=e97] [cursor=pointer]
+              - button "Snack" [ref=e98] [cursor=pointer]
+              - button "Veggie" [ref=e99] [cursor=pointer]
+            - generic [ref=e100]:
+              - text: "Sorteer:"
+              - strong [ref=e101]: Recent ↓

@@ -1,0 +1,53 @@
+- generic [ref=e4]:
+  - generic [ref=e11]: Chef Agent
+  - generic [ref=e12]:
+    - complementary [ref=e13]:
+      - generic [ref=e14]:
+        - generic [ref=e16]: C
+        - generic [ref=e17]: Chef Agent
+      - generic [ref=e18]:
+        - paragraph [ref=e19]: Persoonlijk
+        - link "Vandaag" [ref=e20] [cursor=pointer]:
+          - /url: /
+          - img [ref=e21]
+          - generic [ref=e24]: Vandaag
+        - link "Weekplan" [ref=e25] [cursor=pointer]:
+          - /url: /weekplan
+          - img [ref=e26]
+          - generic [ref=e28]: Weekplan
+        - link "Recepten" [ref=e29] [cursor=pointer]:
+          - /url: /recepten
+          - img [ref=e30]
+          - generic [ref=e32]: Recepten
+        - link "Boodschappen" [ref=e33] [cursor=pointer]:
+          - /url: /boodschappen
+          - img [ref=e34]
+          - generic [ref=e38]: Boodschappen
+        - link "Instellingen" [ref=e39] [cursor=pointer]:
+          - /url: /instellingen
+          - img [ref=e40]
+          - generic [ref=e43]: Instellingen
+      - generic [ref=e46]:
+        - generic [ref=e48]: G
+        - generic [ref=e49]:
+          - paragraph [ref=e50]: Gavin
+          - paragraph [ref=e51]: Pro · 8-weken plan
+    - generic [ref=e52]:
+      - banner [ref=e53]:
+        - heading "Weekplan" [level=1] [ref=e55]
+        - generic [ref=e57]:
+          - button "← Vorige" [ref=e58] [cursor=pointer]
+          - button "Volgende →" [ref=e59] [cursor=pointer]
+          - button "Boodschappenlijst" [ref=e60] [cursor=pointer]:
+            - img [ref=e61]
+            - text: Boodschappenlijst
+      - main [ref=e65]:
+        - generic [ref=e68]:
+          - button "Week 1" [ref=e69] [cursor=pointer]
+          - button "Week 2" [ref=e70] [cursor=pointer]
+          - button "Week 3" [ref=e71] [cursor=pointer]
+          - button "Week 4" [ref=e72] [cursor=pointer]
+          - button "Week 5" [ref=e73] [cursor=pointer]
+          - button "Week 6" [ref=e74] [cursor=pointer]
+          - button "Week 7" [ref=e75] [cursor=pointer]
+          - button "Week 8" [ref=e76] [cursor=pointer]

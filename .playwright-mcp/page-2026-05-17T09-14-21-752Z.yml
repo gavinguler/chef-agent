@@ -1,0 +1,43 @@
+- generic [ref=e79]:
+  - generic [ref=e86]: Chef Agent
+  - generic [ref=e87]:
+    - complementary [ref=e88]:
+      - generic [ref=e89]:
+        - generic [ref=e91]: C
+        - generic [ref=e92]: Chef Agent
+      - generic [ref=e93]:
+        - paragraph [ref=e94]: Persoonlijk
+        - link "Vandaag" [ref=e95] [cursor=pointer]:
+          - /url: /
+          - img [ref=e96]
+          - generic [ref=e99]: Vandaag
+        - link "Weekplan" [ref=e100] [cursor=pointer]:
+          - /url: /weekplan
+          - img [ref=e101]
+          - generic [ref=e103]: Weekplan
+        - link "Recepten" [ref=e104] [cursor=pointer]:
+          - /url: /recepten
+          - img [ref=e105]
+          - generic [ref=e107]: Recepten
+        - link "Boodschappen" [ref=e108] [cursor=pointer]:
+          - /url: /boodschappen
+          - img [ref=e109]
+          - generic [ref=e113]: Boodschappen
+        - link "Instellingen" [ref=e114] [cursor=pointer]:
+          - /url: /instellingen
+          - img [ref=e115]
+          - generic [ref=e118]: Instellingen
+      - generic [ref=e121]:
+        - generic [ref=e123]: G
+        - generic [ref=e124]:
+          - paragraph [ref=e125]: Gavin
+          - paragraph [ref=e126]: Pro · 8-weken plan
+    - generic [ref=e127]:
+      - banner [ref=e128]:
+        - generic [ref=e129]:
+          - heading "Vandaag" [level=1] [ref=e130]
+          - paragraph [ref=e131]: Zondag · week null
+        - button "Nieuw recept" [ref=e133] [cursor=pointer]:
+          - img [ref=e134]
+          - text: Nieuw recept
+      - main [ref=e135]
