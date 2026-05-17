@@ -1,0 +1,43 @@
+- generic [ref=e4]:
+  - generic [ref=e11]: Chef Agent
+  - generic [ref=e12]:
+    - complementary [ref=e13]:
+      - generic [ref=e14]:
+        - generic [ref=e16]: C
+        - generic [ref=e17]: Chef Agent
+      - generic [ref=e18]:
+        - paragraph [ref=e19]: Persoonlijk
+        - link "Vandaag" [ref=e20] [cursor=pointer]:
+          - /url: /
+          - img [ref=e21]
+          - generic [ref=e24]: Vandaag
+        - link "Weekplan" [ref=e25] [cursor=pointer]:
+          - /url: /weekplan
+          - img [ref=e26]
+          - generic [ref=e28]: Weekplan
+        - link "Recepten" [ref=e29] [cursor=pointer]:
+          - /url: /recepten
+          - img [ref=e30]
+          - generic [ref=e32]: Recepten
+        - link "Boodschappen" [ref=e33] [cursor=pointer]:
+          - /url: /boodschappen
+          - img [ref=e34]
+          - generic [ref=e38]: Boodschappen
+        - link "Instellingen" [ref=e39] [cursor=pointer]:
+          - /url: /instellingen
+          - img [ref=e40]
+          - generic [ref=e43]: Instellingen
+      - generic [ref=e46]:
+        - generic [ref=e48]: G
+        - generic [ref=e49]:
+          - paragraph [ref=e50]: Gavin
+          - paragraph [ref=e51]: Pro · 8-weken plan
+    - generic [ref=e52]:
+      - banner [ref=e53]:
+        - generic [ref=e54]:
+          - heading "Boodschappen" [level=1] [ref=e55]
+          - paragraph [ref=e56]: Week 3 · 0 van 0 afgevinkt
+      - main [ref=e57]:
+        - generic [ref=e59]:
+          - paragraph [ref=e60]: Geen boodschappenlijst
+          - paragraph [ref=e61]: Er is nog geen lijst gegenereerd voor week 3.

@@ -29,3 +29,61 @@
 [     161ms] AxiosError: Request failed with status code 404
     at settle (http://localhost:5174/node_modules/.vite/deps/axios.js?v=5fd3f82f:1448:12)
     at XMLHttpRequest.onloadend (http://localhost:5174/node_modules/.vite/deps/axios.js?v=5fd3f82f:1852:7)
+[   24495ms] [ERROR] Failed to load resource: the server responded with a status of 404 (Not Found) @ http://localhost:5174/api/meal-plans/current-week:0
+[   24495ms] [ERROR] Failed to load resource: the server responded with a status of 404 (Not Found) @ http://localhost:5174/api/recipes:0
+[   24495ms] [ERROR] Failed to load resource: the server responded with a status of 404 (Not Found) @ http://localhost:5174/api/meal-plans/current-week:0
+[   24547ms] AxiosError: Request failed with status code 404
+    at settle (http://localhost:5174/node_modules/.vite/deps/axios.js?v=5fd3f82f:1448:12)
+    at XMLHttpRequest.onloadend (http://localhost:5174/node_modules/.vite/deps/axios.js?v=5fd3f82f:1852:7)
+[   24495ms] [ERROR] Failed to load resource: the server responded with a status of 404 (Not Found) @ http://localhost:5174/api/notifications/settings:0
+[   24547ms] AxiosError: Request failed with status code 404
+    at settle (http://localhost:5174/node_modules/.vite/deps/axios.js?v=5fd3f82f:1448:12)
+    at XMLHttpRequest.onloadend (http://localhost:5174/node_modules/.vite/deps/axios.js?v=5fd3f82f:1852:7)
+[   24496ms] [ERROR] Failed to load resource: the server responded with a status of 404 (Not Found) @ http://localhost:5174/api/meal-plans/current-week:0
+[   24497ms] [ERROR] Failed to load resource: the server responded with a status of 404 (Not Found) @ http://localhost:5174/api/recipes:0
+[   24497ms] [ERROR] Failed to load resource: the server responded with a status of 404 (Not Found) @ http://localhost:5174/api/meal-plans/current-week:0
+[   24547ms] AxiosError: Request failed with status code 404
+    at settle (http://localhost:5174/node_modules/.vite/deps/axios.js?v=5fd3f82f:1448:12)
+    at XMLHttpRequest.onloadend (http://localhost:5174/node_modules/.vite/deps/axios.js?v=5fd3f82f:1852:7)
+[   24498ms] [ERROR] Failed to load resource: the server responded with a status of 404 (Not Found) @ http://localhost:5174/api/notifications/settings:0
+[   24547ms] AxiosError: Request failed with status code 404
+    at settle (http://localhost:5174/node_modules/.vite/deps/axios.js?v=5fd3f82f:1448:12)
+    at XMLHttpRequest.onloadend (http://localhost:5174/node_modules/.vite/deps/axios.js?v=5fd3f82f:1852:7)
+[   25251ms] [ERROR] Failed to load resource: the server responded with a status of 404 (Not Found) @ http://localhost:5174/api/meal-plans/current-week:0
+[   25252ms] [ERROR] Failed to load resource: the server responded with a status of 404 (Not Found) @ http://localhost:5174/api/recipes:0
+[   25252ms] [ERROR] Failed to load resource: the server responded with a status of 404 (Not Found) @ http://localhost:5174/api/meal-plans/current-week:0
+[   25252ms] [ERROR] Failed to load resource: the server responded with a status of 404 (Not Found) @ http://localhost:5174/api/recipes:0
+[   25252ms] [ERROR] Failed to load resource: the server responded with a status of 404 (Not Found) @ http://localhost:5174/api/recipes:0
+[   25253ms] [ERROR] Failed to load resource: the server responded with a status of 404 (Not Found) @ http://localhost:5174/api/recipes:0
+[   25301ms] AxiosError: Request failed with status code 404
+    at settle (http://localhost:5174/node_modules/.vite/deps/axios.js?v=5fd3f82f:1448:12)
+    at XMLHttpRequest.onloadend (http://localhost:5174/node_modules/.vite/deps/axios.js?v=5fd3f82f:1852:7)
+[   25301ms] AxiosError: Request failed with status code 404
+    at settle (http://localhost:5174/node_modules/.vite/deps/axios.js?v=5fd3f82f:1448:12)
+    at XMLHttpRequest.onloadend (http://localhost:5174/node_modules/.vite/deps/axios.js?v=5fd3f82f:1852:7)
+[   26715ms] [ERROR] Failed to load resource: the server responded with a status of 404 (Not Found) @ http://localhost:5174/api/meal-plans/current-week:0
+[   26715ms] [ERROR] Failed to load resource: the server responded with a status of 404 (Not Found) @ http://localhost:5174/api/recipes:0
+[   26715ms] [ERROR] Failed to load resource: the server responded with a status of 404 (Not Found) @ http://localhost:5174/api/meal-plans/current-week:0
+[   26715ms] [ERROR] Failed to load resource: the server responded with a status of 404 (Not Found) @ http://localhost:5174/api/recipes:0
+[   26715ms] [ERROR] Failed to load resource: the server responded with a status of 404 (Not Found) @ http://localhost:5174/api/meal-plans/current-week:0
+[   26716ms] [ERROR] Failed to load resource: the server responded with a status of 404 (Not Found) @ http://localhost:5174/api/meal-plans/current-week:0
+[   26761ms] AxiosError: Request failed with status code 404
+    at settle (http://localhost:5174/node_modules/.vite/deps/axios.js?v=5fd3f82f:1448:12)
+    at XMLHttpRequest.onloadend (http://localhost:5174/node_modules/.vite/deps/axios.js?v=5fd3f82f:1852:7)
+[   26761ms] AxiosError: Request failed with status code 404
+    at settle (http://localhost:5174/node_modules/.vite/deps/axios.js?v=5fd3f82f:1448:12)
+    at XMLHttpRequest.onloadend (http://localhost:5174/node_modules/.vite/deps/axios.js?v=5fd3f82f:1852:7)
+[   27412ms] [ERROR] Failed to load resource: the server responded with a status of 404 (Not Found) @ http://localhost:5174/api/meal-plans/current-week:0
+[   27413ms] [ERROR] Failed to load resource: the server responded with a status of 404 (Not Found) @ http://localhost:5174/api/recipes:0
+[   27413ms] [ERROR] Failed to load resource: the server responded with a status of 404 (Not Found) @ http://localhost:5174/api/meal-plans/current-week:0
+[   27464ms] AxiosError: Request failed with status code 404
+    at settle (http://localhost:5174/node_modules/.vite/deps/axios.js?v=5fd3f82f:1448:12)
+    at XMLHttpRequest.onloadend (http://localhost:5174/node_modules/.vite/deps/axios.js?v=5fd3f82f:1852:7)
+[   27414ms] [ERROR] Failed to load resource: the server responded with a status of 404 (Not Found) @ http://localhost:5174/api/recipes:0
+[   27414ms] [ERROR] Failed to load resource: the server responded with a status of 404 (Not Found) @ http://localhost:5174/api/meal-plans/current-week:0
+[   27415ms] [ERROR] Failed to load resource: the server responded with a status of 404 (Not Found) @ http://localhost:5174/api/recipes:0
+[   27415ms] [ERROR] Failed to load resource: the server responded with a status of 404 (Not Found) @ http://localhost:5174/api/meal-plans/current-week:0
+[   27464ms] AxiosError: Request failed with status code 404
+    at settle (http://localhost:5174/node_modules/.vite/deps/axios.js?v=5fd3f82f:1448:12)
+    at XMLHttpRequest.onloadend (http://localhost:5174/node_modules/.vite/deps/axios.js?v=5fd3f82f:1852:7)
+[   27416ms] [ERROR] Failed to load resource: the server responded with a status of 404 (Not Found) @ http://localhost:5174/api/recipes:0

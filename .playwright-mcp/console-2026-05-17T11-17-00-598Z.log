@@ -1,0 +1,109 @@
+[     105ms] [INFO] %cDownload the React DevTools for a better development experience: https://reactjs.org/link/react-devtools font-weight:bold @ http://localhost:5174/node_modules/.vite/deps/chunk-WALXKXZM.js?v=5fd3f82f:21579
+[     127ms] [WARNING] ⚠️ React Router Future Flag Warning: React Router will begin wrapping state updates in `React.startTransition` in v7. You can use the `v7_startTransition` future flag to opt-in early. For more information, see https://reactrouter.com/v6/upgrading/future#v7_starttransition. @ http://localhost:5174/node_modules/.vite/deps/react-router-dom.js?v=5fd3f82f:4451
+[     127ms] [WARNING] ⚠️ React Router Future Flag Warning: Relative route resolution within Splat routes is changing in v7. You can use the `v7_relativeSplatPath` future flag to opt-in early. For more information, see https://reactrouter.com/v6/upgrading/future#v7_relativesplatpath. @ http://localhost:5174/node_modules/.vite/deps/react-router-dom.js?v=5fd3f82f:4451
+[     131ms] [ERROR] Failed to load resource: the server responded with a status of 404 (Not Found) @ http://localhost:5174/api/meal-plans/current-week:0
+[     131ms] [ERROR] Failed to load resource: the server responded with a status of 404 (Not Found) @ http://localhost:5174/api/recipes:0
+[     132ms] [ERROR] Failed to load resource: the server responded with a status of 404 (Not Found) @ http://localhost:5174/api/meal-plans/week/1:0
+[     132ms] [ERROR] Failed to load resource: the server responded with a status of 404 (Not Found) @ http://localhost:5174/api/meal-plans/week/5:0
+[     134ms] [ERROR] Failed to load resource: the server responded with a status of 404 (Not Found) @ http://localhost:5174/api/meal-plans/week/6:0
+[     135ms] [ERROR] Failed to load resource: the server responded with a status of 404 (Not Found) @ http://localhost:5174/api/meal-plans/week/2:0
+[     135ms] [ERROR] Failed to load resource: the server responded with a status of 404 (Not Found) @ http://localhost:5174/api/meal-plans/week/3:0
+[     135ms] [ERROR] Failed to load resource: the server responded with a status of 404 (Not Found) @ http://localhost:5174/api/meal-plans/week/4:0
+[     135ms] [ERROR] Failed to load resource: the server responded with a status of 404 (Not Found) @ http://localhost:5174/api/meal-plans/week/8:0
+[     136ms] [ERROR] Failed to load resource: the server responded with a status of 404 (Not Found) @ http://localhost:5174/api/meal-plans/current-week:0
+[     137ms] [ERROR] Failed to load resource: the server responded with a status of 404 (Not Found) @ http://localhost:5174/api/recipes:0
+[     137ms] [ERROR] Failed to load resource: the server responded with a status of 404 (Not Found) @ http://localhost:5174/api/meal-plans/week/1:0
+[     137ms] [ERROR] Failed to load resource: the server responded with a status of 404 (Not Found) @ http://localhost:5174/api/meal-plans/week/7:0
+[     137ms] [ERROR] Failed to load resource: the server responded with a status of 404 (Not Found) @ http://localhost:5174/api/meal-plans/week/6:0
+[     138ms] [ERROR] Failed to load resource: the server responded with a status of 404 (Not Found) @ http://localhost:5174/api/meal-plans/week/2:0
+[     138ms] [ERROR] Failed to load resource: the server responded with a status of 404 (Not Found) @ http://localhost:5174/api/meal-plans/week/3:0
+[     138ms] [ERROR] Failed to load resource: the server responded with a status of 404 (Not Found) @ http://localhost:5174/api/meal-plans/week/4:0
+[     138ms] [ERROR] Failed to load resource: the server responded with a status of 404 (Not Found) @ http://localhost:5174/api/meal-plans/week/5:0
+[     139ms] [ERROR] Failed to load resource: the server responded with a status of 404 (Not Found) @ http://localhost:5174/api/meal-plans/week/8:0
+[     140ms] [ERROR] Failed to load resource: the server responded with a status of 404 (Not Found) @ http://localhost:5174/api/meal-plans/week/7:0
+[     140ms] [ERROR] Failed to load resource: the server responded with a status of 404 (Not Found) @ http://localhost:5174/api/shopping/week/3:0
+[  269786ms] [LOG] [vite] server connection lost. polling for restart... @ http://localhost:5174/@vite/client:287
+[  269788ms] [ERROR] Failed to load resource: net::ERR_CONNECTION_REFUSED @ http://localhost:5174/:0
+[  270790ms] [ERROR] Failed to load resource: net::ERR_CONNECTION_REFUSED @ http://localhost:5174/:0
+[  271798ms] [ERROR] Failed to load resource: net::ERR_CONNECTION_REFUSED @ http://localhost:5174/:0
+[  272801ms] [ERROR] Failed to load resource: net::ERR_CONNECTION_REFUSED @ http://localhost:5174/:0
+[  273803ms] [ERROR] Failed to load resource: net::ERR_CONNECTION_REFUSED @ http://localhost:5174/:0
+[  274806ms] [ERROR] Failed to load resource: net::ERR_CONNECTION_REFUSED @ http://localhost:5174/:0
+[  275808ms] [ERROR] Failed to load resource: net::ERR_CONNECTION_REFUSED @ http://localhost:5174/:0
+[  276810ms] [ERROR] Failed to load resource: net::ERR_CONNECTION_REFUSED @ http://localhost:5174/:0
+[  277814ms] [ERROR] Failed to load resource: net::ERR_CONNECTION_REFUSED @ http://localhost:5174/:0
+[  278817ms] [ERROR] Failed to load resource: net::ERR_CONNECTION_REFUSED @ http://localhost:5174/:0
+[  279819ms] [ERROR] Failed to load resource: net::ERR_CONNECTION_REFUSED @ http://localhost:5174/:0
+[  280822ms] [ERROR] Failed to load resource: net::ERR_CONNECTION_REFUSED @ http://localhost:5174/:0
+[  281823ms] [ERROR] Failed to load resource: net::ERR_CONNECTION_REFUSED @ http://localhost:5174/:0
+[  282827ms] [ERROR] Failed to load resource: net::ERR_CONNECTION_REFUSED @ http://localhost:5174/:0
+[  283830ms] [ERROR] Failed to load resource: net::ERR_CONNECTION_REFUSED @ http://localhost:5174/:0
+[  284833ms] [ERROR] Failed to load resource: net::ERR_CONNECTION_REFUSED @ http://localhost:5174/:0
+[  285834ms] [ERROR] Failed to load resource: net::ERR_CONNECTION_REFUSED @ http://localhost:5174/:0
+[  286837ms] [ERROR] Failed to load resource: net::ERR_CONNECTION_REFUSED @ http://localhost:5174/:0
+[  287840ms] [ERROR] Failed to load resource: net::ERR_CONNECTION_REFUSED @ http://localhost:5174/:0
+[  288843ms] [ERROR] Failed to load resource: net::ERR_CONNECTION_REFUSED @ http://localhost:5174/:0
+[  289846ms] [ERROR] Failed to load resource: net::ERR_CONNECTION_REFUSED @ http://localhost:5174/:0
+[  290848ms] [ERROR] Failed to load resource: net::ERR_CONNECTION_REFUSED @ http://localhost:5174/:0
+[  291850ms] [ERROR] Failed to load resource: net::ERR_CONNECTION_REFUSED @ http://localhost:5174/:0
+[  292854ms] [ERROR] Failed to load resource: net::ERR_CONNECTION_REFUSED @ http://localhost:5174/:0
+[  293856ms] [ERROR] Failed to load resource: net::ERR_CONNECTION_REFUSED @ http://localhost:5174/:0
+[  294859ms] [ERROR] Failed to load resource: net::ERR_CONNECTION_REFUSED @ http://localhost:5174/:0
+[  295861ms] [ERROR] Failed to load resource: net::ERR_CONNECTION_REFUSED @ http://localhost:5174/:0
+[  296864ms] [ERROR] Failed to load resource: net::ERR_CONNECTION_REFUSED @ http://localhost:5174/:0
+[  297867ms] [ERROR] Failed to load resource: net::ERR_CONNECTION_REFUSED @ http://localhost:5174/:0
+[  298869ms] [ERROR] Failed to load resource: net::ERR_CONNECTION_REFUSED @ http://localhost:5174/:0
+[  299872ms] [ERROR] Failed to load resource: net::ERR_CONNECTION_REFUSED @ http://localhost:5174/:0
+[  300875ms] [ERROR] Failed to load resource: net::ERR_CONNECTION_REFUSED @ http://localhost:5174/:0
+[  301878ms] [ERROR] Failed to load resource: net::ERR_CONNECTION_REFUSED @ http://localhost:5174/:0
+[  302882ms] [ERROR] Failed to load resource: net::ERR_CONNECTION_REFUSED @ http://localhost:5174/:0
+[  303885ms] [ERROR] Failed to load resource: net::ERR_CONNECTION_REFUSED @ http://localhost:5174/:0
+[  304889ms] [ERROR] Failed to load resource: net::ERR_CONNECTION_REFUSED @ http://localhost:5174/:0
+[  305892ms] [ERROR] Failed to load resource: net::ERR_CONNECTION_REFUSED @ http://localhost:5174/:0
+[  306896ms] [ERROR] Failed to load resource: net::ERR_CONNECTION_REFUSED @ http://localhost:5174/:0
+[  307900ms] [ERROR] Failed to load resource: net::ERR_CONNECTION_REFUSED @ http://localhost:5174/:0
+[  308904ms] [ERROR] Failed to load resource: net::ERR_CONNECTION_REFUSED @ http://localhost:5174/:0
+[  309907ms] [ERROR] Failed to load resource: net::ERR_CONNECTION_REFUSED @ http://localhost:5174/:0
+[  310912ms] [ERROR] Failed to load resource: net::ERR_CONNECTION_REFUSED @ http://localhost:5174/:0
+[  311916ms] [ERROR] Failed to load resource: net::ERR_CONNECTION_REFUSED @ http://localhost:5174/:0
+[  312919ms] [ERROR] Failed to load resource: net::ERR_CONNECTION_REFUSED @ http://localhost:5174/:0
+[  313922ms] [ERROR] Failed to load resource: net::ERR_CONNECTION_REFUSED @ http://localhost:5174/:0
+[  314926ms] [ERROR] Failed to load resource: net::ERR_CONNECTION_REFUSED @ http://localhost:5174/:0
+[  315929ms] [ERROR] Failed to load resource: net::ERR_CONNECTION_REFUSED @ http://localhost:5174/:0
+[  316933ms] [ERROR] Failed to load resource: net::ERR_CONNECTION_REFUSED @ http://localhost:5174/:0
+[  317937ms] [ERROR] Failed to load resource: net::ERR_CONNECTION_REFUSED @ http://localhost:5174/:0
+[  318941ms] [ERROR] Failed to load resource: net::ERR_CONNECTION_REFUSED @ http://localhost:5174/:0
+[  319945ms] [ERROR] Failed to load resource: net::ERR_CONNECTION_REFUSED @ http://localhost:5174/:0
+[  320949ms] [ERROR] Failed to load resource: net::ERR_CONNECTION_REFUSED @ http://localhost:5174/:0
+[  321953ms] [ERROR] Failed to load resource: net::ERR_CONNECTION_REFUSED @ http://localhost:5174/:0
+[  322956ms] [ERROR] Failed to load resource: net::ERR_CONNECTION_REFUSED @ http://localhost:5174/:0
+[  323960ms] [ERROR] Failed to load resource: net::ERR_CONNECTION_REFUSED @ http://localhost:5174/:0
+[  324962ms] [ERROR] Failed to load resource: net::ERR_CONNECTION_REFUSED @ http://localhost:5174/:0
+[  325965ms] [ERROR] Failed to load resource: net::ERR_CONNECTION_REFUSED @ http://localhost:5174/:0
+[  326969ms] [ERROR] Failed to load resource: net::ERR_CONNECTION_REFUSED @ http://localhost:5174/:0
+[  327973ms] [ERROR] Failed to load resource: net::ERR_CONNECTION_REFUSED @ http://localhost:5174/:0
+[  328977ms] [ERROR] Failed to load resource: net::ERR_CONNECTION_REFUSED @ http://localhost:5174/:0
+[  329980ms] [ERROR] Failed to load resource: net::ERR_CONNECTION_REFUSED @ http://localhost:5174/:0
+[  330984ms] [ERROR] Failed to load resource: net::ERR_CONNECTION_REFUSED @ http://localhost:5174/:0
+[  331988ms] [ERROR] Failed to load resource: net::ERR_CONNECTION_REFUSED @ http://localhost:5174/:0
+[  332992ms] [ERROR] Failed to load resource: net::ERR_CONNECTION_REFUSED @ http://localhost:5174/:0
+[  333995ms] [ERROR] Failed to load resource: net::ERR_CONNECTION_REFUSED @ http://localhost:5174/:0
+[  334998ms] [ERROR] Failed to load resource: net::ERR_CONNECTION_REFUSED @ http://localhost:5174/:0
+[  336002ms] [ERROR] Failed to load resource: net::ERR_CONNECTION_REFUSED @ http://localhost:5174/:0
+[  337005ms] [ERROR] Failed to load resource: net::ERR_CONNECTION_REFUSED @ http://localhost:5174/:0
+[  338008ms] [ERROR] Failed to load resource: net::ERR_CONNECTION_REFUSED @ http://localhost:5174/:0
+[  339012ms] [ERROR] Failed to load resource: net::ERR_CONNECTION_REFUSED @ http://localhost:5174/:0
+[  340015ms] [ERROR] Failed to load resource: net::ERR_CONNECTION_REFUSED @ http://localhost:5174/:0
+[  341019ms] [ERROR] Failed to load resource: net::ERR_CONNECTION_REFUSED @ http://localhost:5174/:0
+[  342023ms] [ERROR] Failed to load resource: net::ERR_CONNECTION_REFUSED @ http://localhost:5174/:0
+[  343027ms] [ERROR] Failed to load resource: net::ERR_CONNECTION_REFUSED @ http://localhost:5174/:0
+[  344031ms] [ERROR] Failed to load resource: net::ERR_CONNECTION_REFUSED @ http://localhost:5174/:0
+[  345034ms] [ERROR] Failed to load resource: net::ERR_CONNECTION_REFUSED @ http://localhost:5174/:0
+[  346037ms] [ERROR] Failed to load resource: net::ERR_CONNECTION_REFUSED @ http://localhost:5174/:0
+[  347040ms] [ERROR] Failed to load resource: net::ERR_CONNECTION_REFUSED @ http://localhost:5174/:0
+[  348043ms] [ERROR] Failed to load resource: net::ERR_CONNECTION_REFUSED @ http://localhost:5174/:0
+[  349047ms] [ERROR] Failed to load resource: net::ERR_CONNECTION_REFUSED @ http://localhost:5174/:0
+[  350050ms] [ERROR] Failed to load resource: net::ERR_CONNECTION_REFUSED @ http://localhost:5174/:0
+[  351052ms] [ERROR] Failed to load resource: net::ERR_CONNECTION_REFUSED @ http://localhost:5174/:0
+[  352055ms] [ERROR] Failed to load resource: net::ERR_CONNECTION_REFUSED @ http://localhost:5174/:0
+[  353057ms] [ERROR] Failed to load resource: net::ERR_CONNECTION_REFUSED @ http://localhost:5174/:0
