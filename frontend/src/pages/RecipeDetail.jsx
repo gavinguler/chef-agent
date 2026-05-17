@@ -164,49 +164,65 @@ export default function RecipeDetail() {
       {/* ── Desktop ── */}
       <div className="hidden lg:block">
         <DesktopShell
-          title={recipe.naam}
-          subtitle={recipe.categorie}
+          title={`Recepten / ${recipe.naam}`}
           accessory={
-            <div className="flex gap-3">
+            <div className="flex gap-2">
               <button
                 onClick={handleRefreshImage}
                 disabled={imageLoading}
-                className="flex items-center gap-2 px-4 py-2 rounded-[8px] text-[14px] font-semibold text-white disabled:opacity-50"
-                style={{ background: '#0a84ff' }}
+                className="flex items-center gap-1.5 px-3 py-[6px] rounded-[7px] text-[13px] font-semibold disabled:opacity-50"
+                style={{ background: 'rgba(120,120,128,0.14)', color: 'rgba(60,60,67,0.7)' }}
               >
-                <Image size={16} />
+                <Image size={14} />
                 {imageLoading ? "Bezig…" : "Foto genereren"}
               </button>
               <button
                 onClick={handleAiFill}
                 disabled={aiLoading}
-                className="flex items-center gap-2 px-4 py-2 rounded-[8px] text-[14px] font-semibold text-white disabled:opacity-50"
-                style={{ background: '#af52de' }}
+                className="flex items-center gap-1.5 px-3 py-[6px] rounded-[7px] bg-brand text-white text-[13px] font-semibold disabled:opacity-50"
               >
-                <Sparkles size={16} />
-                {aiLoading ? "Bezig…" : "AI Macro's"}
+                <Sparkles size={14} />
+                {aiLoading ? "Bezig…" : "Plan vanavond"}
               </button>
             </div>
           }
         >
-          <div className="grid gap-6" style={{ gridTemplateColumns: '1fr 360px' }}>
-            {/* Left */}
-            <div className="space-y-6">
-              {recipe.image_url && (
-                <div className="rounded-[12px] overflow-hidden h-[320px]">
-                  <img src={recipe.image_url} alt={recipe.naam} className="w-full h-full object-cover" />
-                </div>
-              )}
+          <div className="grid h-full" style={{ gridTemplateColumns: '1fr 360px' }}>
+            {/* Left — photo + bereiding */}
+            <div className="overflow-y-auto p-6 space-y-5">
+              <div
+                className="rounded-[12px] overflow-hidden"
+                style={{ height: 320, background: 'rgba(120,120,128,0.08)' }}
+              >
+                {recipe.image_url
+                  ? <img src={recipe.image_url} alt={recipe.naam} className="w-full h-full object-cover" />
+                  : <div className="w-full h-full flex items-center justify-center text-6xl">🍽️</div>
+                }
+              </div>
+
+              <div>
+                <p className="text-[12px] font-bold uppercase tracking-wide text-brand mb-1">
+                  {recipe.categorie}{recipe.vlees_thema ? ` · ${recipe.vlees_thema}` : ""}
+                </p>
+                <h1 className="text-[28px] font-bold text-ink mb-1 leading-tight">{recipe.naam}</h1>
+                <p className="text-[14px] text-ink2">
+                  2 porties{recipe.bereidingstijd_min ? ` · ${recipe.bereidingstijd_min} min` : ""}
+                </p>
+              </div>
+
               {bereidingSteps.length > 0 && (
-                <div className="bg-surface rounded-[12px] p-6">
-                  <p className="text-[13px] font-bold uppercase tracking-wide text-ink2 mb-4">Bereiding</p>
+                <div>
+                  <p className="text-[12px] font-bold uppercase tracking-wide text-ink2 mb-4">Bereiding</p>
                   <ol className="space-y-3">
                     {bereidingSteps.map((step, i) => (
                       <li key={i} className="flex gap-3">
-                        <span className="w-6 h-6 rounded-full bg-brand text-white text-[12px] font-bold flex items-center justify-center flex-shrink-0 mt-px">
+                        <span
+                          className="w-7 h-7 rounded-full text-white text-[12px] font-bold flex items-center justify-center flex-shrink-0 mt-px"
+                          style={{ background: 'rgba(31,122,77,0.12)', color: '#1f7a4d' }}
+                        >
                           {i + 1}
                         </span>
-                        <p className="text-[15px] text-ink leading-relaxed">{step}</p>
+                        <p className="text-[15px] text-ink leading-relaxed pt-0.5">{step}</p>
                       </li>
                     ))}
                   </ol>
@@ -214,16 +230,33 @@ export default function RecipeDetail() {
               )}
             </div>
 
-            {/* Right */}
-            <div className="space-y-4">
+            {/* Right inspector */}
+            <div
+              className="overflow-y-auto p-5 space-y-4"
+              style={{ borderLeft: '0.5px solid rgba(60,60,67,0.08)', background: '#fff' }}
+            >
               <Panel title="Macro's">
-                <div className="grid grid-cols-2 gap-4">
+                <div className="grid grid-cols-2 gap-4 mb-4">
                   {macros.map(m => <Stat key={m.label} label={m.label} v={m.value} />)}
                 </div>
+                <button
+                  onClick={handleAiFill}
+                  disabled={aiLoading}
+                  className="w-full flex items-center justify-center gap-2 py-2 rounded-[8px] text-white text-[13px] font-semibold disabled:opacity-50"
+                  style={{ background: 'linear-gradient(135deg, #af52de, #5856d6)' }}
+                >
+                  <Sparkles size={14} />
+                  {aiLoading ? "Bezig…" : "Macro's schatten met AI"}
+                </button>
               </Panel>
-              <Panel title="Ingrediënten">
+
+              <Panel title="Ingrediënten" badge="2 porties">
                 {ingredienten.map((ing, i) => (
-                  <div key={i} className={`py-[10px] text-[14px] text-ink ${i < ingredienten.length - 1 ? 'border-b border-sep' : ''}`}>
+                  <div
+                    key={i}
+                    className="py-[8px] text-[13px] text-ink"
+                    style={i < ingredienten.length - 1 ? { borderBottom: '0.5px solid rgba(60,60,67,0.1)' } : {}}
+                  >
                     {ing}
                   </div>
                 ))}

@@ -8,9 +8,8 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,500;0,9..144,600;1,9..144,400&display=swap" rel="stylesheet">
 <style>
-  html, body { margin: 0; padding: 0; background: #f0eee9; font-family: "Inter", -apple-system, system-ui, sans-serif; }
+  html, body { margin: 0; padding: 0; background: #f0eee9; font-family: -apple-system,"SF Pro Text","Inter",system-ui,sans-serif; }
   *, *::before, *::after { box-sizing: border-box; }
-  /* font helper */
   body { -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale; }
 </style>
 <script src="https://unpkg.com/react@18.3.1/umd/react.development.js" integrity="sha384-hD6/rw4ppMLGNu3tX5cjIb+uRZ7UkRJ6BPkLpg4hAu/6onKUg4lLsHAs9EBPT82L" crossorigin="anonymous"></script>
@@ -21,124 +20,150 @@
 <div id="root"></div>
 
 <script type="text/babel" src="ios-frame.jsx"></script>
+<script type="text/babel" src="macos-window.jsx"></script>
 <script type="text/babel" src="design-canvas.jsx"></script>
 <script type="text/babel" src="tweaks-panel.jsx"></script>
 <script type="text/babel" src="icons.jsx"></script>
 <script type="text/babel" src="shared.jsx"></script>
 <script type="text/babel" src="screens-a.jsx"></script>
 <script type="text/babel" src="screens-b.jsx"></script>
+<script type="text/babel" src="screens-ios.jsx"></script>
+<script type="text/babel" src="screens-desktop.jsx"></script>
 
 <script type="text/babel">
-const { useState } = React;
-
 const TWEAK_DEFAULTS = /*EDITMODE-BEGIN*/{
-  "brandA": "#1f3a2c",
-  "brandB": "#7c3a1f",
-  "showLabels": true,
-  "density": "comfy"
+  "brandA": "#0a84ff",
+  "brandB": "#7c3a1f"
 }/*EDITMODE-END*/;
 
-// Wrap each screen in an iOS frame as a card
-function Frame({ children, w = 402, h = 874 }) {
-  return <IOSDevice width={w} height={h}>{children}</IOSDevice>;
+function PhoneFrame({ children }) {
+  return <IOSDevice width={402} height={874}>{children}</IOSDevice>;
+}
+
+// macOS window wrapper — bezel + traffic lights + shadow
+function MacFrame({ children, w = 1280, h = 820 }) {
+  return (
+    <div style={{
+      width: w, height: h, borderRadius: 12, overflow: 'hidden',
+      background: '#f5f5f7',
+      boxShadow: '0 30px 80px rgba(0,0,0,0.25), 0 0 0 0.5px rgba(0,0,0,0.15)',
+      display: 'flex', flexDirection: 'column',
+    }}>
+      {/* Title bar */}
+      <div style={{
+        height: 30, background: 'rgba(246,246,248,0.95)', display: 'flex', alignItems: 'center',
+        padding: '0 14px', flexShrink: 0,
+        borderBottom: '0.5px solid rgba(0,0,0,0.08)',
+        position: 'relative',
+      }}>
+        <MacTrafficLights/>
+        <p style={{
+          margin: 0, position: 'absolute', left: '50%', transform: 'translateX(-50%)',
+          fontFamily: '-apple-system,"SF Pro Text",system-ui,sans-serif',
+          fontSize: 13, fontWeight: 600, color: 'rgba(0,0,0,0.65)',
+        }}>Chef Agent</p>
+      </div>
+      <div style={{ flex: 1, minHeight: 0 }}>{children}</div>
+    </div>
+  );
 }
 
 function App() {
   const [tweaks, setTweak] = useTweaks(TWEAK_DEFAULTS);
 
-  const styleVars = {
-    '--a-brand': tweaks.brandA,
-    '--b-brand': tweaks.brandB,
-  };
-
   return (
-    <div style={styleVars}>
+    <div>
       <DesignCanvas>
-        <DCSection id="overview" title="Chef Agent — Redesign" subtitle="Twee richtingen · Nederlandse hoog-fi prototypes voor de 8-weken voedingsplanner">
-          {/* DIRECTION A — Stil */}
-          <DCArtboard id="a-home" label="A · Stil — Home" width={402} height={874}>
-            <Frame><AHome/></Frame>
+        {/* ─── iOS-native direction (NEW) ─────────────────────── */}
+        <DCSection
+          id="ios"
+          title="iOS · Native"
+          subtitle="True iOS feel — SF Pro, large titles, grouped inset lists, glass tab bar"
+        >
+          <DCArtboard id="ios-home" label="Vandaag (Home)" width={402} height={874}>
+            <PhoneFrame><IOSHome/></PhoneFrame>
           </DCArtboard>
-          <DCArtboard id="a-recepten" label="A · Stil — Recepten" width={402} height={874}>
-            <Frame><ARecipes/></Frame>
+          <DCArtboard id="ios-rec" label="Recepten" width={402} height={874}>
+            <PhoneFrame><IOSRecepten/></PhoneFrame>
           </DCArtboard>
-          <DCArtboard id="a-week" label="A · Stil — Weekplan" width={402} height={874}>
-            <Frame><AWeek/></Frame>
+          <DCArtboard id="ios-week" label="Weekplan" width={402} height={874}>
+            <PhoneFrame><IOSWeek/></PhoneFrame>
           </DCArtboard>
-          <DCArtboard id="a-detail" label="A · Stil — Recept detail" width={402} height={874}>
-            <Frame><ADetail/></Frame>
+          <DCArtboard id="ios-detail" label="Recept detail" width={402} height={874}>
+            <PhoneFrame><IOSDetail/></PhoneFrame>
           </DCArtboard>
-          <DCArtboard id="a-shopping" label="A · Stil — Boodschappen (nieuw)" width={402} height={874}>
-            <Frame><AShopping/></Frame>
+          <DCArtboard id="ios-shop" label="Boodschappen" width={402} height={874}>
+            <PhoneFrame><IOSShopping/></PhoneFrame>
           </DCArtboard>
-          <DCArtboard id="a-settings" label="A · Stil — Instellingen" width={402} height={874}>
-            <Frame><ASettings/></Frame>
-          </DCArtboard>
-        </DCSection>
-
-        <DCSection id="editorial" title="Direction B · Editorial" subtitle="Cookbook-vibes — Fraunces serif, warm cream, photo-led">
-          <DCArtboard id="b-home" label="B · Editorial — Home" width={402} height={874}>
-            <Frame><BHome/></Frame>
-          </DCArtboard>
-          <DCArtboard id="b-recepten" label="B · Editorial — Recepten" width={402} height={874}>
-            <Frame><BRecipes/></Frame>
-          </DCArtboard>
-          <DCArtboard id="b-week" label="B · Editorial — Weekplan" width={402} height={874}>
-            <Frame><BWeek/></Frame>
-          </DCArtboard>
-          <DCArtboard id="b-detail" label="B · Editorial — Recept detail" width={402} height={874}>
-            <Frame><BDetail/></Frame>
-          </DCArtboard>
-          <DCArtboard id="b-settings" label="B · Editorial — Instellingen" width={402} height={874}>
-            <Frame><BSettings/></Frame>
+          <DCArtboard id="ios-set" label="Instellingen" width={402} height={874}>
+            <PhoneFrame><IOSSettings/></PhoneFrame>
           </DCArtboard>
         </DCSection>
 
-        <DCPostIt top={24} right={24} rotate={2} width={220}>
-          Decisions to make:<br/>
-          • A or B for primary direction<br/>
-          • Photo-led vs text-led recipe list<br/>
-          • Keep emoji food categories or fully icon-driven?
+        {/* ─── macOS Desktop (NEW) ────────────────────────────── */}
+        <DCSection
+          id="desktop"
+          title="macOS · Desktop app"
+          subtitle="Sidebar + content — designed for planning week, browsing recipes, deep editing"
+        >
+          <DCArtboard id="dtop-home" label="Vandaag · Dashboard" width={1280} height={820}>
+            <MacFrame><DTopHome/></MacFrame>
+          </DCArtboard>
+          <DCArtboard id="dtop-week" label="Weekplan · 7×3 grid" width={1280} height={820}>
+            <MacFrame><DTopWeek/></MacFrame>
+          </DCArtboard>
+          <DCArtboard id="dtop-rec" label="Recepten · bibliotheek" width={1280} height={820}>
+            <MacFrame><DTopRecepten/></MacFrame>
+          </DCArtboard>
+          <DCArtboard id="dtop-detail" label="Recept detail · split" width={1280} height={820}>
+            <MacFrame><DTopDetail/></MacFrame>
+          </DCArtboard>
+        </DCSection>
+
+        {/* ─── Original two directions kept for reference ─────── */}
+        <DCSection
+          id="stil"
+          title="Direction A · Stil"
+          subtitle="Modern minimaal — diep bosgroen, line icons (eerdere versie)"
+        >
+          <DCArtboard id="a-home" label="Home" width={402} height={874}><PhoneFrame><AHome/></PhoneFrame></DCArtboard>
+          <DCArtboard id="a-rec" label="Recepten" width={402} height={874}><PhoneFrame><ARecipes/></PhoneFrame></DCArtboard>
+          <DCArtboard id="a-week" label="Weekplan" width={402} height={874}><PhoneFrame><AWeek/></PhoneFrame></DCArtboard>
+          <DCArtboard id="a-detail" label="Recept detail" width={402} height={874}><PhoneFrame><ADetail/></PhoneFrame></DCArtboard>
+          <DCArtboard id="a-shop" label="Boodschappen" width={402} height={874}><PhoneFrame><AShopping/></PhoneFrame></DCArtboard>
+          <DCArtboard id="a-set" label="Instellingen" width={402} height={874}><PhoneFrame><ASettings/></PhoneFrame></DCArtboard>
+        </DCSection>
+
+        <DCSection
+          id="editorial"
+          title="Direction B · Editorial"
+          subtitle="Cookbook vibes — Fraunces serif, warm cream (eerdere versie)"
+        >
+          <DCArtboard id="b-home" label="Home" width={402} height={874}><PhoneFrame><BHome/></PhoneFrame></DCArtboard>
+          <DCArtboard id="b-rec" label="Recepten" width={402} height={874}><PhoneFrame><BRecipes/></PhoneFrame></DCArtboard>
+          <DCArtboard id="b-week" label="Weekplan" width={402} height={874}><PhoneFrame><BWeek/></PhoneFrame></DCArtboard>
+          <DCArtboard id="b-detail" label="Recept detail" width={402} height={874}><PhoneFrame><BDetail/></PhoneFrame></DCArtboard>
+          <DCArtboard id="b-set" label="Instellingen" width={402} height={874}><PhoneFrame><BSettings/></PhoneFrame></DCArtboard>
+        </DCSection>
+
+        <DCPostIt top={24} right={24} rotate={2} width={240}>
+          <strong>NEW</strong><br/>
+          • iOS-native section bovenaan<br/>
+          • macOS desktop app daaronder<br/>
+          Dezelfde groene brand &amp; SF Pro stack overal — design coheent over platforms.
         </DCPostIt>
       </DesignCanvas>
 
       <TweaksPanel title="Tweaks">
-        <TweakSection title="Direction A — Stil">
+        <TweakSection title="Brand kleur">
           <TweakColor
-            label="Brand"
+            label="iOS &amp; Desktop tint"
             value={tweaks.brandA}
             onChange={(v) => setTweak('brandA', v)}
-            options={['#1f3a2c', '#16a34a', '#1e3a8a', '#3a1f3a']}
-          />
-        </TweakSection>
-        <TweakSection title="Direction B — Editorial">
-          <TweakColor
-            label="Brand"
-            value={tweaks.brandB}
-            onChange={(v) => setTweak('brandB', v)}
-            options={['#7c3a1f', '#b45309', '#5b3a1f', '#3a1f1f']}
-          />
-        </TweakSection>
-        <TweakSection title="Density">
-          <TweakRadio
-            label="Compactheid"
-            value={tweaks.density}
-            onChange={(v) => setTweak('density', v)}
-            options={[['comfy','Comfy'],['tight','Tight']]}
-          />
-          <TweakToggle
-            label="Toon nav-labels"
-            value={tweaks.showLabels}
-            onChange={(v) => setTweak('showLabels', v)}
+            options={['#1f7a4d', '#16a34a', '#0a84ff', '#af52de', '#ff6b35']}
           />
         </TweakSection>
       </TweaksPanel>
-
-      {/* Tweaked styles applied via global CSS vars */}
-      <style>{`
-        /* override A.brand fills via CSS custom prop fallback — limited but visible */
-        [style*="${'#1f3a2c'}"] { /* no-op selector to acknowledge */ }
-      `}</style>
     </div>
   );
 }

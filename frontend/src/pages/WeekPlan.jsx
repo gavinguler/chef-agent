@@ -13,6 +13,83 @@ const DAYS_SHORT = ["Ma","Di","Wo","Do","Vr","Za","Zo"];
 const MEAL_TYPES = ["ontbijt","lunch","snack","diner","avondsnack"];
 const MEAL_LABEL = { ontbijt:"Ontbijt", lunch:"Lunch", snack:"Snack", diner:"Diner", avondsnack:"Avondsnack" };
 
+function WeekGridRow({ label, days, todayNl, weekPlan, mealType, onNavigate, last }) {
+  return (
+    <>
+      {/* Row label */}
+      <div
+        className="flex items-center px-3"
+        style={{
+          borderTop: '0.5px solid rgba(0,0,0,0.06)',
+          background: 'rgba(0,0,0,0.02)',
+          fontSize: 11, fontWeight: 700, color: 'rgba(60,60,67,0.5)',
+          textTransform: 'uppercase', letterSpacing: '0.6px',
+        }}
+      >
+        {label}
+      </div>
+
+      {/* 7 day cells */}
+      {days.map((day, i) => {
+        const dagData = weekPlan?.dagen?.find(d => d.dag?.toLowerCase() === day);
+        const maaltijd = dagData?.maaltijden?.find(m => m.maaltijd_type === mealType);
+        const isToday = day === todayNl;
+        return (
+          <div
+            key={`${mealType}-${day}`}
+            onClick={() => maaltijd?.recept_id && onNavigate(`/recepten/${maaltijd.recept_id}`)}
+            className={maaltijd?.recept_id ? 'cursor-pointer' : ''}
+            style={{
+              borderTop: '0.5px solid rgba(0,0,0,0.06)',
+              borderLeft: '0.5px solid rgba(0,0,0,0.04)',
+              background: isToday ? '#fbfdfb' : 'transparent',
+              padding: 6,
+            }}
+          >
+            <div
+              style={{
+                background: '#fff',
+                borderRadius: 7,
+                padding: 7,
+                border: '0.5px solid rgba(0,0,0,0.06)',
+                boxShadow: isToday ? '0 0 0 1.5px #1f7a4d' : 'none',
+                minHeight: 80,
+              }}
+            >
+              {/* Photo placeholder */}
+              <div
+                className="rounded-[4px] mb-1.5 flex items-center justify-center overflow-hidden"
+                style={{ height: 48, background: 'rgba(120,120,128,0.08)' }}
+              >
+                {maaltijd?.image_url
+                  ? <img src={maaltijd.image_url} alt="" className="w-full h-full object-cover" />
+                  : maaltijd
+                    ? <span style={{ fontSize: 16 }}>🍽️</span>
+                    : null
+                }
+              </div>
+              {maaltijd ? (
+                <>
+                  <p style={{ margin: 0, fontSize: 11, fontWeight: 600, lineHeight: 1.25, color: '#000', overflow: 'hidden', display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical' }}>
+                    {maaltijd.naam}
+                  </p>
+                  {maaltijd.eiwit_g && (
+                    <p style={{ margin: '3px 0 0', fontSize: 10, color: 'rgba(60,60,67,0.5)' }}>
+                      {Math.round(maaltijd.eiwit_g)}g eiwit
+                    </p>
+                  )}
+                </>
+              ) : (
+                <p style={{ margin: 0, fontSize: 11, color: 'rgba(60,60,67,0.3)' }}>—</p>
+              )}
+            </div>
+          </div>
+        );
+      })}
+    </>
+  );
+}
+
 export default function WeekPlan() {
   const navigate = useNavigate();
   const [cycleWeek, setCycleWeek] = useState(null);
@@ -130,87 +207,127 @@ export default function WeekPlan() {
       {/* ── Desktop ── */}
       <div className="hidden lg:block">
         <DesktopShell
-          title={`Weekplan — Week ${selectedWeek ?? ""}`}
-          subtitle={weekPlan?.vlees_thema}
+          title="Weekplan"
+          subtitle={selectedWeek ? `Week ${selectedWeek}${weekPlan?.vlees_thema ? ' · ' + weekPlan.vlees_thema : ''}` : undefined}
           accessory={
-            <div className="flex items-center gap-3">
-              <div className="flex gap-1">
-                {Array.from({ length: 8 }, (_, i) => i + 1).map(w => (
-                  <button
-                    key={w}
-                    onClick={() => setSelectedWeek(w)}
-                    className="w-8 h-8 rounded-[6px] text-[13px] font-semibold transition-colors"
-                    style={
-                      selectedWeek === w
-                        ? { background: '#1f7a4d', color: '#fff' }
-                        : { background: 'rgba(120,120,128,0.16)', color: 'rgba(60,60,67,0.6)' }
-                    }
-                  >
-                    {w}
-                  </button>
-                ))}
-              </div>
+            <div className="flex items-center gap-2">
+              <button
+                onClick={() => setSelectedWeek(w => Math.max(1, (w ?? 1) - 1))}
+                className="px-3 py-[6px] rounded-[7px] text-[13px] font-medium"
+                style={{ background: 'rgba(120,120,128,0.14)', color: 'rgba(60,60,67,0.6)' }}
+              >← Vorige</button>
+              <button
+                onClick={() => setSelectedWeek(w => Math.min(8, (w ?? 1) + 1))}
+                className="px-3 py-[6px] rounded-[7px] text-[13px] font-medium"
+                style={{ background: 'rgba(120,120,128,0.14)', color: 'rgba(60,60,67,0.6)' }}
+              >Volgende →</button>
               <button
                 onClick={() => navigate(`/boodschappen/${selectedWeek}`)}
-                className="flex items-center gap-2 px-4 py-2 rounded-[8px] bg-brand text-white text-[14px] font-semibold"
+                className="flex items-center gap-1.5 px-3 py-[6px] rounded-[7px] bg-brand text-white text-[13px] font-semibold"
               >
-                <ShoppingCart size={16} />
-                Boodschappenlijst
+                <ShoppingCart size={14} /> Boodschappenlijst
               </button>
             </div>
           }
         >
-          {loading ? (
-            <div className="animate-pulse bg-surface rounded-[12px] h-64" />
-          ) : (
-            <div>
-              {/* Day header row */}
-              <div className="grid gap-3 mb-2" style={{ gridTemplateColumns: `120px repeat(7, 1fr)` }}>
-                <div />
-                {DAYS_NL.map((day, i) => {
-                  const isToday = day === todayNl;
-                  return (
-                    <div key={day} className="text-center pb-2">
-                      <p className="text-[12px] font-semibold uppercase text-ink2">{DAYS_SHORT[i]}</p>
-                      {isToday && <div className="w-1.5 h-1.5 rounded-full bg-brand mx-auto mt-1" />}
-                    </div>
-                  );
-                })}
-              </div>
-
-              {/* All meal type rows */}
-              <div className="space-y-2">
-                {MEAL_TYPES.map(mealType => (
-                  <div key={mealType} className="grid gap-2" style={{ gridTemplateColumns: `120px repeat(7, 1fr)` }}>
-                    <div className="flex items-center">
-                      <p className="text-[13px] font-semibold text-ink2">{MEAL_LABEL[mealType]}</p>
-                    </div>
-                    {DAYS_NL.map(day => {
-                      const dagData = weekPlan?.dagen?.find(d => d.dag?.toLowerCase() === day);
-                      const maaltijd = dagData?.maaltijden?.find(m => m.maaltijd_type === mealType);
-                      const isToday = day === todayNl;
-                      return (
-                        <div
-                          key={`${mealType}-${day}`}
-                          onClick={() => maaltijd?.recept_id && navigate(`/recepten/${maaltijd.recept_id}`)}
-                          className={`bg-surface rounded-[8px] p-2 min-h-[52px] ${maaltijd?.recept_id ? 'cursor-pointer hover:shadow-sm' : ''}`}
-                          style={isToday ? { background: 'rgba(31,122,77,0.06)', outline: '1.5px solid rgba(31,122,77,0.3)' } : {}}
-                        >
-                          {maaltijd
-                            ? <>
-                                <p className="text-[12px] font-medium text-ink leading-snug">{maaltijd.naam}</p>
-                                {maaltijd.eiwit_g && <p className="text-[10px] text-ink2 mt-px">{Math.round(maaltijd.eiwit_g)}g</p>}
-                              </>
-                            : <p className="text-[11px] text-ink3">—</p>
-                          }
-                        </div>
-                      );
-                    })}
-                  </div>
+          <div className="p-6">
+            {/* Week selector strip */}
+            <div className="flex items-center gap-2 mb-5 pb-4" style={{ borderBottom: '0.5px solid rgba(60,60,67,0.08)' }}>
+              <div className="flex gap-1.5">
+                {Array.from({ length: 8 }, (_, i) => i + 1).map(w => (
+                  <button
+                    key={w}
+                    onClick={() => setSelectedWeek(w)}
+                    className="px-4 py-[6px] rounded-[6px] text-[12px] font-semibold transition-colors"
+                    style={
+                      selectedWeek === w
+                        ? { background: '#1f7a4d', color: '#fff' }
+                        : w === cycleWeek
+                        ? { background: 'rgba(31,122,77,0.1)', color: '#1f7a4d' }
+                        : { background: 'rgba(120,120,128,0.12)', color: 'rgba(60,60,67,0.6)' }
+                    }
+                  >
+                    Week {w}
+                  </button>
                 ))}
               </div>
             </div>
-          )}
+
+            {loading ? (
+              <div className="animate-pulse bg-surface rounded-[12px] h-64" />
+            ) : (
+              <div>
+                {/* Grid panel */}
+                <div
+                  className="rounded-[12px] overflow-hidden"
+                  style={{ background: '#fff', boxShadow: '0 1px 2px rgba(0,0,0,0.04)' }}
+                >
+                  {/* Grid: 80px label + 7 day cols */}
+                  <div className="grid" style={{ gridTemplateColumns: '80px repeat(7, 1fr)' }}>
+
+                    {/* Header row */}
+                    <div style={{ padding: '12px 14px', background: 'rgba(0,0,0,0.02)' }} />
+                    {DAYS_NL.map((day, i) => {
+                      const isToday = day === todayNl;
+                      return (
+                        <div
+                          key={day}
+                          className="px-3 py-3"
+                          style={{
+                            background: isToday ? 'rgba(31,122,77,0.06)' : 'rgba(0,0,0,0.02)',
+                            borderBottom: '0.5px solid rgba(0,0,0,0.08)',
+                          }}
+                        >
+                          <p className="text-[11px] font-bold uppercase tracking-[0.6px]" style={{ color: isToday ? '#1f7a4d' : 'rgba(60,60,67,0.5)' }}>
+                            {DAYS_SHORT[i]}
+                          </p>
+                          {isToday && <p className="text-[9px] font-bold tracking-wide" style={{ color: '#1f7a4d' }}>VANDAAG</p>}
+                        </div>
+                      );
+                    })}
+
+                    {/* Meal type rows — 3 main: ontbijt, lunch, diner */}
+                    {["ontbijt", "lunch", "diner"].map((mealType, ri) => (
+                      <WeekGridRow
+                        key={mealType}
+                        label={MEAL_LABEL[mealType]}
+                        days={DAYS_NL}
+                        todayNl={todayNl}
+                        weekPlan={weekPlan}
+                        mealType={mealType}
+                        onNavigate={navigate}
+                        last={ri === 2}
+                      />
+                    ))}
+                  </div>
+                </div>
+
+                {/* Totals row */}
+                {weekPlan && (
+                  <div
+                    className="mt-3 px-4 py-3 rounded-[10px] flex items-center gap-6 text-[12px]"
+                    style={{ background: '#fff', boxShadow: '0 1px 2px rgba(0,0,0,0.04)' }}
+                  >
+                    <span className="text-ink2">Week-totaal:</span>
+                    {(() => {
+                      const allMaaltijden = weekPlan.dagen?.flatMap(d => d.maaltijden ?? []) ?? [];
+                      const totalKcal = allMaaltijden.reduce((s, m) => s + (m.kcal ?? 0), 0);
+                      const totalEiwit = allMaaltijden.reduce((s, m) => s + (m.eiwit_g ?? 0), 0);
+                      return (
+                        <>
+                          <span><strong className="text-ink">{Math.round(totalKcal).toLocaleString()} kcal</strong></span>
+                          <span><strong className="text-ink">{Math.round(totalEiwit)} g</strong> <span className="text-ink2">eiwit</span></span>
+                          {weekPlan.vlees_thema && (
+                            <span className="text-ink2">Vlees-thema: <strong className="text-ink">{weekPlan.vlees_thema}</strong></span>
+                          )}
+                        </>
+                      );
+                    })()}
+                  </div>
+                )}
+              </div>
+            )}
+          </div>
         </DesktopShell>
       </div>
     </>

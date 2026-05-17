@@ -171,13 +171,15 @@ export default function Shopping() {
           title="Boodschappen"
           subtitle={`Week ${week} · ${checkedCount} van ${totalItems} afgevinkt`}
         >
-          {loading ? (
-            <div className="animate-pulse bg-surface rounded-[12px] h-64" />
-          ) : (
-            <div className="max-w-2xl">
-              <ShoppingContent />
-            </div>
-          )}
+          <div className="p-6">
+            {loading ? (
+              <div className="animate-pulse bg-surface rounded-[12px] h-64" />
+            ) : (
+              <div className="max-w-2xl">
+                <ShoppingContent />
+              </div>
+            )}
+          </div>
         </DesktopShell>
       </div>
     </>

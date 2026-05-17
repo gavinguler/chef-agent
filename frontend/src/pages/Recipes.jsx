@@ -6,9 +6,9 @@ import {
   IOSStatusBar, IOSLargeHeader, IOSGroupHeader, IOSGroup, IOSRow,
   IOSSearchField, IOSSegmented, IOSTabBar,
 } from "../components/IOSPrimitives";
-import DesktopShell from "../components/DesktopShell";
+import DesktopShell, { DesktopSearch } from "../components/DesktopShell";
 
-const FILTERS = ["Alle", "Diner", "Lunch", "Veggie"];
+const FILTERS = ["Alle", "Diner", "Lunch", "Ontbijt", "Snack", "Veggie"];
 
 function useRecipes() {
   const [recipes, setRecipes] = useState([]);
@@ -17,6 +17,42 @@ function useRecipes() {
     getRecipes().then(setRecipes).finally(() => setLoading(false));
   }, []);
   return { recipes, loading };
+}
+
+function SidebarFilterGroup({ title, items, onSelect }) {
+  return (
+    <div className="mb-5">
+      <p className="text-[11px] font-bold uppercase tracking-wide text-ink2 mb-2">{title}</p>
+      {items.map(({ label, count, active }) => (
+        <button
+          key={label}
+          onClick={() => onSelect(label)}
+          className="w-full flex items-center gap-2 px-2 py-[5px] rounded-[5px] text-left transition-colors"
+          style={{ background: active ? 'rgba(0,0,0,0.05)' : 'transparent' }}
+        >
+          <div
+            className="w-[14px] h-[14px] rounded-[3px] flex-shrink-0 flex items-center justify-center"
+            style={active
+              ? { background: '#1f7a4d' }
+              : { border: '1.5px solid rgba(60,60,67,0.3)' }
+            }
+          >
+            {active && (
+              <svg width="10" height="10" viewBox="0 0 10 10">
+                <path d="M1.5 5l2 2 5-5" stroke="#fff" strokeWidth="2" fill="none" strokeLinecap="round" />
+              </svg>
+            )}
+          </div>
+          <span className="flex-1 text-[13px]" style={{ color: active ? '#000' : 'rgba(60,60,67,0.8)', fontWeight: active ? 600 : 500 }}>
+            {label}
+          </span>
+          {count > 0 && (
+            <span className="text-[11px] text-ink2">{count}</span>
+          )}
+        </button>
+      ))}
+    </div>
+  );
 }
 
 export default function Recipes() {
@@ -34,10 +70,7 @@ export default function Recipes() {
   const filtered = useMemo(() => {
     return recipes.filter(r => {
       const matchSearch = !debounced || r.naam?.toLowerCase().includes(debounced.toLowerCase());
-      const matchFilter = filter === "Alle"
-        || (filter === "Diner" && r.categorie?.toLowerCase() === "diner")
-        || (filter === "Lunch" && r.categorie?.toLowerCase() === "lunch")
-        || (filter === "Veggie" && r.categorie?.toLowerCase() === "veggie");
+      const matchFilter = filter === "Alle" || r.categorie?.toLowerCase() === filter.toLowerCase();
       return matchSearch && matchFilter;
     });
   }, [recipes, debounced, filter]);
@@ -87,76 +120,87 @@ export default function Recipes() {
       <div className="hidden lg:block">
         <DesktopShell
           title="Recepten"
-          subtitle={`${filtered.length} gerechten`}
+          subtitle={`${filtered.length} gerechten in je bibliotheek`}
           accessory={
-            <button className="flex items-center gap-2 px-4 py-2 rounded-[8px] bg-brand text-white text-[14px] font-semibold">
-              <Plus size={16} />
-              Nieuw recept
-            </button>
+            <div className="flex items-center gap-2">
+              <DesktopSearch value={search} onChange={setSearch} placeholder="Zoek recepten…" />
+              <button className="flex items-center gap-1.5 px-3 py-[6px] rounded-[7px] bg-brand text-white text-[13px] font-semibold">
+                <Plus size={14} /> Nieuw recept
+              </button>
+            </div>
           }
         >
-          {/* Filter bar */}
-          <div className="flex items-center gap-3 mb-6">
-            <div
-              className="flex items-center gap-2 h-[34px] rounded-[8px] px-3"
-              style={{ background: 'rgba(120,120,128,0.16)' }}
+          <div className="flex h-full">
+            {/* Filter sidebar */}
+            <aside
+              className="flex-shrink-0 overflow-y-auto"
+              style={{ width: 200, padding: '20px 14px', borderRight: '0.5px solid rgba(60,60,67,0.1)' }}
             >
-              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="rgba(60,60,67,0.6)" strokeWidth="2.5">
-                <circle cx="11" cy="11" r="8" />
-                <path d="m21 21-4.35-4.35" />
-              </svg>
-              <input
-                className="bg-transparent text-[14px] text-ink outline-none w-[180px]"
-                placeholder="Zoek recepten..."
-                value={search}
-                onChange={e => setSearch(e.target.value)}
+              <SidebarFilterGroup
+                title="Categorie"
+                items={FILTERS.map(f => ({
+                  label: f,
+                  count: f === 'Alle' ? recipes.length : recipes.filter(r => r.categorie?.toLowerCase() === f.toLowerCase()).length,
+                  active: filter === f,
+                }))}
+                onSelect={setFilter}
               />
-            </div>
-            <div className="flex gap-2">
-              {FILTERS.map(f => (
-                <button
-                  key={f}
-                  onClick={() => setFilter(f)}
-                  className="px-3 py-[6px] rounded-full text-[13px] font-medium transition-colors"
-                  style={filter === f
-                    ? { background: '#1f7a4d', color: '#fff' }
-                    : { background: 'rgba(120,120,128,0.16)', color: 'rgba(60,60,67,0.6)' }
-                  }
-                >
-                  {f}
-                </button>
-              ))}
+            </aside>
+
+            {/* Content */}
+            <div className="flex-1 overflow-y-auto p-5">
+              {/* Filter chips */}
+              <div className="flex items-center justify-between mb-4">
+                <div className="flex gap-2 flex-wrap">
+                  {FILTERS.map(f => (
+                    <button
+                      key={f}
+                      onClick={() => setFilter(f)}
+                      className="px-3 py-[5px] rounded-full text-[12px] font-semibold transition-colors"
+                      style={filter === f
+                        ? { background: '#1f3a2c', color: '#fff' }
+                        : { background: 'rgba(120,120,128,0.14)', color: 'rgba(60,60,67,0.7)' }
+                      }
+                    >
+                      {f}
+                    </button>
+                  ))}
+                </div>
+                <span className="text-[12px] text-ink2 flex-shrink-0 ml-4">
+                  Sorteer: <strong className="text-ink">Recent ↓</strong>
+                </span>
+              </div>
+
+              {loading ? (
+                <div className="animate-pulse bg-surface rounded-[12px] h-64" />
+              ) : (
+                <div className="grid gap-4" style={{ gridTemplateColumns: 'repeat(auto-fill, minmax(190px, 1fr))' }}>
+                  {filtered.map(r => (
+                    <div
+                      key={r.id}
+                      onClick={() => navigate(`/recepten/${r.id}`)}
+                      className="bg-surface rounded-[10px] overflow-hidden cursor-pointer hover:shadow-md transition-shadow"
+                      style={{ boxShadow: '0 1px 2px rgba(0,0,0,0.04)' }}
+                    >
+                      <div className="h-[130px] bg-fill flex items-center justify-center">
+                        {r.image_url
+                          ? <img src={r.image_url} alt={r.naam} className="w-full h-full object-cover" />
+                          : <span className="text-3xl">🍽️</span>
+                        }
+                      </div>
+                      <div className="p-3">
+                        <p className="text-[10px] font-bold uppercase tracking-wide text-brand">{r.categorie}</p>
+                        <p className="text-[13px] font-semibold text-ink mt-1 leading-snug">{r.naam}</p>
+                        <p className="text-[11px] text-ink2 mt-1">
+                          {[r.eiwit_g ? `${Math.round(r.eiwit_g)}g eiwit` : null, r.kcal ? `${r.kcal} kcal` : null].filter(Boolean).join(' · ')}
+                        </p>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              )}
             </div>
           </div>
-
-          {/* Grid */}
-          {loading ? (
-            <div className="animate-pulse bg-surface rounded-[12px] h-64" />
-          ) : (
-            <div className="grid gap-4" style={{ gridTemplateColumns: 'repeat(auto-fill, minmax(200px, 1fr))' }}>
-              {filtered.map(r => (
-                <div
-                  key={r.id}
-                  onClick={() => navigate(`/recepten/${r.id}`)}
-                  className="bg-surface rounded-[12px] overflow-hidden cursor-pointer hover:shadow-md transition-shadow"
-                >
-                  <div className="h-[130px] bg-fill flex items-center justify-center">
-                    {r.image_url
-                      ? <img src={r.image_url} alt={r.naam} className="w-full h-full object-cover" />
-                      : <span className="text-4xl">🍽️</span>
-                    }
-                  </div>
-                  <div className="p-3">
-                    <p className="text-[11px] font-bold uppercase tracking-wide text-ink2">{r.categorie}</p>
-                    <p className="text-[15px] font-semibold text-ink mt-1 leading-snug">{r.naam}</p>
-                    <p className="text-[12px] text-ink2 mt-1">
-                      {[r.eiwit_g ? `${Math.round(r.eiwit_g)}g eiwit` : null, r.kcal ? `${r.kcal} kcal` : null].filter(Boolean).join(' · ')}
-                    </p>
-                  </div>
-                </div>
-              ))}
-            </div>
-          )}
         </DesktopShell>
       </div>
     </>

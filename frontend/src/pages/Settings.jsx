@@ -210,7 +210,7 @@ export default function Settings() {
       {/* ── Desktop ── */}
       <div className="hidden lg:block">
         <DesktopShell title="Instellingen" subtitle={saving ? "Opslaan…" : undefined}>
-          <div className="max-w-2xl">
+          <div className="p-6 max-w-2xl">
             <SettingsContent />
           </div>
         </DesktopShell>
