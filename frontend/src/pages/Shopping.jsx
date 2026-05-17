@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
-import { getCurrentWeek, getShoppingList } from "../api/client";
+import { getCurrentWeek, getShoppingList, toggleShoppingItem } from "../api/client";
 import { getStoredWeek } from "../lib/weekStorage";
 import { IOSStatusBar, IOSLargeHeader, IOSGroupHeader, IOSTabBar } from "../components/IOSPrimitives";
 import DesktopShell from "../components/DesktopShell";
@@ -51,33 +51,36 @@ export default function Shopping() {
 
   const { list, loading } = useShoppingData(week);
 
-  const [checked, setChecked] = useState(() => {
-    try { return new Set(JSON.parse(localStorage.getItem(`shopping-checked-${paramWeek || 'current'}`) ?? "[]")); }
-    catch { return new Set(); }
-  });
+  const [checked, setChecked] = useState(new Set());
 
+  // Sync checked state from API response
   useEffect(() => {
-    if (!week) return;
-    try {
-      const saved = JSON.parse(localStorage.getItem(`shopping-checked-${week}`) ?? "[]");
-      setChecked(new Set(saved));
-    } catch {
-      setChecked(new Set());
-    }
-  }, [week]);
+    if (!list) return;
+    const apiChecked = new Set(
+      list.categories.flatMap(cat => cat.items.filter(item => item.checked).map(item => item.id))
+    );
+    setChecked(apiChecked);
+  }, [list]);
 
-  useEffect(() => {
-    if (!week) return;
-    localStorage.setItem(`shopping-checked-${week}`, JSON.stringify([...checked]));
-  }, [checked, week]);
-
-  function toggle(id) {
+  async function toggle(id) {
+    // Optimistic update
     setChecked(prev => {
       const next = new Set(prev);
       if (next.has(id)) next.delete(id);
       else next.add(id);
       return next;
     });
+    try {
+      await toggleShoppingItem(week, id);
+    } catch {
+      // Revert on failure
+      setChecked(prev => {
+        const next = new Set(prev);
+        if (next.has(id)) next.delete(id);
+        else next.add(id);
+        return next;
+      });
+    }
   }
 
   const categories = list?.categories ?? list?.boodschappen_per_categorie ?? [];
