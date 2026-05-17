@@ -76,7 +76,7 @@ export function IOSToggle({ on, onChange }) {
       role="switch"
       aria-checked={on}
       onClick={() => onChange(!on)}
-      className="relative flex-shrink-0 w-[51px] h-[31px] rounded-full transition-colors duration-200"
+      className="relative flex-shrink-0 w-[51px] h-[31px] rounded-full overflow-hidden transition-colors duration-200"
       style={{ background: on ? '#34c759' : 'rgba(120,120,128,0.16)' }}
     >
       <span
