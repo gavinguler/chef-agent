@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
-import { Star, Sparkles, Image } from "lucide-react";
+import { Star, Sparkles, Image, Pencil } from "lucide-react";
 import { getRecipe, aiFillMacros, refreshRecipeImage } from "../api/client";
 import {
   IOSStatusBar, IOSLargeHeader, IOSGroupHeader, IOSGroup, IOSRow, IOSTabBar,
@@ -92,10 +92,11 @@ export default function RecipeDetail() {
             <span className="text-brand text-[18px]">‹</span>
           </button>
           <button
+            onClick={() => navigate(`/recepten/${recipe.id}/bewerken`)}
             className="absolute top-4 right-4 w-[34px] h-[34px] rounded-full flex items-center justify-center"
             style={{ background: 'rgba(255,255,255,0.85)', backdropFilter: 'blur(10px)' }}
           >
-            <Star size={18} className="text-ink" />
+            <Pencil size={16} className="text-ink" />
           </button>
         </div>
 
@@ -177,12 +178,11 @@ export default function RecipeDetail() {
                 {imageLoading ? "Bezig…" : "Foto genereren"}
               </button>
               <button
-                onClick={handleAiFill}
-                disabled={aiLoading}
-                className="flex items-center gap-1.5 px-3 py-[6px] rounded-[7px] bg-brand text-white text-[13px] font-semibold disabled:opacity-50"
+                onClick={() => navigate(`/recepten/${recipe.id}/bewerken`)}
+                className="flex items-center gap-1.5 px-3 py-[6px] rounded-[7px] bg-brand text-white text-[13px] font-semibold"
               >
-                <Sparkles size={14} />
-                {aiLoading ? "Bezig…" : "Plan vanavond"}
+                <Pencil size={14} />
+                Bewerken
               </button>
             </div>
           }

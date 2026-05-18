@@ -83,7 +83,10 @@ export default function Recipes() {
         <IOSLargeHeader
           title="Recepten"
           accessory={
-            <button className="w-[32px] h-[32px] rounded-full bg-brand flex items-center justify-center">
+            <button
+              onClick={() => navigate('/recepten/nieuw')}
+              className="w-[32px] h-[32px] rounded-full bg-brand flex items-center justify-center"
+            >
               <Plus size={20} className="text-white" />
             </button>
           }
@@ -124,7 +127,10 @@ export default function Recipes() {
           accessory={
             <div className="flex items-center gap-2">
               <DesktopSearch value={search} onChange={setSearch} placeholder="Zoek recepten…" />
-              <button className="flex items-center gap-1.5 px-3 py-[6px] rounded-[7px] bg-brand text-white text-[13px] font-semibold">
+              <button
+                onClick={() => navigate('/recepten/nieuw')}
+                className="flex items-center gap-1.5 px-3 py-[6px] rounded-[7px] bg-brand text-white text-[13px] font-semibold"
+              >
                 <Plus size={14} /> Nieuw recept
               </button>
             </div>
