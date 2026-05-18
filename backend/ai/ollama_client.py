@@ -35,6 +35,18 @@ async def estimate_macros(naam: str, ingredienten: list[str]) -> dict:
         return {"kcal": None, "eiwit_g": None, "vet_g": None, "koolhydraten_g": None}
 
 
+INSTRUCTIONS_PROMPT = """Schrijf stap-voor-stap bereidingsinstructies in het Nederlands voor: {naam}{ingredienten_str}
+
+Elke stap op een aparte regel, geen nummers of bullets, max 8 stappen. Alleen de stappen, geen inleiding."""
+
+
+async def generate_instructions(naam: str, ingredienten: list[str] | None = None) -> str:
+    ingredienten_str = f"\nIngrediënten: {', '.join(ingredienten)}" if ingredienten else ""
+    prompt = INSTRUCTIONS_PROMPT.format(naam=naam, ingredienten_str=ingredienten_str)
+    raw = await ollama_chat(prompt)
+    return raw.strip()
+
+
 async def generate_shopping_list(week_plan: dict) -> list[dict]:
     """Genereer een boodschappenlijst op basis van het weekplan."""
     recepten = []

@@ -8,7 +8,7 @@ import uuid
 
 from backend.db.session import get_db
 from backend.db.models import Recipe
-from backend.ai.agent import fill_recipe_macros as _fill_recipe_macros
+from backend.ai.agent import fill_recipe_macros as _fill_recipe_macros, fill_recipe_instructions as _fill_recipe_instructions
 from backend.config import settings
 from backend.services.wiki_sync import (
     delete_recipe_from_wiki,
@@ -154,3 +154,19 @@ async def ai_fill_macros(payload: AiFillMacrosIn):
         return await _fill_recipe_macros(payload.naam, payload.ingredienten)
     except (httpx.HTTPError, httpx.ConnectError):
         raise HTTPException(status_code=503, detail="AI service niet beschikbaar")
+
+
+@router.post("/{recipe_id}/fill-instructions", response_model=RecipeOut)
+async def fill_instructions(recipe_id: uuid.UUID, background_tasks: BackgroundTasks, db: Session = Depends(get_db)):
+    recipe = db.query(Recipe).filter(Recipe.id == recipe_id).first()
+    if not recipe:
+        raise HTTPException(status_code=404, detail="Recept niet gevonden")
+    try:
+        instructies = await _fill_recipe_instructions(recipe.naam)
+        recipe.instructies = instructies
+        db.commit()
+        db.refresh(recipe)
+        background_tasks.add_task(sync_recipe_to_wiki, recipe)
+    except (httpx.HTTPError, httpx.ConnectError):
+        raise HTTPException(status_code=503, detail="AI service niet beschikbaar")
+    return recipe

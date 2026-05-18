@@ -37,6 +37,9 @@ export const aiFillMacros = (naam, ingredienten) =>
 export const refreshRecipeImage = (id) =>
   api.post(`/api/recipes/${id}/refresh-image`).then((r) => r.data);
 
+export const fillRecipeInstructions = (id) =>
+  api.post(`/api/recipes/${id}/fill-instructions`).then((r) => r.data);
+
 export const getNotificationSettings = () =>
   api.get("/api/notifications/settings").then((r) => r.data);
 

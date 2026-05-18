@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
-import { Star, Sparkles, Image, Pencil } from "lucide-react";
-import { getRecipe, aiFillMacros, refreshRecipeImage } from "../api/client";
+import { Sparkles, Image, Pencil, BookOpen } from "lucide-react";
+import { getRecipe, aiFillMacros, refreshRecipeImage, fillRecipeInstructions } from "../api/client";
 import {
   IOSStatusBar, IOSLargeHeader, IOSGroupHeader, IOSGroup, IOSRow, IOSTabBar,
 } from "../components/IOSPrimitives";
@@ -14,6 +14,7 @@ export default function RecipeDetail() {
   const [loading, setLoading] = useState(true);
   const [aiLoading, setAiLoading] = useState(false);
   const [imageLoading, setImageLoading] = useState(false);
+  const [instructionsLoading, setInstructionsLoading] = useState(false);
 
   useEffect(() => {
     getRecipe(id).then(setRecipe).finally(() => setLoading(false));
@@ -27,6 +28,17 @@ export default function RecipeDetail() {
       setRecipe(r => ({ ...r, image_url: result.image_url }));
     } finally {
       setImageLoading(false);
+    }
+  }
+
+  async function handleFillInstructions() {
+    if (!recipe) return;
+    setInstructionsLoading(true);
+    try {
+      const result = await fillRecipeInstructions(recipe.id);
+      setRecipe(r => ({ ...r, instructies: result.instructies }));
+    } finally {
+      setInstructionsLoading(false);
     }
   }
 
@@ -149,6 +161,13 @@ export default function RecipeDetail() {
               detail={imageLoading ? "…" : undefined}
             />
             <IOSRow
+              icon={<BookOpen size={16} className="text-white" />}
+              iconBg="#34c759"
+              title="Instructies genereren met AI"
+              onClick={instructionsLoading ? undefined : handleFillInstructions}
+              detail={instructionsLoading ? "…" : undefined}
+            />
+            <IOSRow
               icon={<Sparkles size={16} className="text-white" />}
               iconBg="#af52de"
               title="Macro's opnieuw schatten met AI"
@@ -239,15 +258,26 @@ export default function RecipeDetail() {
                 <div className="grid grid-cols-2 gap-4 mb-4">
                   {macros.map(m => <Stat key={m.label} label={m.label} v={m.value} />)}
                 </div>
-                <button
-                  onClick={handleAiFill}
-                  disabled={aiLoading}
-                  className="w-full flex items-center justify-center gap-2 py-2 rounded-[8px] text-white text-[13px] font-semibold disabled:opacity-50"
-                  style={{ background: 'linear-gradient(135deg, #af52de, #5856d6)' }}
-                >
-                  <Sparkles size={14} />
-                  {aiLoading ? "Bezig…" : "Macro's schatten met AI"}
-                </button>
+                <div className="flex flex-col gap-2">
+                  <button
+                    onClick={handleFillInstructions}
+                    disabled={instructionsLoading}
+                    className="w-full flex items-center justify-center gap-2 py-2 rounded-[8px] text-white text-[13px] font-semibold disabled:opacity-50"
+                    style={{ background: 'linear-gradient(135deg, #30d158, #34c759)' }}
+                  >
+                    <BookOpen size={14} />
+                    {instructionsLoading ? "Bezig…" : "Instructies genereren"}
+                  </button>
+                  <button
+                    onClick={handleAiFill}
+                    disabled={aiLoading}
+                    className="w-full flex items-center justify-center gap-2 py-2 rounded-[8px] text-white text-[13px] font-semibold disabled:opacity-50"
+                    style={{ background: 'linear-gradient(135deg, #af52de, #5856d6)' }}
+                  >
+                    <Sparkles size={14} />
+                    {aiLoading ? "Bezig…" : "Macro's schatten met AI"}
+                  </button>
+                </div>
               </Panel>
 
               <Panel title="Ingrediënten" badge="2 porties">
