@@ -177,7 +177,7 @@ export default function WeekPlan() {
                       <IOSRow
                         key={dagData.dag}
                         title={`🍳 ${dagData.dag.charAt(0).toUpperCase() + dagData.dag.slice(1)}`}
-                        sub={diner ? `Kook extra: ${diner.naam}${consumerStr}` : 'Voorbereiding voor de rest van de week'}
+                        sub={consumers.length > 0 && diner ? `Kook extra: ${diner.naam}${consumerStr}` : 'Voorbereiding voor volgende week'}
                         last={i === arr.length - 1}
                       />
                     );
@@ -364,15 +364,13 @@ export default function WeekPlan() {
                             <p className="text-[12px] font-semibold text-ink mb-1">
                               {dagData.dag.charAt(0).toUpperCase() + dagData.dag.slice(1)}
                             </p>
-                            {diner ? (
+                            {consumers.length > 0 && diner ? (
                               <>
                                 <p className="text-[12px] text-ink leading-snug">Kook extra: <strong>{diner.naam}</strong></p>
-                                {consumers.length > 0 && (
-                                  <p className="text-[11px] text-ink2 mt-1">→ {consumers.join(' + ')} lunch</p>
-                                )}
+                                <p className="text-[11px] text-ink2 mt-1">→ {consumers.join(' + ')} lunch</p>
                               </>
                             ) : (
-                              <p className="text-[12px] text-ink2">Voorbereiding voor de week</p>
+                              <p className="text-[12px] text-ink2">Voorbereiding voor volgende week</p>
                             )}
                           </div>
                         );
