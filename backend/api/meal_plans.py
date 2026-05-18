@@ -95,10 +95,7 @@ def get_week_plan(week_num: int, db: Session = Depends(get_db)):
                     kcal=None,
                     eiwit_g=None,
                 ))
-        is_batch = any(
-            m.naam and "(batch)" in m.naam.lower() and m.maaltijd_type == "diner"
-            for m in maaltijden if m.naam
-        )
+        is_batch = dag in {"donderdag", "zondag"}
         dagen.append(DayPlan(
             dag=dag,
             maaltijden=maaltijden,
