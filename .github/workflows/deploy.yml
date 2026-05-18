@@ -1,55 +1,109 @@
-name: Deploy to Chef Agent
+name: Build & Deploy
 
 on:
   push:
     branches: [master]
+  workflow_dispatch:
+    inputs:
+      version:
+        description: 'Version tag (laat leeg voor auto)'
+        required: false
+        default: ''
+
+env:
+  IMAGE_NAME: ghcr.io/gavinguler/chef-agent
+  DEPLOY_HOST: 192.168.0.61
+  DEPLOY_PORT: 8001
 
 jobs:
-  deploy:
-    name: Deploy via Octopus Deploy
-    runs-on: [self-hosted, chef-agent]
-    env:
-      OCTOPUS_URL: http://192.168.0.210:8080
-      OCTOPUS_SPACE: Spaces-1
-      OCTOPUS_PROJECT_ID: Projects-21
-      OCTOPUS_ENV_ID: Environments-1
+  build:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
+    outputs:
+      version: ${{ steps.version.outputs.version }}
 
     steps:
-      - name: Create Octopus Release
-        id: release
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Determine version
+        id: version
         run: |
-          VERSION="0.0.${{ github.run_number }}"
-          BODY=$(printf '{"ProjectId":"%s","Version":"%s","VersionControlReference":{"GitRef":"refs/heads/master","GitCommit":"%s"}}' \
-            "$OCTOPUS_PROJECT_ID" "$VERSION" "${{ github.sha }}")
-
-          RESPONSE=$(curl -s -w "\nHTTP_STATUS:%{http_code}" -X POST "$OCTOPUS_URL/api/$OCTOPUS_SPACE/releases" \
-            -H "X-Octopus-ApiKey: ${{ secrets.OCTOPUS_API_KEY }}" \
-            -H "Content-Type: application/json" \
-            -d "$BODY")
-
-          HTTP_STATUS=$(echo "$RESPONSE" | grep "HTTP_STATUS:" | cut -d: -f2)
-          BODY_RESPONSE=$(echo "$RESPONSE" | sed '/HTTP_STATUS:/d')
-
-          echo "HTTP status: $HTTP_STATUS"
-          echo "Response: $BODY_RESPONSE"
-
-          if [ "$HTTP_STATUS" != "201" ]; then
-            echo "Fout bij aanmaken release!"
-            exit 1
+          if [ -n "${{ inputs.version }}" ]; then
+            VERSION="${{ inputs.version }}"
+          else
+            VERSION="$(date -u +%Y.%-m.%-d).${{ github.run_number }}"
           fi
+          echo "version=${VERSION}" >> $GITHUB_OUTPUT
+          echo "Building version: ${VERSION}"
 
-          RELEASE_ID=$(echo "$BODY_RESPONSE" | python3 -c "import sys,json; print(json.load(sys.stdin)['Id'])")
-          echo "release_id=$RELEASE_ID" >> $GITHUB_OUTPUT
-          echo "Release $VERSION aangemaakt: $RELEASE_ID"
+      - name: Log in to GitHub Container Registry
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Deploy Release to home-lab
+      - name: Build and push Docker image
+        uses: docker/build-push-action@v5
+        with:
+          context: .
+          push: true
+          tags: |
+            ${{ env.IMAGE_NAME }}:${{ steps.version.outputs.version }}
+            ${{ env.IMAGE_NAME }}:latest
+
+  deploy:
+    needs: build
+    runs-on: [self-hosted, Linux, X64]
+
+    steps:
+      - name: Deploy via SSH
+        env:
+          VERSION: ${{ needs.build.outputs.version }}
+          DEPLOY_SSH_KEY: ${{ secrets.DEPLOY_SSH_KEY }}
+          DATABASE_URL: ${{ secrets.DATABASE_URL }}
+          TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+          TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
+          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+          UNSPLASH_ACCESS_KEY: ${{ secrets.UNSPLASH_ACCESS_KEY }}
+          GITHUB_TOKEN_WIKI: ${{ secrets.GITHUB_TOKEN_WIKI }}
+          OLLAMA_BASE_URL: ${{ secrets.OLLAMA_BASE_URL }}
         run: |
-          BODY=$(printf '{"ReleaseId":"%s","EnvironmentId":"%s"}' \
-            "${{ steps.release.outputs.release_id }}" "$OCTOPUS_ENV_ID")
+          set -e
 
-          curl -sf -X POST "$OCTOPUS_URL/api/$OCTOPUS_SPACE/deployments" \
-            -H "X-Octopus-ApiKey: ${{ secrets.OCTOPUS_API_KEY }}" \
-            -H "Content-Type: application/json" \
-            -d "$BODY"
+          mkdir -p ~/.ssh
+          echo "$DEPLOY_SSH_KEY" > ~/.ssh/deploy_key
+          chmod 600 ~/.ssh/deploy_key
 
-          echo "Deploy gestart naar home-lab!"
+          ssh -o StrictHostKeyChecking=no -i ~/.ssh/deploy_key root@${{ env.DEPLOY_HOST }} bash -s << 'SSHEOF'
+          set -e
+
+          echo "${{ secrets.GITHUB_TOKEN }}" | docker login ghcr.io -u gavinguler --password-stdin
+
+          docker pull ${{ env.IMAGE_NAME }}:$VERSION
+
+          docker stop chef-agent 2>/dev/null || true
+          docker rm chef-agent 2>/dev/null || true
+
+          docker run -d \
+            --name chef-agent \
+            --restart unless-stopped \
+            -p ${{ env.DEPLOY_PORT }}:${{ env.DEPLOY_PORT }} \
+            -e PORT=${{ env.DEPLOY_PORT }} \
+            -e DATABASE_URL="$DATABASE_URL" \
+            -e TELEGRAM_BOT_TOKEN="$TELEGRAM_BOT_TOKEN" \
+            -e TELEGRAM_CHAT_ID="$TELEGRAM_CHAT_ID" \
+            -e ANTHROPIC_API_KEY="$ANTHROPIC_API_KEY" \
+            -e UNSPLASH_ACCESS_KEY="$UNSPLASH_ACCESS_KEY" \
+            -e GITHUB_TOKEN="$GITHUB_TOKEN_WIKI" \
+            -e OLLAMA_BASE_URL="$OLLAMA_BASE_URL" \
+            ${{ env.IMAGE_NAME }}:$VERSION
+
+          echo "chef-agent draait op ${{ env.DEPLOY_HOST }}:${{ env.DEPLOY_PORT }}"
+          docker ps | grep chef-agent
+          SSHEOF
+
+          rm -f ~/.ssh/deploy_key
