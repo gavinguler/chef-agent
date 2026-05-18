@@ -1,15 +1,15 @@
 """add notification_settings table
 
-Revision ID: 002
-Revises: 001
+Revision ID: b2c3d4e5f601
+Revises: a1b2c3d4e5f6
 Create Date: 2026-05-08 12:00:00.000000
 """
 from typing import Sequence, Union
 from alembic import op
 import sqlalchemy as sa
 
-revision: str = '002'
-down_revision: Union[str, None] = '001'
+revision: str = 'b2c3d4e5f601'
+down_revision: Union[str, None] = 'a1b2c3d4e5f6'
 branch_labels: Union[Sequence[str], None] = None
 depends_on: Union[str, Sequence[str], None] = None
 
@@ -26,7 +26,6 @@ def upgrade() -> None:
         sa.Column("shopping_hour", sa.Integer(), nullable=False, server_default="8"),
         sa.Column("shopping_minute", sa.Integer(), nullable=False, server_default="0"),
     )
-    # Insert default row
     op.execute(
         "INSERT INTO notification_settings (id, daily_enabled, daily_hour, daily_minute, "
         "shopping_enabled, shopping_days, shopping_hour, shopping_minute) "

@@ -1,14 +1,14 @@
 """add checked to shopping_lists
 
-Revision ID: 003
-Revises: 002
+Revision ID: c3d4e5f6a102
+Revises: b2c3d4e5f601
 Create Date: 2026-05-08
 """
 from alembic import op
 import sqlalchemy as sa
 
-revision = '003'
-down_revision = '002'
+revision = 'c3d4e5f6a102'
+down_revision = 'b2c3d4e5f601'
 branch_labels = None
 depends_on = None
 
