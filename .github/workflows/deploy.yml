@@ -64,13 +64,13 @@ jobs:
         env:
           VERSION: ${{ needs.build.outputs.version }}
           DEPLOY_SSH_KEY: ${{ secrets.DEPLOY_SSH_KEY }}
+          GHCR_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           DATABASE_URL: ${{ secrets.DATABASE_URL }}
           TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
           TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
           ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
           UNSPLASH_ACCESS_KEY: ${{ secrets.UNSPLASH_ACCESS_KEY }}
           GITHUB_TOKEN_WIKI: ${{ secrets.GITHUB_TOKEN_WIKI }}
-          OLLAMA_BASE_URL: ${{ secrets.OLLAMA_BASE_URL }}
         run: |
           set -e
 
@@ -78,12 +78,12 @@ jobs:
           echo "$DEPLOY_SSH_KEY" > ~/.ssh/deploy_key
           chmod 600 ~/.ssh/deploy_key
 
-          ssh -o StrictHostKeyChecking=no -i ~/.ssh/deploy_key root@${{ env.DEPLOY_HOST }} bash -s << 'SSHEOF'
+          ssh -o StrictHostKeyChecking=no -i ~/.ssh/deploy_key root@${{ env.DEPLOY_HOST }} bash -s << EOF
           set -e
 
-          echo "${{ secrets.GITHUB_TOKEN }}" | docker login ghcr.io -u gavinguler --password-stdin
+          echo "$GHCR_TOKEN" | docker login ghcr.io -u gavinguler --password-stdin
 
-          docker pull ${{ env.IMAGE_NAME }}:$VERSION
+          docker pull ${{ env.IMAGE_NAME }}:${VERSION}
 
           docker stop chef-agent 2>/dev/null || true
           docker rm chef-agent 2>/dev/null || true
@@ -93,17 +93,17 @@ jobs:
             --restart unless-stopped \
             -p ${{ env.DEPLOY_PORT }}:${{ env.DEPLOY_PORT }} \
             -e PORT=${{ env.DEPLOY_PORT }} \
-            -e DATABASE_URL="$DATABASE_URL" \
-            -e TELEGRAM_BOT_TOKEN="$TELEGRAM_BOT_TOKEN" \
-            -e TELEGRAM_CHAT_ID="$TELEGRAM_CHAT_ID" \
-            -e ANTHROPIC_API_KEY="$ANTHROPIC_API_KEY" \
-            -e UNSPLASH_ACCESS_KEY="$UNSPLASH_ACCESS_KEY" \
-            -e GITHUB_TOKEN="$GITHUB_TOKEN_WIKI" \
-            -e OLLAMA_BASE_URL="$OLLAMA_BASE_URL" \
-            ${{ env.IMAGE_NAME }}:$VERSION
+            -e DATABASE_URL="${DATABASE_URL}" \
+            -e TELEGRAM_BOT_TOKEN="${TELEGRAM_BOT_TOKEN}" \
+            -e TELEGRAM_CHAT_ID="${TELEGRAM_CHAT_ID}" \
+            -e ANTHROPIC_API_KEY="${ANTHROPIC_API_KEY}" \
+            -e UNSPLASH_ACCESS_KEY="${UNSPLASH_ACCESS_KEY}" \
+            -e GITHUB_TOKEN="${GITHUB_TOKEN_WIKI}" \
+            -e OLLAMA_BASE_URL="http://192.168.0.38:11434" \
+            ${{ env.IMAGE_NAME }}:${VERSION}
 
           echo "chef-agent draait op ${{ env.DEPLOY_HOST }}:${{ env.DEPLOY_PORT }}"
           docker ps | grep chef-agent
-          SSHEOF
+          EOF
 
           rm -f ~/.ssh/deploy_key
