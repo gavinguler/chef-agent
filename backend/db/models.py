@@ -15,6 +15,7 @@ class Recipe(Base):
     id = Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
     naam = Column(Text, nullable=False)
     beschrijving = Column(Text)
+    ingredienten = Column(Text)
     instructies = Column(Text)
     kcal = Column(Integer)
     eiwit_g = Column(Float)

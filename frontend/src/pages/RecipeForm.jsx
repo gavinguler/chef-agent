@@ -11,7 +11,7 @@ const CATEGORIEEN = ["diner", "lunch", "ontbijt", "snack", "veggie"];
 const CAT_LABEL = { diner: "Diner", lunch: "Lunch", ontbijt: "Ontbijt", snack: "Snack", veggie: "Veggie" };
 
 const EMPTY = {
-  naam: "", categorie: "diner", beschrijving: "", instructies: "",
+  naam: "", categorie: "diner", beschrijving: "", ingredienten: "", instructies: "",
   kcal: "", eiwit_g: "", vet_g: "", koolhydraten_g: "", vlees_type: "",
 };
 
@@ -20,6 +20,7 @@ function toFormValues(r) {
     naam: r.naam ?? "",
     categorie: r.categorie ?? "diner",
     beschrijving: r.beschrijving ?? "",
+    ingredienten: r.ingredienten ?? "",
     instructies: r.instructies ?? "",
     kcal: r.kcal ?? "",
     eiwit_g: r.eiwit_g ?? "",
@@ -34,6 +35,7 @@ function toPayload(form) {
     naam: form.naam,
     categorie: form.categorie || null,
     beschrijving: form.beschrijving || null,
+    ingredienten: form.ingredienten || null,
     instructies: form.instructies || null,
     kcal: form.kcal !== "" ? Number(form.kcal) : null,
     eiwit_g: form.eiwit_g !== "" ? Number(form.eiwit_g) : null,
@@ -56,7 +58,6 @@ export default function RecipeForm() {
   const [loading, setLoading] = useState(isEdit);
   const [saving, setSaving] = useState(false);
   const [aiLoading, setAiLoading] = useState(false);
-  const [ingredienten, setIngredienten] = useState("");
   const [error, setError] = useState(null);
 
   useEffect(() => {
@@ -85,7 +86,7 @@ export default function RecipeForm() {
   async function handleAiFill() {
     setAiLoading(true);
     try {
-      const result = await aiFillMacros(form.naam, ingredienten.split("\n").filter(Boolean));
+      const result = await aiFillMacros(form.naam, (form.ingredienten || "").split("\n").filter(Boolean));
       setForm(f => ({ ...f, ...Object.fromEntries(
         Object.entries(result).filter(([, v]) => v != null).map(([k, v]) => [k, v])
       )}));
@@ -184,6 +185,19 @@ export default function RecipeForm() {
         </div>
       </IOSGroup>
 
+      <IOSGroupHeader>Ingrediënten</IOSGroupHeader>
+      <IOSGroup footer="Één ingrediënt per regel">
+        <div className="px-4 py-[11px]">
+          <textarea
+            className={textareaCls}
+            placeholder={"200g kipfilet\n150g rijst\n1 el olijfolie"}
+            rows={5}
+            value={form.ingredienten}
+            onChange={e => set("ingredienten", e.target.value)}
+          />
+        </div>
+      </IOSGroup>
+
       <IOSGroupHeader>Bereiding</IOSGroupHeader>
       <IOSGroup>
         <div className="px-4 py-[11px]">
@@ -215,20 +229,11 @@ export default function RecipeForm() {
       </IOSGroup>
 
       <IOSGroupHeader>AI — Macro's schatten</IOSGroupHeader>
-      <IOSGroup footer="Vul ingrediënten in, één per regel.">
-        <div className="px-4 pt-[11px]">
-          <textarea
-            className={textareaCls}
-            placeholder={"200g kipfilet\n150g rijst\n1 el olijfolie"}
-            rows={4}
-            value={ingredienten}
-            onChange={e => setIngredienten(e.target.value)}
-          />
-        </div>
-        <div className="px-4 pb-3 pt-2">
+      <IOSGroup footer="Gebruikt de ingrediënten die je hierboven hebt ingevuld.">
+        <div className="px-4 py-3">
           <button
             onClick={handleAiFill}
-            disabled={aiLoading || (!ingredienten.trim() && !form.naam.trim())}
+            disabled={aiLoading || (!form.ingredienten?.trim() && !form.naam.trim())}
             className="flex items-center gap-2 px-4 py-[9px] rounded-[9px] text-white text-[14px] font-semibold disabled:opacity-40"
             style={{ background: 'linear-gradient(135deg, #af52de, #5856d6)' }}
           >
@@ -301,19 +306,11 @@ export default function RecipeForm() {
             >
               <div>
                 <p className="text-[11px] font-bold uppercase tracking-wider text-ink2 mb-1">AI Macro's</p>
-                <p className="text-[12px] text-ink2 mb-3">Ingrediënten invullen, één per regel.</p>
-                <textarea
-                  className="w-full rounded-[8px] p-3 text-[13px] text-ink outline-none resize-none"
-                  style={{ background: 'rgba(120,120,128,0.1)' }}
-                  placeholder={"200g kipfilet\n150g rijst\n1 el olijfolie"}
-                  rows={6}
-                  value={ingredienten}
-                  onChange={e => setIngredienten(e.target.value)}
-                />
+                <p className="text-[12px] text-ink2 mb-3">Vul eerst ingrediënten in het formulier in.</p>
                 <button
                   onClick={handleAiFill}
-                  disabled={aiLoading || (!ingredienten.trim() && !form.naam.trim())}
-                  className="mt-2 w-full flex items-center justify-center gap-2 py-[9px] rounded-[8px] text-white text-[13px] font-semibold disabled:opacity-40"
+                  disabled={aiLoading || (!form.ingredienten?.trim() && !form.naam.trim())}
+                  className="w-full flex items-center justify-center gap-2 py-[9px] rounded-[8px] text-white text-[13px] font-semibold disabled:opacity-40"
                   style={{ background: 'linear-gradient(135deg, #af52de, #5856d6)' }}
                 >
                   <Sparkles size={14} />

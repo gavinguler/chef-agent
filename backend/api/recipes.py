@@ -22,6 +22,7 @@ router = APIRouter()
 class RecipeIn(BaseModel):
     naam: str
     beschrijving: Optional[str] = None
+    ingredienten: Optional[str] = None
     instructies: Optional[str] = None
     kcal: Optional[int] = None
     eiwit_g: Optional[float] = None
@@ -36,6 +37,7 @@ class RecipeOut(BaseModel):
     id: uuid.UUID
     naam: str
     beschrijving: Optional[str] = None
+    ingredienten: Optional[str] = None
     instructies: Optional[str] = None
     kcal: Optional[int] = None
     eiwit_g: Optional[float] = None
