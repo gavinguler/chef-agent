@@ -70,7 +70,7 @@ jobs:
           TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
           ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
           UNSPLASH_ACCESS_KEY: ${{ secrets.UNSPLASH_ACCESS_KEY }}
-          GITHUB_TOKEN_WIKI: ${{ secrets.GITHUB_TOKEN_WIKI }}
+          WIKI_TOKEN: ${{ secrets.WIKI_TOKEN }}
         run: |
           set -e
 
@@ -98,7 +98,7 @@ jobs:
             -e TELEGRAM_CHAT_ID="${TELEGRAM_CHAT_ID}" \
             -e ANTHROPIC_API_KEY="${ANTHROPIC_API_KEY}" \
             -e UNSPLASH_ACCESS_KEY="${UNSPLASH_ACCESS_KEY}" \
-            -e GITHUB_TOKEN="${GITHUB_TOKEN_WIKI}" \
+            -e GITHUB_TOKEN="${WIKI_TOKEN}" \
             -e OLLAMA_BASE_URL="http://192.168.0.38:11434" \
             ${{ env.IMAGE_NAME }}:${VERSION}
 
