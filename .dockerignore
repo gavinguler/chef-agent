@@ -8,7 +8,6 @@ __pycache__/
 *.pyo
 tests/
 docs/
-alembic/versions/
 *.md
 .DS_Store
 .playwright-mcp/
