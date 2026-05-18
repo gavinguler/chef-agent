@@ -47,6 +47,7 @@ class DayPlan(BaseModel):
     maaltijden: list[MealOut]
     totaal_eiwit_g: float
     totaal_kcal: int
+    is_batch: bool = False
 
 
 class WeekPlan(BaseModel):
@@ -94,11 +95,16 @@ def get_week_plan(week_num: int, db: Session = Depends(get_db)):
                     kcal=None,
                     eiwit_g=None,
                 ))
+        is_batch = any(
+            m.naam and "(batch)" in m.naam.lower() and m.maaltijd_type == "diner"
+            for m in maaltijden if m.naam
+        )
         dagen.append(DayPlan(
             dag=dag,
             maaltijden=maaltijden,
             totaal_eiwit_g=totaal_eiwit,
             totaal_kcal=totaal_kcal,
+            is_batch=is_batch,
         ))
     nutrition = db.query(NutritionCycle).filter(NutritionCycle.cyclus_week == week_num).first()
     vlees_thema = nutrition.vlees_type if nutrition else None
