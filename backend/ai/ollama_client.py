@@ -14,7 +14,7 @@ Geef terug als JSON:
 
 
 async def ollama_chat(prompt: str, model: str = "llama3.1:8b") -> str:
-    async with httpx.AsyncClient(timeout=60.0) as client:
+    async with httpx.AsyncClient(timeout=180.0) as client:
         response = await client.post(
             f"{settings.ollama_base_url}/api/generate",
             json={"model": model, "prompt": prompt, "stream": False},
