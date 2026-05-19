@@ -14,13 +14,22 @@ Geef terug als JSON:
 
 
 async def ollama_chat(prompt: str, model: str = "llama3.1:8b") -> str:
-    async with httpx.AsyncClient(timeout=180.0) as client:
-        response = await client.post(
+    timeout = httpx.Timeout(connect=10.0, read=30.0, write=10.0, pool=5.0)
+    async with httpx.AsyncClient(timeout=timeout) as client:
+        async with client.stream(
+            "POST",
             f"{settings.ollama_base_url}/api/generate",
-            json={"model": model, "prompt": prompt, "stream": False},
-        )
-        response.raise_for_status()
-        return response.json()["response"]
+            json={"model": model, "prompt": prompt, "stream": True},
+        ) as response:
+            response.raise_for_status()
+            parts = []
+            async for line in response.aiter_lines():
+                if line:
+                    chunk = json.loads(line)
+                    parts.append(chunk.get("response", ""))
+                    if chunk.get("done"):
+                        break
+            return "".join(parts)
 
 
 async def estimate_macros(naam: str, ingredienten: list[str]) -> dict:
