@@ -14,7 +14,7 @@ Geef terug als JSON:
 
 
 async def ollama_chat(prompt: str, model: str = "llama3.1:8b") -> str:
-    timeout = httpx.Timeout(connect=10.0, read=30.0, write=10.0, pool=5.0)
+    timeout = httpx.Timeout(connect=60.0, read=120.0, write=10.0, pool=5.0)
     async with httpx.AsyncClient(timeout=timeout) as client:
         async with client.stream(
             "POST",
