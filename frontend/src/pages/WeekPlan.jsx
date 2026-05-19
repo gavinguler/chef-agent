@@ -95,6 +95,7 @@ export default function WeekPlan() {
   const [cycleWeek, setCycleWeek] = useState(null);
   const [selectedWeek, setSelectedWeek] = useState(null);
   const [weekPlan, setWeekPlan] = useState(null);
+  const [nextWeekPlan, setNextWeekPlan] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
@@ -110,8 +111,9 @@ export default function WeekPlan() {
   useEffect(() => {
     if (!selectedWeek) return;
     setLoading(true);
-    getWeekPlan(selectedWeek)
-      .then(data => { setError(null); setWeekPlan(data); })
+    const nextWeek = (selectedWeek % 8) + 1;
+    Promise.all([getWeekPlan(selectedWeek), getWeekPlan(nextWeek)])
+      .then(([data, next]) => { setError(null); setWeekPlan(data); setNextWeekPlan(next); })
       .catch(() => setError("Kon weekplan niet laden"))
       .finally(() => setLoading(false));
   }, [selectedWeek]);
@@ -173,11 +175,24 @@ export default function WeekPlan() {
                         d.maaltijden?.some(m => m.naam?.toLowerCase().includes('(batch)')))
                       .map(d => d.dag.charAt(0).toUpperCase() + d.dag.slice(1));
                     const consumerStr = consumers.length > 0 ? ` → ${consumers.join(' + ')} lunch` : '';
+                    const nextBatchNames = consumers.length === 0
+                      ? (nextWeekPlan?.dagen ?? [])
+                          .filter(d => ['maandag','dinsdag','woensdag'].includes(d.dag))
+                          .flatMap(d => d.maaltijden ?? [])
+                          .filter(m => m.naam?.toLowerCase().includes('(batch)'))
+                          .map(m => m.naam.replace(/\s*\(batch\)/i, '').trim())
+                          .filter((v, i, a) => a.indexOf(v) === i)
+                      : [];
+                    const subText = consumers.length > 0 && diner
+                      ? `Kook extra: ${diner.naam}${consumerStr}`
+                      : nextBatchNames.length > 0
+                        ? `Kook voor volgende week: ${nextBatchNames.join(', ')}`
+                        : 'Voorbereiding voor volgende week';
                     return (
                       <IOSRow
                         key={dagData.dag}
                         title={`🍳 ${dagData.dag.charAt(0).toUpperCase() + dagData.dag.slice(1)}`}
-                        sub={consumers.length > 0 && diner ? `Kook extra: ${diner.naam}${consumerStr}` : 'Voorbereiding voor volgende week'}
+                        sub={subText}
                         last={i === arr.length - 1}
                       />
                     );
@@ -355,6 +370,14 @@ export default function WeekPlan() {
                           .filter(d => DAYS_NL.indexOf(d.dag) > batchIdx &&
                             d.maaltijden?.some(m => m.naam?.toLowerCase().includes('(batch)')))
                           .map(d => d.dag.charAt(0).toUpperCase() + d.dag.slice(1));
+                        const nextBatchNames = consumers.length === 0
+                          ? (nextWeekPlan?.dagen ?? [])
+                              .filter(d => ['maandag','dinsdag','woensdag'].includes(d.dag))
+                              .flatMap(d => d.maaltijden ?? [])
+                              .filter(m => m.naam?.toLowerCase().includes('(batch)'))
+                              .map(m => m.naam.replace(/\s*\(batch\)/i, '').trim())
+                              .filter((v, j, a) => a.indexOf(v) === j)
+                          : [];
                         return (
                           <div
                             key={dagData.dag}
@@ -368,6 +391,11 @@ export default function WeekPlan() {
                               <>
                                 <p className="text-[12px] text-ink leading-snug">Kook extra: <strong>{diner.naam}</strong></p>
                                 <p className="text-[11px] text-ink2 mt-1">→ {consumers.join(' + ')} lunch</p>
+                              </>
+                            ) : nextBatchNames.length > 0 ? (
+                              <>
+                                <p className="text-[12px] text-ink leading-snug">Kook voor volgende week:</p>
+                                <p className="text-[12px] font-semibold text-ink mt-0.5">{nextBatchNames.join(', ')}</p>
                               </>
                             ) : (
                               <p className="text-[12px] text-ink2">Voorbereiding voor volgende week</p>
