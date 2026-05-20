@@ -51,3 +51,6 @@ export const testDailyMessage = () =>
 
 export const testShoppingReminder = () =>
   api.post("/api/notifications/test-shopping").then((r) => r.data);
+
+export const enrichShoppingPrices = (week) =>
+  api.post(`/api/shopping/week/${week}/enrich-prices`).then((r) => r.data);

@@ -6,6 +6,7 @@ import uuid
 
 from backend.db.session import get_db
 from backend.db.models import ShoppingList
+from backend.bonnetjes.client import lookup_prices
 
 router = APIRouter()
 
@@ -81,3 +82,23 @@ def delete_item(week_num: int, item_id: uuid.UUID, db: Session = Depends(get_db)
         raise HTTPException(status_code=404, detail="Item niet gevonden")
     db.delete(item)
     db.commit()
+
+
+@router.post("/week/{week_num}/enrich-prices")
+async def enrich_prices(week_num: int, db: Session = Depends(get_db)):
+    _validate_week(week_num)
+    items = db.query(ShoppingList).filter(ShoppingList.cyclus_week == week_num).all()
+    if not items:
+        return {"enriched": 0, "total": 0}
+
+    prices = await lookup_prices([item.product for item in items])
+
+    enriched = 0
+    for item in items:
+        price = prices.get(item.product)
+        if price is not None:
+            item.prijs_indicatie = price
+            enriched += 1
+
+    db.commit()
+    return {"enriched": enriched, "total": len(items)}

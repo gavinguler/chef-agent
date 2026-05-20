@@ -1,9 +1,19 @@
 import { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
-import { getCurrentWeek, getShoppingList, toggleShoppingItem } from "../api/client";
+import { getCurrentWeek, getShoppingList, toggleShoppingItem, enrichShoppingPrices } from "../api/client";
 import { getStoredWeek } from "../lib/weekStorage";
 import { IOSStatusBar, IOSLargeHeader, IOSGroupHeader, IOSTabBar } from "../components/IOSPrimitives";
 import DesktopShell from "../components/DesktopShell";
+
+function parseShoppingData(data) {
+  const grouped = {};
+  for (const item of data.items ?? []) {
+    const cat = item.categorie ?? "overig";
+    if (!grouped[cat]) grouped[cat] = [];
+    grouped[cat].push({ ...item, naam: item.product });
+  }
+  return { week: data.week, categories: Object.entries(grouped).map(([naam, items]) => ({ naam, items })) };
+}
 
 function useShoppingData(week) {
   const [list, setList] = useState(null);
@@ -13,21 +23,12 @@ function useShoppingData(week) {
     if (!week) return;
     setLoading(true);
     getShoppingList(week)
-      .then(data => {
-        const grouped = {};
-        for (const item of data.items ?? []) {
-          const cat = item.categorie ?? "overig";
-          if (!grouped[cat]) grouped[cat] = [];
-          grouped[cat].push({ ...item, naam: item.product });
-        }
-        const categories = Object.entries(grouped).map(([naam, items]) => ({ naam, items }));
-        setList({ week: data.week, categories });
-      })
+      .then(data => setList(parseShoppingData(data)))
       .catch(() => setList(null))
       .finally(() => setLoading(false));
   }, [week]);
 
-  return { list, loading };
+  return { list, setList, loading };
 }
 
 export default function Shopping() {
@@ -49,9 +50,10 @@ export default function Shopping() {
     }
   }, [paramWeek]);
 
-  const { list, loading } = useShoppingData(week);
+  const { list, setList, loading } = useShoppingData(week);
 
   const [checked, setChecked] = useState(new Set());
+  const [enriching, setEnriching] = useState(false);
 
   // Sync checked state from API response
   useEffect(() => {
@@ -61,6 +63,20 @@ export default function Shopping() {
     );
     setChecked(apiChecked);
   }, [list]);
+
+  async function handleEnrichPrices() {
+    if (!week || enriching) return;
+    setEnriching(true);
+    try {
+      await enrichShoppingPrices(week);
+      const data = await getShoppingList(week);
+      setList(parseShoppingData(data));
+    } catch {
+      // silently ignore
+    } finally {
+      setEnriching(false);
+    }
+  }
 
   async function toggle(id) {
     // Optimistic update
@@ -90,6 +106,11 @@ export default function Shopping() {
   const totalItems = allItems.length;
   const checkedCount = allItems.filter(id => checked.has(id)).length;
   const progress = totalItems > 0 ? checkedCount / totalItems : 0;
+
+  const allFlatItems = categories.flatMap(cat => cat.items ?? cat.boodschappen ?? []);
+  const priceItems = allFlatItems.filter(item => item.prijs_indicatie != null);
+  const totalPrice = priceItems.reduce((sum, item) => sum + item.prijs_indicatie, 0);
+  const hasPrices = priceItems.length > 0;
 
   // ── Mobile checklist ──────────────────────────────────────
   const MobileList = () => (
@@ -130,6 +151,11 @@ export default function Shopping() {
                     <span className="flex-1 text-[17px] text-ink" style={isDone ? { textDecoration: 'line-through', opacity: 0.45 } : {}}>
                       {item.naam}
                     </span>
+                    {item.prijs_indicatie != null && (
+                      <span className="text-[13px] text-ink2 ml-2 flex-shrink-0" style={isDone ? { opacity: 0.45 } : {}}>
+                        €{item.prijs_indicatie.toFixed(2)}
+                      </span>
+                    )}
                   </div>
                 );
               })}
@@ -177,6 +203,11 @@ export default function Shopping() {
                     >
                       {item.naam}
                     </span>
+                    {item.prijs_indicatie != null && (
+                      <span className="text-[13px] tabular-nums ml-3 flex-shrink-0" style={{ color: isDone ? 'rgba(60,60,67,0.4)' : 'rgba(60,60,67,0.6)' }}>
+                        €{item.prijs_indicatie.toFixed(2)}
+                      </span>
+                    )}
                   </div>
                 );
               })}
@@ -214,9 +245,19 @@ export default function Shopping() {
           </div>
         </div>
 
-        <p className="px-4 mb-3 text-[13px] text-ink2">
-          {totalItems} items · {checkedCount} afgevinkt
-        </p>
+        <div className="px-4 mb-3 flex items-center justify-between">
+          <span className="text-[13px] text-ink2">{totalItems} items · {checkedCount} afgevinkt{hasPrices ? ` · ±€${totalPrice.toFixed(2)}` : ""}</span>
+          {list && (
+            <button
+              onClick={handleEnrichPrices}
+              disabled={enriching}
+              className="text-[13px] font-medium px-3 py-1 rounded-[8px]"
+              style={{ background: 'rgba(31,122,77,0.12)', color: enriching ? 'rgba(31,122,77,0.5)' : '#1f7a4d' }}
+            >
+              {enriching ? "Ophalen…" : "Prijzen ophalen"}
+            </button>
+          )}
+        </div>
 
         {!week ? (
           <div className="mx-4 animate-pulse bg-surface rounded-[10px] h-40" />
@@ -237,7 +278,7 @@ export default function Shopping() {
       <div className="hidden lg:block">
         <DesktopShell
           title="Boodschappen"
-          subtitle={week ? `Week ${week} · ${checkedCount} van ${totalItems} afgevinkt` : undefined}
+          subtitle={week ? `Week ${week} · ${checkedCount} van ${totalItems} afgevinkt${hasPrices ? ` · ±€${totalPrice.toFixed(2)}` : ""}` : undefined}
           accessory={
             <div className="flex items-center gap-1">
               {Array.from({ length: 8 }, (_, i) => i + 1).map(w => (
@@ -298,6 +339,26 @@ export default function Shopping() {
                         </div>
                       );
                     })}
+                  </div>
+
+                  <div className="bg-surface rounded-[12px] p-4" style={{ boxShadow: '0 1px 2px rgba(0,0,0,0.04)' }}>
+                    <p className="text-[11px] font-bold uppercase tracking-wider text-ink2 mb-3">Prijzen</p>
+                    {hasPrices ? (
+                      <div className="flex items-baseline gap-1 mb-3">
+                        <span className="text-[24px] font-bold text-ink">€{totalPrice.toFixed(2)}</span>
+                        <span className="text-[13px] text-ink2">indicatie</span>
+                      </div>
+                    ) : (
+                      <p className="text-[13px] text-ink2 mb-3">Nog geen prijzen opgehaald</p>
+                    )}
+                    <button
+                      onClick={handleEnrichPrices}
+                      disabled={enriching}
+                      className="w-full py-[8px] rounded-[8px] text-[13px] font-semibold transition-opacity"
+                      style={{ background: enriching ? 'rgba(31,122,77,0.5)' : '#1f7a4d', color: '#fff', opacity: enriching ? 0.7 : 1 }}
+                    >
+                      {enriching ? "Ophalen…" : "Prijzen ophalen"}
+                    </button>
                   </div>
                 </div>
               </div>

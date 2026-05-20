@@ -13,5 +13,6 @@ class Settings(BaseSettings):
     cycle_anchor_iso_week: int = 18  # ISO week die overeenkomt met cyclus week 1
     github_token: str = ""  # PAT met contents:write op gavinguler/LLM-wiki
     unsplash_access_key: str = ""
+    bonnetjes_url: str = "http://localhost:8000"
 
 settings = Settings()
