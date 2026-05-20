@@ -21,8 +21,16 @@ def run_daily_job():
         dag = get_today_nl()
         week_data = build_week_data(db, cyclus_week)
         dag_data = next((d for d in week_data["dagen"] if d["dag"] == dag), None)
+
+        tomorrow = DAYS_NL[(DAYS_NL.index(dag) + 1) % 7]
+        if dag == "zondag":
+            tomorrow_week_data = build_week_data(db, (cyclus_week % 8) + 1)
+        else:
+            tomorrow_week_data = week_data
+        tomorrow_data = next((d for d in tomorrow_week_data["dagen"] if d["dag"] == tomorrow), None)
+
         if dag_data:
-            asyncio.run(send_daily_message(dag_data, cyclus_week))
+            asyncio.run(send_daily_message(dag_data, cyclus_week, tomorrow_data))
             print(f"Dagelijks bericht verstuurd voor {dag}, cyclus week {cyclus_week}")
     finally:
         db.close()

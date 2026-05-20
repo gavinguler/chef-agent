@@ -68,7 +68,15 @@ def format_weekly_message(week_data: dict) -> str:
     return "\n".join(lines)
 
 
-def format_daily_message(dag_data: dict, cyclus_week: int) -> str:
+def _vlees_van_dag(dag_data: dict) -> str | None:
+    """Geeft het vlees_type terug als een van de maaltijden vlees bevat."""
+    for m in dag_data.get("maaltijden", []):
+        if m.get("vlees_type"):
+            return m["vlees_type"]
+    return None
+
+
+def format_daily_message(dag_data: dict, cyclus_week: int, tomorrow_data: dict | None = None) -> str:
     dag = dag_data.get("dag", "")
     dag_label = dag.capitalize()
     vandaag = date.today()
@@ -90,6 +98,18 @@ def format_daily_message(dag_data: dict, cyclus_week: int) -> str:
             lines.append(f"💪 {round(totaal_eiwit)}g eiwit · {totaal_kcal} kcal")
     else:
         lines.append("Geen maaltijden ingesteld voor vandaag.")
+
+    # Vriezer-reminders
+    vandaag_vlees = _vlees_van_dag(dag_data)
+    morgen_vlees = _vlees_van_dag(tomorrow_data) if tomorrow_data else None
+
+    if vandaag_vlees or morgen_vlees:
+        lines.append("")
+    if vandaag_vlees:
+        lines.append(f"🥩 Haal {vandaag_vlees} uit de vriezer voor vanavond")
+    if morgen_vlees:
+        morgen_label = tomorrow_data["dag"].capitalize()
+        lines.append(f"❄️ Morgen ({morgen_label}) eet je {morgen_vlees} — leg het alvast in de koelkast")
 
     return "\n".join(lines)
 
@@ -131,8 +151,8 @@ async def send_message(text: str) -> None:
     await bot.send_message(chat_id=settings.telegram_chat_id, text=text)
 
 
-async def send_daily_message(dag_data: dict, cyclus_week: int) -> None:
-    await send_message(format_daily_message(dag_data, cyclus_week))
+async def send_daily_message(dag_data: dict, cyclus_week: int, tomorrow_data: dict | None = None) -> None:
+    await send_message(format_daily_message(dag_data, cyclus_week, tomorrow_data))
 
 
 async def send_shopping_reminder(week_data: dict) -> None:

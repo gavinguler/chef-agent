@@ -39,6 +39,7 @@ def build_week_data(db: Session, cyclus_week: int) -> dict:
                     "maaltijd_type": e.maaltijd_type,
                     "naam": e.recipe.naam,
                     "eiwit_g": e.recipe.eiwit_g or 0,
+                    "vlees_type": e.recipe.vlees_type,
                 })
                 totaal_eiwit += e.recipe.eiwit_g or 0
                 totaal_kcal += e.recipe.kcal or 0
