@@ -100,6 +100,7 @@ jobs:
             -e UNSPLASH_ACCESS_KEY="${UNSPLASH_ACCESS_KEY}" \
             -e GITHUB_TOKEN="${WIKI_TOKEN}" \
             -e OLLAMA_BASE_URL="http://192.168.0.38:11434" \
+            -e BONNETJES_URL="http://192.168.0.61:8000" \
             ${{ env.IMAGE_NAME }}:${VERSION}
 
           echo "chef-agent draait op ${{ env.DEPLOY_HOST }}:${{ env.DEPLOY_PORT }}"
