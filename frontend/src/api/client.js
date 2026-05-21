@@ -54,3 +54,15 @@ export const testShoppingReminder = () =>
 
 export const enrichShoppingPrices = (week) =>
   api.post(`/api/shopping/week/${week}/enrich-prices`).then((r) => r.data);
+
+export const getProductMappings = () =>
+  api.get("/api/product-mappings").then((r) => r.data);
+
+export const upsertProductMapping = (ingredient_name, bonnetjes_product_id, bonnetjes_product_name) =>
+  api.put("/api/product-mappings", { ingredient_name, bonnetjes_product_id, bonnetjes_product_name }).then((r) => r.data);
+
+export const deleteProductMapping = (ingredient_name) =>
+  api.delete(`/api/product-mappings/${encodeURIComponent(ingredient_name)}`);
+
+export const searchBonnetjesProducts = (q) =>
+  api.get("/api/product-mappings/bonnetjes-search", { params: { q } }).then((r) => r.data);

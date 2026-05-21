@@ -5,8 +5,10 @@ from typing import Optional
 import uuid
 
 from backend.db.session import get_db
-from backend.db.models import ShoppingList
+from backend.db.models import ShoppingList, IngredientProductMapping
 from backend.bonnetjes.client import lookup_prices
+from backend.config import settings
+import httpx
 
 router = APIRouter()
 
@@ -91,11 +93,38 @@ async def enrich_prices(week_num: int, db: Session = Depends(get_db)):
     if not items:
         return {"enriched": 0, "total": 0}
 
-    prices = await lookup_prices([item.product for item in items])
+    # Load manual mappings: ingredient_name → bonnetjes_product_id
+    mappings = {
+        m.ingredient_name: m.bonnetjes_product_id
+        for m in db.query(IngredientProductMapping).all()
+    }
+
+    # Fetch prices for manually mapped products via dedicated endpoint
+    mapped_prices: dict[str, float] = {}
+    mapped_ids = list({mappings[item.product] for item in items if item.product in mappings})
+    if mapped_ids and settings.bonnetjes_url:
+        try:
+            async with httpx.AsyncClient(timeout=8.0) as client:
+                resp = await client.post(
+                    f"{settings.bonnetjes_url}/api/products/price-by-ids",
+                    json=mapped_ids,
+                )
+                if resp.status_code == 200:
+                    id_to_price: dict[int, float] = resp.json()
+                    for item in items:
+                        pid = mappings.get(item.product)
+                        if pid and pid in id_to_price:
+                            mapped_prices[item.product] = id_to_price[pid]
+        except Exception:
+            pass
+
+    # Fuzzy lookup for unmapped items
+    unmapped_names = [item.product for item in items if item.product not in mapped_prices]
+    fuzzy_prices = await lookup_prices(unmapped_names) if unmapped_names else {}
 
     enriched = 0
     for item in items:
-        price = prices.get(item.product)
+        price = mapped_prices.get(item.product) or fuzzy_prices.get(item.product)
         if price is not None:
             item.prijs_indicatie = price
             enriched += 1

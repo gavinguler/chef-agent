@@ -84,6 +84,15 @@ class NotificationSettings(Base):
     shopping_minute = Column(Integer, default=0)
 
 
+class IngredientProductMapping(Base):
+    __tablename__ = "ingredient_product_mappings"
+
+    ingredient_name = Column(Text, primary_key=True)
+    bonnetjes_product_id = Column(Integer, nullable=False)
+    bonnetjes_product_name = Column(Text, nullable=False)
+    aangemaakt_op = Column(DateTime, default=datetime.utcnow)
+
+
 class NutritionCycle(Base):
     __tablename__ = "nutrition_cycle"
 

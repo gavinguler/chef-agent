@@ -5,7 +5,7 @@ from fastapi import Depends, FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import FileResponse
 from sqlalchemy.orm import Session
-from backend.api import recipes, meal_plans, shopping, notifications
+from backend.api import recipes, meal_plans, shopping, notifications, product_mappings
 from backend.db.models import Recipe, NotificationSettings
 from backend.db.session import get_db, SessionLocal
 from backend.scheduler.manager import scheduler, reschedule_notification_jobs
@@ -53,6 +53,7 @@ app.include_router(recipes.router, prefix="/api/recipes", tags=["recipes"])
 app.include_router(meal_plans.router, prefix="/api/meal-plans", tags=["meal-plans"])
 app.include_router(shopping.router, prefix="/api/shopping", tags=["shopping"])
 app.include_router(notifications.router, prefix="/api/notifications", tags=["notifications"])
+app.include_router(product_mappings.router, prefix="/api/product-mappings", tags=["product-mappings"])
 
 
 @app.get("/health")
