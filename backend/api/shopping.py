@@ -110,7 +110,7 @@ async def enrich_prices(week_num: int, db: Session = Depends(get_db)):
                     json=mapped_ids,
                 )
                 if resp.status_code == 200:
-                    id_to_price: dict[int, float] = resp.json()
+                    id_to_price = {int(k): v for k, v in resp.json().items()}
                     for item in items:
                         pid = mappings.get(item.product)
                         if pid and pid in id_to_price:
