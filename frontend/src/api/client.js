@@ -40,6 +40,12 @@ export const refreshRecipeImage = (id) =>
 export const fillRecipeInstructions = (id) =>
   api.post(`/api/recipes/${id}/fill-instructions`).then((r) => r.data);
 
+export const fillRecipeIngredients = (id) =>
+  api.post(`/api/recipes/${id}/fill-ingredients`).then((r) => r.data);
+
+export const fillAllIngredients = () =>
+  api.post("/api/recipes/fill-all-ingredients").then((r) => r.data);
+
 export const getNotificationSettings = () =>
   api.get("/api/notifications/settings").then((r) => r.data);
 
@@ -66,3 +72,6 @@ export const deleteProductMapping = (ingredient_name) =>
 
 export const searchBonnetjesProducts = (q) =>
   api.get("/api/product-mappings/bonnetjes-search", { params: { q } }).then((r) => r.data);
+
+export const resolveIngredientPrices = (names) =>
+  api.post("/api/product-mappings/resolve-prices", names).then((r) => r.data);

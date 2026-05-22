@@ -56,6 +56,45 @@ def delete_mapping(ingredient_name: str, db: Session = Depends(get_db)):
     db.commit()
 
 
+@router.post("/resolve-prices")
+async def resolve_prices(ingredient_names: list[str], db: Session = Depends(get_db)):
+    """Geeft voor een lijst ingredientnamen de gematchte productprijs terug."""
+    if not ingredient_names:
+        return {}
+
+    # Exact match first, then substring
+    all_mappings = db.query(IngredientProductMapping).all()
+    resolved: dict[str, dict] = {}
+    for name in ingredient_names:
+        lower = name.lower()
+        match = next((m for m in all_mappings if m.ingredient_name.lower() == lower), None)
+        if not match:
+            match = next((m for m in all_mappings if m.ingredient_name.lower() in lower), None)
+        if match:
+            resolved[name] = {"product_id": match.bonnetjes_product_id, "product_name": match.bonnetjes_product_name}
+
+    if not resolved or not settings.bonnetjes_url:
+        return {name: {**info, "price": None} for name, info in resolved.items()}
+
+    product_ids = list({info["product_id"] for info in resolved.values()})
+    id_to_price: dict[int, float] = {}
+    try:
+        async with httpx.AsyncClient(timeout=8.0) as client:
+            resp = await client.post(
+                f"{settings.bonnetjes_url}/api/products/price-by-ids",
+                json=product_ids,
+            )
+            if resp.status_code == 200:
+                id_to_price = {int(k): v for k, v in resp.json().items()}
+    except Exception:
+        pass
+
+    return {
+        name: {**info, "price": id_to_price.get(info["product_id"])}
+        for name, info in resolved.items()
+    }
+
+
 @router.get("/bonnetjes-search")
 async def bonnetjes_search(q: str = ""):
     if not settings.bonnetjes_url:

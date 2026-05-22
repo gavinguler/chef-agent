@@ -8,7 +8,7 @@ import uuid
 
 from backend.db.session import get_db
 from backend.db.models import Recipe
-from backend.ai.agent import fill_recipe_macros as _fill_recipe_macros, fill_recipe_instructions as _fill_recipe_instructions
+from backend.ai.agent import fill_recipe_macros as _fill_recipe_macros, fill_recipe_instructions as _fill_recipe_instructions, fill_recipe_ingredients as _fill_recipe_ingredients
 from backend.config import settings
 from backend.services.wiki_sync import (
     delete_recipe_from_wiki,
@@ -150,12 +150,46 @@ class AiFillMacrosIn(BaseModel):
     ingredienten: list[str]
 
 
+@router.post("/fill-all-ingredients")
+async def fill_all_ingredients(db: Session = Depends(get_db)):
+    """Vul ingrediënten in voor alle recepten die ze missen."""
+    recipes = db.query(Recipe).filter(
+        (Recipe.ingredienten == None) | (Recipe.ingredienten == "")
+    ).all()
+    ok, failed = 0, 0
+    for recipe in recipes:
+        try:
+            ing = await _fill_recipe_ingredients(recipe.naam)
+            recipe.ingredienten = ing
+            db.commit()
+            ok += 1
+        except Exception:
+            failed += 1
+    return {"ok": ok, "failed": failed, "total": len(recipes)}
+
+
 @router.post("/ai-fill-macros")
 async def ai_fill_macros(payload: AiFillMacrosIn):
     try:
         return await _fill_recipe_macros(payload.naam, payload.ingredienten)
     except (httpx.HTTPError, httpx.ConnectError):
         raise HTTPException(status_code=503, detail="AI service niet beschikbaar")
+
+
+@router.post("/{recipe_id}/fill-ingredients", response_model=RecipeOut)
+async def fill_ingredients(recipe_id: uuid.UUID, background_tasks: BackgroundTasks, db: Session = Depends(get_db)):
+    recipe = db.query(Recipe).filter(Recipe.id == recipe_id).first()
+    if not recipe:
+        raise HTTPException(status_code=404, detail="Recept niet gevonden")
+    try:
+        ing = await _fill_recipe_ingredients(recipe.naam)
+        recipe.ingredienten = ing
+        db.commit()
+        db.refresh(recipe)
+        background_tasks.add_task(sync_recipe_to_wiki, recipe)
+    except (httpx.HTTPError, httpx.ConnectError):
+        raise HTTPException(status_code=503, detail="AI service niet beschikbaar")
+    return recipe
 
 
 @router.post("/{recipe_id}/fill-instructions", response_model=RecipeOut)

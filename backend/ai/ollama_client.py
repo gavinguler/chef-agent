@@ -56,6 +56,18 @@ async def generate_instructions(naam: str, ingredienten: list[str] | None = None
     return raw.strip()
 
 
+INGREDIENTS_PROMPT = """Geef een ingrediëntenlijst voor dit recept: {naam}
+
+Elke ingrediënt op een aparte regel, met hoeveelheid (bijv. "200g kipfilet", "1 ui", "2 el olijfolie").
+Max 12 ingrediënten. Alleen de lijst, geen inleiding, uitleg of nummering."""
+
+
+async def generate_ingredients(naam: str) -> str:
+    prompt = INGREDIENTS_PROMPT.format(naam=naam)
+    raw = await ollama_chat(prompt)
+    return raw.strip()
+
+
 async def generate_shopping_list(week_plan: dict) -> list[dict]:
     """Genereer een boodschappenlijst op basis van het weekplan."""
     recepten = []

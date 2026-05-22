@@ -1,4 +1,4 @@
-from backend.ai.ollama_client import estimate_macros, generate_shopping_list, generate_instructions
+from backend.ai.ollama_client import estimate_macros, generate_shopping_list, generate_instructions, generate_ingredients
 from backend.ai.claude_client import integrate_recipe_in_schema, validate_week_macros
 
 
@@ -16,6 +16,10 @@ async def check_week_macros(week_data: dict) -> dict:
 
 async def fill_recipe_instructions(naam: str, ingredienten: list[str] | None = None) -> str:
     return await generate_instructions(naam, ingredienten)
+
+
+async def fill_recipe_ingredients(naam: str) -> str:
+    return await generate_ingredients(naam)
 
 
 async def generate_week_shopping(week_plan: dict) -> list[dict]:
