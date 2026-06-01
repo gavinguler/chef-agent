@@ -2,7 +2,6 @@ import { useEffect, useState, useMemo } from "react";
 import { useNavigate } from "react-router-dom";
 import { Bell, ShoppingCart, Plus, Sparkles, ChevronRight } from "lucide-react";
 import { getWeekPlan, getCurrentWeek, getRecipes } from "../api/client";
-import { getStoredWeek } from "../lib/weekStorage";
 import {
   IOSStatusBar, IOSLargeHeader, IOSGroupHeader, IOSGroup, IOSRow, IOSTabBar,
 } from "../components/IOSPrimitives";
@@ -29,9 +28,7 @@ function usePlan() {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const stored = getStoredWeek();
-    if (stored) setCycleWeek(stored);
-    else getCurrentWeek().then(setCycleWeek);
+    getCurrentWeek().then(setCycleWeek);
   }, []);
 
   useEffect(() => {

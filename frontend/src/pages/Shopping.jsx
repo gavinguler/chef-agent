@@ -4,7 +4,6 @@ import {
   getCurrentWeek, getShoppingList, toggleShoppingItem, enrichShoppingPrices,
   getProductMappings, upsertProductMapping, deleteProductMapping, searchBonnetjesProducts,
 } from "../api/client";
-import { getStoredWeek } from "../lib/weekStorage";
 import { IOSStatusBar, IOSLargeHeader, IOSGroupHeader, IOSTabBar } from "../components/IOSPrimitives";
 import DesktopShell from "../components/DesktopShell";
 
@@ -161,9 +160,7 @@ export default function Shopping() {
     if (paramWeek) {
       setWeek(Number(paramWeek));
     } else {
-      const stored = getStoredWeek();
-      if (stored) setWeek(stored);
-      else getCurrentWeek().then(setWeek).catch(() => {});
+      getCurrentWeek().then(setWeek).catch(() => {});
     }
   }, [paramWeek]);
 

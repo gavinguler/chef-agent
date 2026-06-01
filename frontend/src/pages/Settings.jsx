@@ -1,8 +1,9 @@
 import { useEffect, useState } from "react";
-import { MessageCircle } from "lucide-react";
+import { MessageCircle, ListPlus } from "lucide-react";
 import {
   getNotificationSettings, updateNotificationSettings,
   testDailyMessage, testShoppingReminder, getCurrentWeek,
+  fillAllIngredients,
 } from "../api/client";
 import { getStoredWeek, setStoredWeek, clearStoredWeek } from "../lib/weekStorage";
 import {
@@ -20,6 +21,8 @@ export default function Settings() {
   const [realWeek, setRealWeek] = useState(null);
   const [overrideWeek, setOverrideWeek] = useState(null);
   const [saving, setSaving] = useState(false);
+  const [fillingIngredients, setFillingIngredients] = useState(false);
+  const [fillResult, setFillResult] = useState(null);
 
   useEffect(() => {
     getNotificationSettings().then(setSettings);
@@ -62,6 +65,19 @@ export default function Settings() {
     else setStoredWeek(w);
   }
 
+  async function handleFillAllIngredients() {
+    setFillingIngredients(true);
+    setFillResult(null);
+    try {
+      const result = await fillAllIngredients();
+      setFillResult(`${result.ok ?? 0}/${result.total ?? 0} recepten bijgewerkt${result.failed ? `, ${result.failed} mislukt` : ""}`);
+    } catch {
+      setFillResult("Fout bij genereren ingrediënten");
+    } finally {
+      setFillingIngredients(false);
+    }
+  }
+
   const SettingsContent = () => (
     <>
       <IOSGroupHeader>Cyclus</IOSGroupHeader>
@@ -88,6 +104,19 @@ export default function Settings() {
               ))}
             </div>
           }
+        />
+      </IOSGroup>
+
+      <IOSGroupHeader>Recepten</IOSGroupHeader>
+      <IOSGroup>
+        <IOSRow
+          icon={<ListPlus size={16} className="text-white" />}
+          iconBg="#f97316"
+          title="Genereer alle ingrediënten"
+          sub={fillResult ?? "Vult ontbrekende ingrediënten via AI in"}
+          last
+          onClick={fillingIngredients ? undefined : handleFillAllIngredients}
+          detail={fillingIngredients ? <span className="text-[13px] text-ink2">Bezig…</span> : undefined}
         />
       </IOSGroup>
 

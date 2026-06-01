@@ -103,9 +103,11 @@ export default function WeekPlan() {
   const todayNl = DAYS_NL[todayIndex === 0 ? 6 : todayIndex - 1];
 
   useEffect(() => {
-    const stored = getStoredWeek();
-    if (stored) { setCycleWeek(stored); setSelectedWeek(stored); }
-    else getCurrentWeek().then(w => { setCycleWeek(w); setSelectedWeek(w); });
+    getCurrentWeek().then(w => {
+      setCycleWeek(w);
+      const stored = getStoredWeek();
+      setSelectedWeek(stored ?? w);
+    });
   }, []);
 
   useEffect(() => {
