@@ -1,10 +1,10 @@
 import { useEffect, useRef, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
-import { Sparkles, Image, Pencil, BookOpen, ListPlus, Link } from "lucide-react";
+import { Sparkles, Image, Pencil, BookOpen, ListPlus, Link, ShoppingBag } from "lucide-react";
 import {
   getRecipe, aiFillMacros, refreshRecipeImage, fillRecipeInstructions, fillRecipeIngredients,
   getProductMappings, upsertProductMapping, deleteProductMapping, searchBonnetjesProducts,
-  resolveIngredientPrices,
+  resolveIngredientPrices, getStockStatus, deductStock,
 } from "../api/client";
 import {
   IOSStatusBar, IOSLargeHeader, IOSGroupHeader, IOSGroup, IOSRow, IOSTabBar,
@@ -124,6 +124,8 @@ export default function RecipeDetail() {
   const [ingredientsLoading, setIngredientsLoading] = useState(false);
   const [mappings, setMappings] = useState({});
   const [ingredientPrices, setIngredientPrices] = useState({});
+  const [stockStatus, setStockStatus] = useState({});
+  const [deducting, setDeducting] = useState(false);
   const [linkIngredient, setLinkIngredient] = useState(null);
 
   useEffect(() => {
@@ -141,6 +143,14 @@ export default function RecipeDetail() {
     const lines = recipe.ingredienten.split("\n").filter(Boolean);
     if (!lines.length) return;
     resolveIngredientPrices(lines).then(setIngredientPrices).catch(() => {});
+  }, [recipe?.ingredienten, Object.keys(mappings).length]);
+
+  // Fetch stock status from Bonnetjes
+  useEffect(() => {
+    if (!recipe?.ingredienten) return;
+    const lines = recipe.ingredienten.split("\n").map(l => l.trim()).filter(Boolean);
+    if (!lines.length) return;
+    getStockStatus(lines).then(setStockStatus).catch(() => {});
   }, [recipe?.ingredienten, Object.keys(mappings).length]);
 
   async function handleRefreshImage() {
@@ -173,6 +183,19 @@ export default function RecipeDetail() {
       setRecipe(r => ({ ...r, ingredienten: result.ingredienten }));
     } finally {
       setIngredientsLoading(false);
+    }
+  }
+
+  async function handleDeductStock() {
+    if (!recipe?.ingredienten) return;
+    setDeducting(true);
+    const lines = recipe.ingredienten.split("\n").map(l => l.trim()).filter(Boolean);
+    try {
+      await deductStock(lines);
+      const updated = await getStockStatus(lines);
+      setStockStatus(updated);
+    } finally {
+      setDeducting(false);
     }
   }
 
@@ -279,6 +302,9 @@ export default function RecipeDetail() {
               ? ingredienten.map((ing, i) => {
                   const resolved = ingredientPrices[ing];
                   const isLinked = !!findPriceForIngredient(ing, mappings);
+                  const stock = stockStatus[ing];
+                  const inStock = stock !== undefined && stock.quantity > 0;
+                  const missing = stock !== undefined && stock.quantity === 0;
                   return (
                     <div
                       key={i}
@@ -286,6 +312,16 @@ export default function RecipeDetail() {
                       style={i < ingredienten.length - 1 ? { borderBottom: '0.5px solid rgba(60,60,67,0.12)' } : {}}
                     >
                       <span className="flex-1 text-[17px] text-ink">{ing}</span>
+                      {inStock && (
+                        <span className="text-[11px] font-semibold px-[6px] py-[2px] rounded-full flex-shrink-0" style={{ background: 'rgba(31,122,77,0.1)', color: '#1f7a4d' }}>
+                          ✓ {stock.quantity}x
+                        </span>
+                      )}
+                      {missing && (
+                        <span className="text-[11px] font-semibold px-[6px] py-[2px] rounded-full flex-shrink-0" style={{ background: 'rgba(220,38,38,0.08)', color: '#dc2626' }}>
+                          ✗ mis
+                        </span>
+                      )}
                       {resolved?.price != null && (
                         <span className="text-[13px] text-ink2 flex-shrink-0">€{resolved.price.toFixed(2)}</span>
                       )}
@@ -302,6 +338,19 @@ export default function RecipeDetail() {
               : <IOSRow title="Geen ingrediënten" last />
             }
           </IOSGroup>
+          {Object.keys(stockStatus).length > 0 && (
+            <div className="px-4 mt-2 mb-1">
+              <button
+                onClick={deducting ? undefined : handleDeductStock}
+                disabled={deducting}
+                className="w-full flex items-center justify-center gap-2 py-[11px] rounded-[12px] text-[15px] font-semibold disabled:opacity-50"
+                style={{ background: 'rgba(0,122,255,0.1)', color: '#007aff' }}
+              >
+                <ShoppingBag size={16} />
+                {deducting ? "Bezig…" : "Gebruik alles — trek af van voorraad"}
+              </button>
+            </div>
+          )}
 
           {bereidingSteps.length > 0 && (
             <>
@@ -456,6 +505,9 @@ export default function RecipeDetail() {
                 {ingredienten.length > 0 ? ingredienten.map((ing, i) => {
                   const resolved = ingredientPrices[ing];
                   const isLinked = !!findPriceForIngredient(ing, mappings);
+                  const stock = stockStatus[ing];
+                  const inStock = stock !== undefined && stock.quantity > 0;
+                  const missing = stock !== undefined && stock.quantity === 0;
                   return (
                     <div
                       key={i}
@@ -463,6 +515,16 @@ export default function RecipeDetail() {
                       style={i < ingredienten.length - 1 ? { borderBottom: '0.5px solid rgba(60,60,67,0.1)' } : {}}
                     >
                       <span className="flex-1 text-[13px] text-ink">{ing}</span>
+                      {inStock && (
+                        <span className="text-[10px] font-semibold px-[5px] py-[1px] rounded-full flex-shrink-0" style={{ background: 'rgba(31,122,77,0.1)', color: '#1f7a4d' }}>
+                          ✓ {stock.quantity}x
+                        </span>
+                      )}
+                      {missing && (
+                        <span className="text-[10px] font-semibold px-[5px] py-[1px] rounded-full flex-shrink-0" style={{ background: 'rgba(220,38,38,0.08)', color: '#dc2626' }}>
+                          ✗ mis
+                        </span>
+                      )}
                       {resolved?.price != null && (
                         <span className="text-[12px] text-ink2 tabular-nums flex-shrink-0">€{resolved.price.toFixed(2)}</span>
                       )}
@@ -490,15 +552,28 @@ export default function RecipeDetail() {
                   </div>
                 )}
                 {ingredienten.length > 0 && (
-                  <button
-                    onClick={handleFillIngredients}
-                    disabled={ingredientsLoading}
-                    className="w-full mt-2 flex items-center justify-center gap-1.5 py-1.5 rounded-[7px] text-[12px] font-medium disabled:opacity-50"
-                    style={{ background: 'rgba(255,149,0,0.1)', color: '#ff9500' }}
-                  >
-                    <ListPlus size={12} />
-                    {ingredientsLoading ? "Bezig…" : "Opnieuw genereren"}
-                  </button>
+                  <div className="mt-2 flex flex-col gap-1.5">
+                    {Object.keys(stockStatus).length > 0 && (
+                      <button
+                        onClick={deducting ? undefined : handleDeductStock}
+                        disabled={deducting}
+                        className="w-full flex items-center justify-center gap-1.5 py-1.5 rounded-[7px] text-[12px] font-semibold disabled:opacity-50"
+                        style={{ background: 'rgba(0,122,255,0.1)', color: '#007aff' }}
+                      >
+                        <ShoppingBag size={12} />
+                        {deducting ? "Bezig…" : "Gebruik alles — trek af van voorraad"}
+                      </button>
+                    )}
+                    <button
+                      onClick={handleFillIngredients}
+                      disabled={ingredientsLoading}
+                      className="w-full flex items-center justify-center gap-1.5 py-1.5 rounded-[7px] text-[12px] font-medium disabled:opacity-50"
+                      style={{ background: 'rgba(255,149,0,0.1)', color: '#ff9500' }}
+                    >
+                      <ListPlus size={12} />
+                      {ingredientsLoading ? "Bezig…" : "Opnieuw genereren"}
+                    </button>
+                  </div>
                 )}
               </Panel>
             </div>

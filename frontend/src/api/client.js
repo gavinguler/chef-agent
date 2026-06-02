@@ -75,3 +75,9 @@ export const searchBonnetjesProducts = (q) =>
 
 export const resolveIngredientPrices = (names) =>
   api.post("/api/product-mappings/resolve-prices", names).then((r) => r.data);
+
+export const getStockStatus = (ingredientNames) =>
+  api.post("/api/product-mappings/stock-status", ingredientNames).then((r) => r.data);
+
+export const deductStock = (ingredientNames) =>
+  api.post("/api/product-mappings/deduct-stock", ingredientNames).then((r) => r.data);

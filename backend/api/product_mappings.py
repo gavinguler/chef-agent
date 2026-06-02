@@ -95,6 +95,79 @@ async def resolve_prices(ingredient_names: list[str], db: Session = Depends(get_
     }
 
 
+@router.post("/stock-status")
+async def stock_status(ingredient_names: list[str], db: Session = Depends(get_db)):
+    """Geeft voor een lijst ingredientnamen de huidige voorraad terug via Bonnetjes."""
+    if not ingredient_names or not settings.bonnetjes_url:
+        return {}
+
+    all_mappings = db.query(IngredientProductMapping).all()
+    resolved: dict[str, dict] = {}
+    for name in ingredient_names:
+        lower = name.lower()
+        match = next((m for m in all_mappings if m.ingredient_name.lower() == lower), None)
+        if not match:
+            match = next((m for m in all_mappings if m.ingredient_name.lower() in lower), None)
+        if match:
+            resolved[name] = {
+                "product_id": match.bonnetjes_product_id,
+                "product_name": match.bonnetjes_product_name,
+            }
+
+    if not resolved:
+        return {}
+
+    product_ids = {info["product_id"] for info in resolved.values()}
+    balances: dict[int, float] = {}
+    try:
+        async with httpx.AsyncClient(timeout=8.0) as client:
+            resp = await client.get(f"{settings.bonnetjes_url}/api/stock/balances")
+            if resp.status_code == 200:
+                for b in resp.json():
+                    if b["product_id"] in product_ids:
+                        balances[b["product_id"]] = b["quantity"]
+    except Exception:
+        pass
+
+    return {
+        name: {**info, "quantity": balances.get(info["product_id"], 0.0)}
+        for name, info in resolved.items()
+    }
+
+
+@router.post("/deduct-stock")
+async def deduct_stock(ingredient_names: list[str], db: Session = Depends(get_db)):
+    """Trek 1 stuk per gematchte ingrediënt af uit de Bonnetjes voorraad."""
+    if not ingredient_names or not settings.bonnetjes_url:
+        return {"deducted": 0, "skipped": len(ingredient_names)}
+
+    all_mappings = db.query(IngredientProductMapping).all()
+    deducted = 0
+    skipped = 0
+    async with httpx.AsyncClient(timeout=8.0) as client:
+        for name in ingredient_names:
+            lower = name.lower()
+            match = next((m for m in all_mappings if m.ingredient_name.lower() == lower), None)
+            if not match:
+                match = next((m for m in all_mappings if m.ingredient_name.lower() in lower), None)
+            if not match:
+                skipped += 1
+                continue
+            try:
+                resp = await client.post(
+                    f"{settings.bonnetjes_url}/api/stock/out-by-id",
+                    json={"product_id": match.bonnetjes_product_id, "quantity": 1.0},
+                )
+                if resp.status_code == 200:
+                    deducted += 1
+                else:
+                    skipped += 1
+            except Exception:
+                skipped += 1
+
+    return {"deducted": deducted, "skipped": skipped}
+
+
 @router.get("/bonnetjes-search")
 async def bonnetjes_search(q: str = ""):
     if not settings.bonnetjes_url:
