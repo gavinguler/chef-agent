@@ -45,6 +45,22 @@ async def integrate_recipe_in_schema(recept: dict, huidig_schema: list) -> dict:
         return {"status": "error", "aanpassingen": [], "uitleg": "Parse fout"}
 
 
+async def generate_ingredients_claude(naam: str) -> str:
+    message = await _client.messages.create(
+        model="claude-haiku-4-5-20251001",
+        max_tokens=300,
+        messages=[{
+            "role": "user",
+            "content": (
+                f"Geef de ingrediënten voor het recept '{naam}' voor 2 personen. "
+                "Geef alleen de ingrediëntenlijst terug, één ingrediënt per regel, "
+                "met hoeveelheid en eenheid (bijv. '200g kipfilet'). Geen titels, geen uitleg."
+            )
+        }],
+    )
+    return message.content[0].text.strip()
+
+
 async def validate_week_macros(week_data: dict) -> dict:
     message = await _client.messages.create(
         model="claude-sonnet-4-6",
