@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { ShoppingCart } from "lucide-react";
-import { getWeekPlan, getCurrentWeek } from "../api/client";
+import { ShoppingCart, Wand2, LayoutTemplate } from "lucide-react";
+import { getWeekPlan, getCurrentWeek, getTemplates, applyTemplate } from "../api/client";
 import { getStoredWeek } from "../lib/weekStorage";
 import {
   IOSStatusBar, IOSLargeHeader, IOSGroupHeader, IOSGroup, IOSRow, IOSTabBar,
@@ -97,6 +97,9 @@ export default function WeekPlan() {
   const [weekPlan, setWeekPlan] = useState(null);
   const [nextWeekPlan, setNextWeekPlan] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [showTemplates, setShowTemplates] = useState(false);
+  const [templates, setTemplates] = useState([]);
+  const [applyingTemplate, setApplyingTemplate] = useState(null);
   const [error, setError] = useState(null);
 
   const todayIndex = new Date().getDay();
@@ -124,12 +127,56 @@ export default function WeekPlan() {
     (acc, d) => acc + (d.maaltijden?.length ?? 0), 0
   ) ?? 0;
 
+  async function handleOpenTemplates() {
+    setShowTemplates(true);
+    try {
+      const data = await getTemplates();
+      setTemplates(data);
+    } catch {
+      setTemplates([]);
+    }
+  }
+
+  async function handleApplyTemplate(templateId) {
+    if (!selectedWeek) return;
+    const hasSlots = weekPlan?.dagen?.some(d => d.maaltijden?.length > 0);
+    if (hasSlots && !window.confirm("De huidige week heeft al een weekplan. Overschrijven?")) return;
+    setApplyingTemplate(templateId);
+    try {
+      await applyTemplate(templateId, selectedWeek);
+      const data = await getWeekPlan(selectedWeek);
+      setWeekPlan(data);
+      setShowTemplates(false);
+    } finally {
+      setApplyingTemplate(null);
+    }
+  }
+
   return (
     <>
       {/* ── Mobile ── */}
       <div className="lg:hidden min-h-screen bg-bg pb-[100px]">
         <IOSStatusBar />
-        <IOSLargeHeader title={`Week ${selectedWeek ?? ""}`} />
+        <IOSLargeHeader
+          title={`Week ${selectedWeek ?? ""}`}
+          accessory={
+            <div className="flex gap-2">
+              <button
+                onClick={handleOpenTemplates}
+                className="w-[32px] h-[32px] rounded-full flex items-center justify-center"
+                style={{ background: 'rgba(120,120,128,0.14)' }}
+              >
+                <LayoutTemplate size={16} className="text-ink2" />
+              </button>
+              <button
+                onClick={() => navigate('/weekplan/genereren')}
+                className="w-[32px] h-[32px] rounded-full bg-brand flex items-center justify-center"
+              >
+                <Wand2 size={16} className="text-white" />
+              </button>
+            </div>
+          }
+        />
         {weekPlan?.vlees_thema && (
           <p className="px-4 mb-3 text-[15px] text-ink2">{weekPlan.vlees_thema}</p>
         )}
@@ -273,6 +320,20 @@ export default function WeekPlan() {
                 className="px-3 py-[6px] rounded-[7px] text-[13px] font-medium"
                 style={{ background: 'rgba(120,120,128,0.14)', color: 'rgba(60,60,67,0.6)' }}
               >Volgende →</button>
+              <button
+                onClick={handleOpenTemplates}
+                className="flex items-center gap-1.5 px-3 py-[6px] rounded-[7px] text-[13px] font-semibold"
+                style={{ background: 'rgba(120,120,128,0.14)', color: 'rgba(60,60,67,0.7)' }}
+              >
+                <LayoutTemplate size={14} /> Laad template
+              </button>
+              <button
+                onClick={() => navigate('/weekplan/genereren')}
+                className="flex items-center gap-1.5 px-3 py-[6px] rounded-[7px] text-[13px] font-semibold"
+                style={{ background: 'rgba(31,122,77,0.1)', color: '#1f7a4d' }}
+              >
+                <Wand2 size={14} /> Genereer weekplan
+              </button>
               <button
                 onClick={() => navigate(`/boodschappen/${selectedWeek}`)}
                 className="flex items-center gap-1.5 px-3 py-[6px] rounded-[7px] bg-brand text-white text-[13px] font-semibold"
@@ -437,6 +498,46 @@ export default function WeekPlan() {
           </div>
         </DesktopShell>
       </div>
+
+      {/* Template modal */}
+      {showTemplates && (
+        <div
+          className="fixed inset-0 z-50 flex items-end lg:items-center justify-center"
+          style={{ background: 'rgba(0,0,0,0.4)' }}
+          onClick={() => setShowTemplates(false)}
+        >
+          <div
+            className="w-full max-w-md rounded-t-[20px] lg:rounded-[16px] bg-white p-5"
+            onClick={e => e.stopPropagation()}
+          >
+            <div className="flex items-center justify-between mb-4">
+              <p className="text-[17px] font-semibold text-ink">Laad template</p>
+              <button onClick={() => setShowTemplates(false)} className="text-[13px] text-brand font-medium">Sluiten</button>
+            </div>
+            {templates.length === 0 ? (
+              <p className="text-[14px] text-ink2 text-center py-6">Nog geen templates opgeslagen.</p>
+            ) : (
+              <div className="space-y-2">
+                {templates.map(t => (
+                  <div key={t.id} className="flex items-center justify-between p-3 rounded-[10px]" style={{ background: 'rgba(120,120,128,0.06)' }}>
+                    <div>
+                      <p className="text-[15px] font-medium text-ink">{t.naam}</p>
+                      <p className="text-[12px] text-ink2">{t.slot_count} maaltijden · {t.aangemaakt_op?.slice(0, 10)}</p>
+                    </div>
+                    <button
+                      onClick={() => handleApplyTemplate(t.id)}
+                      disabled={applyingTemplate === t.id}
+                      className="px-3 py-[6px] rounded-[7px] bg-brand text-white text-[13px] font-semibold disabled:opacity-50"
+                    >
+                      {applyingTemplate === t.id ? "…" : "Laden"}
+                    </button>
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
+        </div>
+      )}
     </>
   );
 }

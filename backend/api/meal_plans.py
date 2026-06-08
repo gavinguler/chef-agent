@@ -142,3 +142,63 @@ def set_meal(
         db.add(entry)
     db.commit()
     return {"status": "ok"}
+
+
+class GenerateWeekPlanIn(BaseModel):
+    meal_types: list[str]
+    locked_slots: dict = {}
+
+
+@router.post("/generate")
+async def generate_week_plan_endpoint(payload: GenerateWeekPlanIn, db: Session = Depends(get_db)):
+    from backend.ai.agent import generate_week_plan as _generate
+    from backend.bonnetjes.client import get_all_balances
+
+    stock = await get_all_balances()
+    recipes = db.query(Recipe).filter(Recipe.ingredienten != None).all()
+
+    slots = await _generate(
+        meal_types=payload.meal_types,
+        locked_slots=payload.locked_slots,
+        stock=stock,
+        recipes=recipes,
+    )
+
+    recipe_map = {str(r.id): r for r in recipes}
+    for slot in slots:
+        rid = slot.get("recept_id")
+        if rid and rid in recipe_map:
+            r = recipe_map[rid]
+            slot["recept_naam"] = r.naam
+            slot["kcal"] = r.kcal
+            slot["eiwit_g"] = r.eiwit_g
+            slot["image_url"] = r.image_url
+
+    return {"slots": slots}
+
+
+class ApplyWeekPlanIn(BaseModel):
+    slots: list[dict]
+
+
+@router.post("/apply")
+def apply_week_plan(week: int, payload: ApplyWeekPlanIn, db: Session = Depends(get_db)):
+    for slot in payload.slots:
+        if not slot.get("recept_id"):
+            continue
+        entry = db.query(MealPlan).filter(
+            MealPlan.cyclus_week == week,
+            MealPlan.dag == slot["dag"],
+            MealPlan.maaltijd_type == slot["maaltijd_type"],
+        ).first()
+        if entry:
+            entry.recept_id = uuid.UUID(slot["recept_id"])
+        else:
+            db.add(MealPlan(
+                cyclus_week=week,
+                dag=slot["dag"],
+                maaltijd_type=slot["maaltijd_type"],
+                recept_id=uuid.UUID(slot["recept_id"]),
+            ))
+    db.commit()
+    return {"status": "ok", "applied": len(payload.slots)}

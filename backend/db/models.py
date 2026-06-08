@@ -106,3 +106,12 @@ class NutritionCycle(Base):
         if 'gebruikt' not in kwargs:
             kwargs['gebruikt'] = False
         super().__init__(**kwargs)
+
+
+class WeekPlanTemplate(Base):
+    __tablename__ = "week_plan_templates"
+
+    id = Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
+    naam = Column(Text, nullable=False)
+    slots = Column(Text, nullable=False)  # JSON: [{dag, maaltijd_type, recept_id, recept_naam}]
+    aangemaakt_op = Column(DateTime, default=datetime.utcnow)

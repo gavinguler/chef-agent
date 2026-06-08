@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { useParams, useNavigate } from "react-router-dom";
+import { useParams, useNavigate, useLocation } from "react-router-dom";
 import { Sparkles } from "lucide-react";
 import { getRecipe, createRecipe, updateRecipe, aiFillMacros } from "../api/client";
 import {
@@ -52,6 +52,7 @@ const textareaCls = "w-full bg-transparent text-[15px] text-ink outline-none pla
 export default function RecipeForm() {
   const { id } = useParams();
   const navigate = useNavigate();
+  const location = useLocation();
   const isEdit = !!id;
 
   const [form, setForm] = useState(EMPTY);
@@ -61,7 +62,12 @@ export default function RecipeForm() {
   const [error, setError] = useState(null);
 
   useEffect(() => {
-    if (!isEdit) return;
+    if (!isEdit) {
+      if (location.state?.prefill) {
+        setForm(f => ({ ...f, ...toFormValues(location.state.prefill) }));
+      }
+      return;
+    }
     getRecipe(id).then(r => setForm(toFormValues(r))).finally(() => setLoading(false));
   }, [id, isEdit]);
 

@@ -6,6 +6,7 @@ import httpx
 from backend.db.session import get_db
 from backend.db.models import IngredientProductMapping
 from backend.config import settings
+from backend.bonnetjes.client import get_all_balances, add_stock as bonnetjes_add_stock
 
 router = APIRouter()
 
@@ -166,6 +167,41 @@ async def deduct_stock(ingredient_names: list[str], db: Session = Depends(get_db
                 skipped += 1
 
     return {"deducted": deducted, "skipped": skipped}
+
+
+@router.get("/stock-balances")
+async def stock_balances():
+    """Alle Bonnetjes voorraadbalansen ophalen."""
+    return await get_all_balances()
+
+
+class StockDirectIn(BaseModel):
+    product_id: int
+    quantity: float = 1.0
+
+
+@router.post("/add-stock-direct")
+async def add_stock_direct(body: StockDirectIn):
+    ok = await bonnetjes_add_stock(body.product_id, body.quantity)
+    if not ok:
+        raise HTTPException(status_code=502, detail="Bonnetjes niet bereikbaar")
+    return {"status": "ok"}
+
+
+@router.post("/deduct-stock-direct")
+async def deduct_stock_direct(body: StockDirectIn):
+    if not settings.bonnetjes_url:
+        raise HTTPException(status_code=503, detail="Bonnetjes niet geconfigureerd")
+    try:
+        async with httpx.AsyncClient(timeout=10.0) as client:
+            resp = await client.post(
+                f"{settings.bonnetjes_url}/api/stock/out-by-id",
+                json={"product_id": body.product_id, "quantity": body.quantity},
+            )
+            resp.raise_for_status()
+    except Exception as e:
+        raise HTTPException(status_code=502, detail=f"Bonnetjes fout: {e}")
+    return {"status": "ok"}
 
 
 @router.get("/bonnetjes-search")

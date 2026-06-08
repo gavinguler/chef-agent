@@ -81,3 +81,36 @@ export const getStockStatus = (ingredientNames) =>
 
 export const deductStock = (ingredientNames) =>
   api.post("/api/product-mappings/deduct-stock", ingredientNames).then((r) => r.data);
+
+export const getStockBalances = () =>
+  api.get("/api/product-mappings/stock-balances").then((r) => r.data);
+
+export const addStockDirect = (productId, quantity = 1) =>
+  api.post("/api/product-mappings/add-stock-direct", { product_id: productId, quantity }).then((r) => r.data);
+
+export const deductStockDirect = (productId, quantity = 1) =>
+  api.post("/api/product-mappings/deduct-stock-direct", { product_id: productId, quantity }).then((r) => r.data);
+
+export const suggestRecipeFromStock = () =>
+  api.post("/api/recipes/suggest-from-stock").then((r) => r.data);
+
+export const generateWeekPlan = (mealTypes, lockedSlots = {}) =>
+  api.post("/api/meal-plans/generate", { meal_types: mealTypes, locked_slots: lockedSlots }).then((r) => r.data);
+
+export const applyWeekPlan = (week, slots) =>
+  api.post(`/api/meal-plans/apply?week=${week}`, { slots }).then((r) => r.data);
+
+export const getTemplates = () =>
+  api.get("/api/templates").then((r) => r.data);
+
+export const saveTemplate = (naam, slots) =>
+  api.post("/api/templates", { naam, slots }).then((r) => r.data);
+
+export const deleteTemplate = (id) =>
+  api.delete(`/api/templates/${id}`);
+
+export const applyTemplate = (id, week) =>
+  api.post(`/api/templates/${id}/apply?week=${week}`).then((r) => r.data);
+
+export const setMeal = (week, dag, mealType, receptId) =>
+  api.put(`/api/meal-plans/week/${week}/dag/${dag}/maaltijd/${mealType}`, { recept_id: receptId }).then((r) => r.data);

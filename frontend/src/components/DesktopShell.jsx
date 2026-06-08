@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { NavLink, useNavigate } from "react-router-dom";
-import { Home, BookOpen, Calendar, ShoppingCart, Settings } from "lucide-react";
+import { Home, BookOpen, Calendar, ShoppingCart, Settings, Package } from "lucide-react";
 import { getRecipes, getWeekPlan, getShoppingList, getCurrentWeek } from "../api/client";
 import { getStoredWeek, setStoredWeek } from "../lib/weekStorage";
 
@@ -54,6 +54,7 @@ const NAV_ITEMS = [
   { id: 'home',     label: 'Vandaag',     to: '/',             Icon: Home,         end: true },
   { id: 'week',     label: 'Weekplan',    to: '/weekplan',     Icon: Calendar },
   { id: 'recipes',  label: 'Recepten',    to: '/recepten',     Icon: BookOpen },
+  { id: 'voorraad', label: 'Voorraad',    to: '/voorraad',     Icon: Package },
   { id: 'shopping', label: 'Boodschappen',to: '/boodschappen', Icon: ShoppingCart },
   { id: 'settings', label: 'Instellingen',to: '/instellingen', Icon: Settings },
 ];

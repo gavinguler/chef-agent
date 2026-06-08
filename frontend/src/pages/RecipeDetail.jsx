@@ -1,10 +1,10 @@
 import { useEffect, useRef, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
-import { Sparkles, Image, Pencil, BookOpen, ListPlus, Link, ShoppingBag } from "lucide-react";
+import { Sparkles, Image, Pencil, BookOpen, ListPlus, Link, ShoppingBag, Trash2 } from "lucide-react";
 import {
   getRecipe, aiFillMacros, refreshRecipeImage, fillRecipeInstructions, fillRecipeIngredients,
   getProductMappings, upsertProductMapping, deleteProductMapping, searchBonnetjesProducts,
-  resolveIngredientPrices, getStockStatus, deductStock,
+  resolveIngredientPrices, getStockStatus, deductStock, deleteRecipe,
 } from "../api/client";
 import {
   IOSStatusBar, IOSLargeHeader, IOSGroupHeader, IOSGroup, IOSRow, IOSTabBar,
@@ -126,6 +126,7 @@ export default function RecipeDetail() {
   const [ingredientPrices, setIngredientPrices] = useState({});
   const [stockStatus, setStockStatus] = useState({});
   const [deducting, setDeducting] = useState(false);
+  const [deleting, setDeleting] = useState(false);
   const [linkIngredient, setLinkIngredient] = useState(null);
 
   useEffect(() => {
@@ -183,6 +184,17 @@ export default function RecipeDetail() {
       setRecipe(r => ({ ...r, ingredienten: result.ingredienten }));
     } finally {
       setIngredientsLoading(false);
+    }
+  }
+
+  async function handleDelete() {
+    if (!window.confirm(`Recept "${recipe.naam}" definitief verwijderen?`)) return;
+    setDeleting(true);
+    try {
+      await deleteRecipe(recipe.id);
+      navigate('/recepten');
+    } finally {
+      setDeleting(false);
     }
   }
 
@@ -399,6 +411,18 @@ export default function RecipeDetail() {
           </IOSGroup>
         </div>
 
+        <div className="px-4 mt-4 mb-2">
+          <button
+            onClick={deleting ? undefined : handleDelete}
+            disabled={deleting}
+            className="w-full flex items-center justify-center gap-2 py-[11px] rounded-[12px] text-[15px] font-semibold disabled:opacity-50"
+            style={{ background: 'rgba(255,59,48,0.1)', color: '#ff3b30' }}
+          >
+            <Trash2 size={16} />
+            {deleting ? "Verwijderen…" : "Verwijder recept"}
+          </button>
+        </div>
+
         <IOSTabBar />
       </div>
 
@@ -577,6 +601,17 @@ export default function RecipeDetail() {
                 )}
               </Panel>
             </div>
+          </div>
+          <div className="px-5 pb-4">
+            <button
+              onClick={deleting ? undefined : handleDelete}
+              disabled={deleting}
+              className="flex items-center gap-2 px-3 py-[6px] rounded-[7px] text-[13px] font-semibold disabled:opacity-50"
+              style={{ background: 'rgba(255,59,48,0.08)', color: '#ff3b30' }}
+            >
+              <Trash2 size={14} />
+              {deleting ? "Verwijderen…" : "Verwijder recept"}
+            </button>
           </div>
         </DesktopShell>
       </div>

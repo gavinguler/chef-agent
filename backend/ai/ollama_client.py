@@ -68,6 +68,30 @@ async def generate_ingredients(naam: str) -> str:
     return raw.strip()
 
 
+SELECT_SLOT_PROMPT = """Kies het beste recept voor {meal_type} op basis van deze opties (gesorteerd op voorraad-score):
+{options}
+
+Geef terug als JSON: {{"recept": "<exacte naam uit de lijst>"}}
+Alleen JSON, geen uitleg."""
+
+
+async def select_recipe_for_slot(meal_type: str, candidates: list[dict]) -> str | None:
+    """Kies via Ollama het beste recept voor een slot. Returns receptnaam of None bij falen."""
+    options = "\n".join(
+        f"- {c['naam']} (score: {c['score']:.0%})" for c in candidates
+    )
+    prompt = SELECT_SLOT_PROMPT.format(meal_type=meal_type, options=options)
+    try:
+        raw = await ollama_chat(prompt)
+        start = raw.find("{")
+        end = raw.rfind("}") + 1
+        data = json.loads(raw[start:end])
+        return data.get("recept")
+    except Exception:
+        logger.warning("select_recipe_for_slot: Ollama keuze mislukt, val terug op top-1")
+        return None
+
+
 async def generate_shopping_list(week_plan: dict) -> list[dict]:
     """Genereer een boodschappenlijst op basis van het weekplan."""
     recepten = []

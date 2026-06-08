@@ -61,6 +61,31 @@ async def generate_ingredients_claude(naam: str) -> str:
     return message.content[0].text.strip()
 
 
+async def suggest_recipe_from_stock(orphaned_products: list[str]) -> dict:
+    products_str = ", ".join(orphaned_products)
+    message = await _client.messages.create(
+        model="claude-haiku-4-5-20251001",
+        max_tokens=400,
+        messages=[{
+            "role": "user",
+            "content": (
+                f"Maak een receptsuggestie op basis van deze producten die ik op voorraad heb: {products_str}. "
+                "Geef terug als JSON: "
+                '{"naam": "...", "beschrijving": "...", "ingredienten": "ingrediënt1\\ningredient2\\n..."} '
+                "Alleen JSON, geen uitleg."
+            )
+        }],
+    )
+    raw = message.content[0].text.strip()
+    try:
+        start = raw.find("{")
+        end = raw.rfind("}") + 1
+        return json.loads(raw[start:end])
+    except (json.JSONDecodeError, ValueError):
+        logger.warning("suggest_recipe_from_stock: kon JSON niet parsen: %r", raw)
+        return {"naam": "Recept op basis van voorraad", "beschrijving": "", "ingredienten": "\n".join(orphaned_products)}
+
+
 async def validate_week_macros(week_data: dict) -> dict:
     message = await _client.messages.create(
         model="claude-sonnet-4-6",

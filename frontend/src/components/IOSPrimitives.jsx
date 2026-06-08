@@ -1,5 +1,5 @@
 import { NavLink } from "react-router-dom";
-import { ChevronLeft, ChevronRight, Home, BookOpen, Calendar, ShoppingCart, Settings } from "lucide-react";
+import { ChevronLeft, ChevronRight, Home, BookOpen, Calendar, ShoppingCart, Settings, Package } from "lucide-react";
 
 export function IOSStatusBar() {
   return <div className="h-[54px]" />;
@@ -134,8 +134,8 @@ const TAB_ITEMS = [
   { id: 'home',     label: 'Vandaag',      to: '/',            Icon: Home,         end: true },
   { id: 'recipes',  label: 'Recepten',     to: '/recepten',    Icon: BookOpen },
   { id: 'week',     label: 'Week',         to: '/weekplan',    Icon: Calendar },
+  { id: 'voorraad', label: 'Voorraad',     to: '/voorraad',    Icon: Package },
   { id: 'shopping', label: 'Lijst',        to: '/boodschappen', Icon: ShoppingCart },
-  { id: 'settings', label: 'Instellingen', to: '/instellingen', Icon: Settings },
 ];
 
 export function IOSTabBar() {

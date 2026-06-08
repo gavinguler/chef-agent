@@ -9,6 +9,7 @@ import uuid
 from backend.db.session import get_db
 from backend.db.models import Recipe
 from backend.ai.agent import fill_recipe_macros as _fill_recipe_macros, fill_recipe_instructions as _fill_recipe_instructions, fill_recipe_ingredients as _fill_recipe_ingredients
+from backend.db.models import IngredientProductMapping
 from backend.config import settings
 from backend.services.wiki_sync import (
     delete_recipe_from_wiki,
@@ -166,6 +167,39 @@ async def fill_all_ingredients(db: Session = Depends(get_db)):
         except Exception:
             failed += 1
     return {"ok": ok, "failed": failed, "total": len(recipes)}
+
+
+@router.post("/suggest-from-stock")
+async def suggest_from_stock(db: Session = Depends(get_db)):
+    """Claude-gegenereerd receptvoorstel op basis van voorraad-items zonder recept."""
+    from backend.bonnetjes.client import get_all_balances
+    from backend.ai.claude_client import suggest_recipe_from_stock as _suggest
+
+    balances = await get_all_balances()
+    in_stock_ids = {b["product_id"] for b in balances if b.get("quantity", 0) > 0}
+
+    mappings = db.query(IngredientProductMapping).filter(
+        IngredientProductMapping.bonnetjes_product_id.in_(in_stock_ids)
+    ).all()
+
+    if not mappings:
+        raise HTTPException(status_code=404, detail="Geen gemapte voorraad gevonden")
+
+    all_recipes = db.query(Recipe).filter(Recipe.ingredienten != None).all()
+    used_ingredients = set()
+    for recipe in all_recipes:
+        for line in (recipe.ingredienten or "").splitlines():
+            used_ingredients.add(line.strip().lower())
+
+    orphaned = [
+        m.bonnetjes_product_name for m in mappings
+        if not any(m.bonnetjes_product_name.lower() in ing for ing in used_ingredients)
+    ]
+
+    if len(orphaned) < 3:
+        raise HTTPException(status_code=404, detail="Niet genoeg ongebruikte voorraad voor suggestie")
+
+    return await _suggest(orphaned)
 
 
 @router.post("/ai-fill-macros")
