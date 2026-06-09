@@ -246,11 +246,12 @@ export default function RecipeDetail() {
     );
   }
 
+  const p = recipe.porties || 1;
   const macros = [
-    { label: "Calorieën", value: recipe.kcal ? `${recipe.kcal} kcal` : "—" },
-    { label: "Eiwit",     value: recipe.eiwit_g ? `${Math.round(recipe.eiwit_g)}g` : "—" },
-    { label: "Vet",       value: recipe.vet_g ? `${Math.round(recipe.vet_g)}g` : "—" },
-    { label: "Koolhydraten", value: recipe.koolhydraten_g ? `${Math.round(recipe.koolhydraten_g)}g` : "—" },
+    { label: "Calorieën", value: recipe.kcal ? `${Math.round(recipe.kcal / p)} kcal` : "—" },
+    { label: "Eiwit",     value: recipe.eiwit_g ? `${Math.round(recipe.eiwit_g / p)}g` : "—" },
+    { label: "Vet",       value: recipe.vet_g ? `${Math.round(recipe.vet_g / p)}g` : "—" },
+    { label: "Koolhydraten", value: recipe.koolhydraten_g ? `${Math.round(recipe.koolhydraten_g / p)}g` : "—" },
   ];
 
   const ingredienten = typeof recipe.ingredienten === "string"
@@ -297,15 +298,27 @@ export default function RecipeDetail() {
             </p>
             <h1 className="text-[28px] font-bold text-ink leading-tight mb-1">{recipe.naam}</h1>
             <p className="text-[15px] text-ink2">
-              2 porties{recipe.bereidingstijd_min ? ` · ${recipe.bereidingstijd_min} min` : ""}
+              {p} {p === 1 ? 'portie' : 'porties'}{recipe.bereidingstijd_min ? ` · ${recipe.bereidingstijd_min} min` : ""}
             </p>
           </div>
 
-          <IOSGroupHeader>Macro's</IOSGroupHeader>
+          <IOSGroupHeader>Macro's — per portie</IOSGroupHeader>
           <IOSGroup>
-            {macros.map((m, i) => (
-              <IOSRow key={m.label} title={m.label} detail={m.value} last={i === macros.length - 1} />
-            ))}
+            <div className="grid grid-cols-2">
+              {macros.map(({ label, value }, i) => (
+                <div
+                  key={label}
+                  className="px-4 py-[13px]"
+                  style={{
+                    borderRight: i % 2 === 0 ? '0.5px solid rgba(60,60,67,0.1)' : 'none',
+                    borderBottom: i < 2 ? '0.5px solid rgba(60,60,67,0.1)' : 'none',
+                  }}
+                >
+                  <p className="text-[11px] text-ink2 uppercase tracking-wide mb-1">{label}</p>
+                  <p className="text-[22px] font-bold text-ink">{value}</p>
+                </div>
+              ))}
+            </div>
           </IOSGroup>
 
           <IOSGroupHeader>Ingrediënten</IOSGroupHeader>
@@ -470,7 +483,7 @@ export default function RecipeDetail() {
                 </p>
                 <h1 className="text-[28px] font-bold text-ink mb-1 leading-tight">{recipe.naam}</h1>
                 <p className="text-[14px] text-ink2">
-                  2 porties{recipe.bereidingstijd_min ? ` · ${recipe.bereidingstijd_min} min` : ""}
+                  {p} {p === 1 ? 'portie' : 'porties'}{recipe.bereidingstijd_min ? ` · ${recipe.bereidingstijd_min} min` : ""}
                 </p>
               </div>
 
@@ -500,6 +513,7 @@ export default function RecipeDetail() {
               style={{ borderLeft: '0.5px solid rgba(60,60,67,0.08)', background: '#fff' }}
             >
               <Panel title="Macro's">
+                <p className="text-[11px] text-ink2 mb-3">per portie</p>
                 <div className="grid grid-cols-2 gap-4 mb-4">
                   {macros.map(m => <Stat key={m.label} label={m.label} v={m.value} />)}
                 </div>
@@ -525,7 +539,7 @@ export default function RecipeDetail() {
                 </div>
               </Panel>
 
-              <Panel title="Ingrediënten" badge="2 porties">
+              <Panel title="Ingrediënten" badge={p > 1 ? `${p} porties` : '1 portie'}>
                 {ingredienten.length > 0 ? ingredienten.map((ing, i) => {
                   const resolved = ingredientPrices[ing];
                   const isLinked = !!findPriceForIngredient(ing, mappings);

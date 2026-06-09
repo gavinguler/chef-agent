@@ -1,7 +1,8 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { ShoppingCart, Wand2, LayoutTemplate } from "lucide-react";
-import { getWeekPlan, getCurrentWeek, getTemplates, applyTemplate } from "../api/client";
+import { ShoppingCart, Wand2, LayoutTemplate, LayoutList, Pencil } from "lucide-react";
+import { getWeekPlan, getCurrentWeek, getTemplates, applyTemplate, setMeal } from "../api/client";
+import RecipePicker from "../components/RecipePicker";
 import { getStoredWeek } from "../lib/weekStorage";
 import {
   IOSStatusBar, IOSLargeHeader, IOSGroupHeader, IOSGroup, IOSRow, IOSTabBar,
@@ -13,7 +14,7 @@ const DAYS_SHORT = ["Ma","Di","Wo","Do","Vr","Za","Zo"];
 const MEAL_TYPES = ["ontbijt","lunch","snack","diner","avondsnack"];
 const MEAL_LABEL = { ontbijt:"Ontbijt", lunch:"Lunch", snack:"Snack", diner:"Diner", avondsnack:"Avondsnack" };
 
-function WeekGridRow({ label, days, todayNl, weekPlan, mealType, onNavigate, last }) {
+function WeekGridRow({ label, days, todayNl, weekPlan, mealType, onNavigate, onEdit, last }) {
   return (
     <>
       {/* Row label */}
@@ -38,7 +39,7 @@ function WeekGridRow({ label, days, todayNl, weekPlan, mealType, onNavigate, las
           <div
             key={`${mealType}-${day}`}
             onClick={() => maaltijd?.recept_id && onNavigate(`/recepten/${maaltijd.recept_id}`)}
-            className={maaltijd?.recept_id ? 'cursor-pointer' : ''}
+            className={`${maaltijd?.recept_id ? 'cursor-pointer' : ''} relative group`}
             style={{
               borderTop: '0.5px solid rgba(0,0,0,0.06)',
               borderLeft: '0.5px solid rgba(0,0,0,0.04)',
@@ -54,6 +55,7 @@ function WeekGridRow({ label, days, todayNl, weekPlan, mealType, onNavigate, las
                 border: '0.5px solid rgba(0,0,0,0.06)',
                 boxShadow: isToday ? '0 0 0 1.5px #1f7a4d' : 'none',
                 minHeight: 80,
+                position: 'relative',
               }}
             >
               {/* Photo placeholder */}
@@ -82,6 +84,15 @@ function WeekGridRow({ label, days, todayNl, weekPlan, mealType, onNavigate, las
               ) : (
                 <p style={{ margin: 0, fontSize: 11, color: 'rgba(60,60,67,0.3)' }}>—</p>
               )}
+              {onEdit && (
+                <button
+                  onClick={e => { e.stopPropagation(); onEdit(day, mealType); }}
+                  className="absolute top-1 right-1 w-5 h-5 rounded-full opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center"
+                  style={{ background: 'rgba(120,120,128,0.2)' }}
+                >
+                  <Pencil size={9} className="text-ink2" />
+                </button>
+              )}
             </div>
           </div>
         );
@@ -101,6 +112,7 @@ export default function WeekPlan() {
   const [templates, setTemplates] = useState([]);
   const [applyingTemplate, setApplyingTemplate] = useState(null);
   const [error, setError] = useState(null);
+  const [editSlot, setEditSlot] = useState(null); // { dag, mealType, hasRecipe }
 
   const todayIndex = new Date().getDay();
   const todayNl = DAYS_NL[todayIndex === 0 ? 6 : todayIndex - 1];
@@ -152,6 +164,15 @@ export default function WeekPlan() {
     }
   }
 
+  async function handleSlotSelect(recipe) {
+    if (!editSlot) return;
+    const { dag, mealType } = editSlot;
+    await setMeal(selectedWeek, dag, mealType, recipe?.id ?? null);
+    const data = await getWeekPlan(selectedWeek);
+    setWeekPlan(data);
+    setEditSlot(null);
+  }
+
   return (
     <>
       {/* ── Mobile ── */}
@@ -167,6 +188,13 @@ export default function WeekPlan() {
                 style={{ background: 'rgba(120,120,128,0.14)' }}
               >
                 <LayoutTemplate size={16} className="text-ink2" />
+              </button>
+              <button
+                onClick={() => navigate('/weekplan/samenstellen')}
+                className="w-[32px] h-[32px] rounded-full flex items-center justify-center"
+                style={{ background: 'rgba(120,120,128,0.14)' }}
+              >
+                <LayoutList size={16} className="text-ink2" />
               </button>
               <button
                 onClick={() => navigate('/weekplan/genereren')}
@@ -252,9 +280,10 @@ export default function WeekPlan() {
 
             {DAYS_NL.map((day, i) => {
               const dagData = weekPlan?.dagen?.find(d => d.dag?.toLowerCase() === day);
-              const dayMeals = MEAL_TYPES
-                .map(type => ({ type, meal: dagData?.maaltijden?.find(m => m.maaltijd_type === type) }))
-                .filter(x => x.meal);
+              const allSlots = MEAL_TYPES.map(type => ({
+                type,
+                meal: dagData?.maaltijden?.find(m => m.maaltijd_type === type),
+              }));
               const isToday = day === todayNl;
               const isBatch = dagData?.is_batch;
               return (
@@ -270,17 +299,38 @@ export default function WeekPlan() {
                     )}
                   </div>
                   <IOSGroup>
-                    {dayMeals.length > 0 ? dayMeals.map(({ type, meal }, j) => (
-                      <IOSRow
+                    {allSlots.map(({ type, meal }, j) => (
+                      <div
                         key={type}
-                        title={meal.naam}
-                        sub={MEAL_LABEL[type] + (meal.eiwit_g ? ` · ${Math.round(meal.eiwit_g)}g eiwit` : "")}
-                        last={j === dayMeals.length - 1}
-                        onClick={meal.recept_id ? () => navigate(`/recepten/${meal.recept_id}`) : undefined}
-                      />
-                    )) : (
-                      <IOSRow title="Geen maaltijden gepland" last />
-                    )}
+                        className="flex items-center px-4 py-[11px] min-h-[44px]"
+                        style={j < allSlots.length - 1 ? { borderBottom: '0.5px solid rgba(60,60,67,0.08)' } : {}}
+                      >
+                        <div
+                          className="flex-1 min-w-0"
+                          onClick={meal?.recept_id ? () => navigate(`/recepten/${meal.recept_id}`) : undefined}
+                          style={meal?.recept_id ? { cursor: 'pointer' } : {}}
+                        >
+                          <p className="text-[11px] text-ink3 mb-0.5">{MEAL_LABEL[type]}</p>
+                          {meal ? (
+                            <p className="text-[15px] text-ink font-medium truncate">
+                              {meal.naam}{meal.eiwit_g ? ` · ${Math.round(meal.eiwit_g)}g eiwit` : ""}
+                            </p>
+                          ) : (
+                            <p className="text-[15px] text-ink3">—</p>
+                          )}
+                        </div>
+                        <button
+                          onClick={() => setEditSlot({ dag: day, mealType: type, hasRecipe: !!meal?.recept_id })}
+                          className="w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0 ml-2"
+                          style={{ background: meal?.recept_id ? 'rgba(120,120,128,0.1)' : 'rgba(31,122,77,0.08)' }}
+                        >
+                          {meal?.recept_id
+                            ? <Pencil size={13} className="text-ink3" />
+                            : <span style={{ color: '#1f7a4d', fontSize: 20, lineHeight: 1 }}>+</span>
+                          }
+                        </button>
+                      </div>
+                    ))}
                   </IOSGroup>
                 </div>
               );
@@ -326,6 +376,13 @@ export default function WeekPlan() {
                 style={{ background: 'rgba(120,120,128,0.14)', color: 'rgba(60,60,67,0.7)' }}
               >
                 <LayoutTemplate size={14} /> Laad template
+              </button>
+              <button
+                onClick={() => navigate('/weekplan/samenstellen')}
+                className="flex items-center gap-1.5 px-3 py-[6px] rounded-[7px] text-[13px] font-semibold"
+                style={{ background: 'rgba(120,120,128,0.14)', color: 'rgba(60,60,67,0.7)' }}
+              >
+                <LayoutList size={14} /> Stel samen
               </button>
               <button
                 onClick={() => navigate('/weekplan/genereren')}
@@ -412,6 +469,13 @@ export default function WeekPlan() {
                         weekPlan={weekPlan}
                         mealType={mealType}
                         onNavigate={navigate}
+                        onEdit={(dag, mt) => setEditSlot({
+                          dag,
+                          mealType: mt,
+                          hasRecipe: !!(weekPlan?.dagen
+                            ?.find(d => d.dag?.toLowerCase() === dag)
+                            ?.maaltijden?.find(m => m.maaltijd_type === mt)?.recept_id),
+                        })}
                         last={ri === 2}
                       />
                     ))}
@@ -498,6 +562,14 @@ export default function WeekPlan() {
           </div>
         </DesktopShell>
       </div>
+
+      <RecipePicker
+        open={editSlot !== null}
+        onClose={() => setEditSlot(null)}
+        categoryFilter={editSlot?.mealType}
+        allowClear={editSlot?.hasRecipe}
+        onSelect={handleSlotSelect}
+      />
 
       {/* Template modal */}
       {showTemplates && (

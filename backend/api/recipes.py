@@ -32,6 +32,7 @@ class RecipeIn(BaseModel):
     categorie: Optional[str] = None
     vlees_type: Optional[str] = None
     bron: str = "handmatig"
+    porties: int = 1
 
 
 class RecipeOut(BaseModel):
@@ -48,6 +49,7 @@ class RecipeOut(BaseModel):
     vlees_type: Optional[str] = None
     bron: str
     image_url: Optional[str] = None
+    porties: int = 1
 
     model_config = {"from_attributes": True}
 

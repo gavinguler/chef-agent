@@ -12,7 +12,7 @@ const CAT_LABEL = { diner: "Diner", lunch: "Lunch", ontbijt: "Ontbijt", snack: "
 
 const EMPTY = {
   naam: "", categorie: "diner", beschrijving: "", ingredienten: "", instructies: "",
-  kcal: "", eiwit_g: "", vet_g: "", koolhydraten_g: "", vlees_type: "",
+  kcal: "", eiwit_g: "", vet_g: "", koolhydraten_g: "", vlees_type: "", porties: 1,
 };
 
 function toFormValues(r) {
@@ -27,6 +27,7 @@ function toFormValues(r) {
     vet_g: r.vet_g ?? "",
     koolhydraten_g: r.koolhydraten_g ?? "",
     vlees_type: r.vlees_type ?? "",
+    porties: r.porties ?? 1,
   };
 }
 
@@ -43,6 +44,7 @@ function toPayload(form) {
     koolhydraten_g: form.koolhydraten_g !== "" ? Number(form.koolhydraten_g) : null,
     vlees_type: form.vlees_type || null,
     bron: "handmatig",
+    porties: form.porties !== "" ? Number(form.porties) : 1,
   };
 }
 
@@ -230,6 +232,21 @@ export default function RecipeForm() {
             placeholder="bijv. kip, rund, vis…"
             value={form.vlees_type}
             onChange={e => set("vlees_type", e.target.value)}
+          />
+        </div>
+      </IOSGroup>
+
+      <IOSGroupHeader>Porties</IOSGroupHeader>
+      <IOSGroup footer="Aantal porties dat dit recept maakt.">
+        <div className="px-4 py-[11px]">
+          <input
+            type="number"
+            inputMode="numeric"
+            min="1"
+            className={inputCls}
+            placeholder="1"
+            value={form.porties}
+            onChange={e => set("porties", e.target.value)}
           />
         </div>
       </IOSGroup>

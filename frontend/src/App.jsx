@@ -3,6 +3,7 @@ import HomePage from "./pages/Home";
 import Recipes from "./pages/Recipes";
 import WeekPlan from "./pages/WeekPlan";
 import WeekPlanGenerator from "./pages/WeekPlanGenerator";
+import WeekPlanBuilder from "./pages/WeekPlanBuilder";
 import RecipeDetail from "./pages/RecipeDetail";
 import RecipeForm from "./pages/RecipeForm";
 import SettingsPage from "./pages/Settings";
@@ -20,6 +21,7 @@ export default function App() {
         <Route path="/recepten/:id/bewerken" element={<RecipeForm />} />
         <Route path="/weekplan" element={<WeekPlan />} />
         <Route path="/weekplan/genereren" element={<WeekPlanGenerator />} />
+        <Route path="/weekplan/samenstellen" element={<WeekPlanBuilder />} />
         <Route path="/instellingen" element={<SettingsPage />} />
         <Route path="/boodschappen" element={<Shopping />} />
         <Route path="/boodschappen/:week" element={<Shopping />} />

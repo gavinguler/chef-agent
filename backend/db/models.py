@@ -26,6 +26,7 @@ class Recipe(Base):
     bron = Column(String(50), default="handmatig")
     aangemaakt_op = Column(DateTime, default=datetime.utcnow)
     image_url = Column(Text, nullable=True)
+    porties = Column(Integer, default=1, nullable=False, server_default="1")
 
     meal_plan_entries = relationship("MealPlan", back_populates="recipe")
 

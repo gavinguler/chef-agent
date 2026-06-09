@@ -109,7 +109,7 @@ export default function Recipes() {
               }
               iconBg={r.image_url ? "transparent" : "#e5e5ea"}
               title={r.naam}
-              sub={[r.categorie, r.eiwit_g ? `${Math.round(r.eiwit_g)}g eiwit` : null, r.kcal ? `${r.kcal} kcal` : null].filter(Boolean).join(' · ')}
+              sub={[r.categorie, r.eiwit_g ? `${Math.round(r.eiwit_g / (r.porties || 1))}g eiwit` : null, r.kcal ? `${Math.round(r.kcal / (r.porties || 1))} kcal` : null].filter(Boolean).join(' · ')}
               last={i === filtered.length - 1}
               onClick={() => navigate(`/recepten/${r.id}`)}
             />
@@ -198,7 +198,7 @@ export default function Recipes() {
                         <p className="text-[10px] font-bold uppercase tracking-wide text-brand">{r.categorie}</p>
                         <p className="text-[13px] font-semibold text-ink mt-1 leading-snug">{r.naam}</p>
                         <p className="text-[11px] text-ink2 mt-1">
-                          {[r.eiwit_g ? `${Math.round(r.eiwit_g)}g eiwit` : null, r.kcal ? `${r.kcal} kcal` : null].filter(Boolean).join(' · ')}
+                          {[r.eiwit_g ? `${Math.round(r.eiwit_g / (r.porties || 1))}g eiwit` : null, r.kcal ? `${Math.round(r.kcal / (r.porties || 1))} kcal` : null].filter(Boolean).join(' · ')}
                         </p>
                       </div>
                     </div>
